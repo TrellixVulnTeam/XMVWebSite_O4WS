@@ -1,0 +1,13 @@
+
+    "Topic": "JavaScript Window Navigator - The window.navigator object contains information about the visitor's browser"
+    "URL": "https://www.w3schools.com/js/js_window_navigator.asp"
+},
+{
+  "id": 2
+    "Topic": "How to detect the user browser ( Safari, Chrome, IE, Firefox and Opera ) using JavaScript ?"
+    "URL": "https://www.geeksforgeeks.org/how-to-detect-the-user-browser-safari-chrome-ie-firefox-and-opera-using-javascript/"
+},
+{
+  "id": 3
+    "Topic": "CanvasRenderingContext2D.createLinearGradient()"
+    "URL": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/createLinearGradient"
