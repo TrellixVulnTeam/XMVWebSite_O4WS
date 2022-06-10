@@ -1,18 +1,45 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { MatIconModule} from '@angular/material/icon';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
+import { XmvCompanyComponent } from './xmv-company/xmv-company.component';
+import { XMVCompanyContactComponent } from './xmv-company/xmvcompany-contact/xmvcompany-contact.component';
+import { XMVCompanyOfferComponent } from './xmv-company/xmvcompany-offer/xmvcompany-offer.component';
+import { XMVCompanyProfileComponent } from './xmv-company/xmvcompany-profile/xmvcompany-profile.component';
+import { RespondContactComponent } from './Special-Services/Respond-Contact.component';
+import { LoginComponent } from './Login/login.component';
+import { Event27AugComponent}  from './Special-Services/Event-27AUG2022.component';
+import { Event02JULComponent}  from './Special-Services/Event-02JUL2022.component';
+
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    XmvCompanyComponent,
+    XMVCompanyContactComponent,
+    XMVCompanyOfferComponent,
+    XMVCompanyProfileComponent,
+    RespondContactComponent,
+    LoginComponent,
+    Event27AugComponent,
+    Event02JULComponent
   ],
   imports: [
+    AppRoutingModule,
     BrowserModule,
-    AppRoutingModule
+    CommonModule,
+    FormsModule,
+    MatIconModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+
   ],
-  providers: [],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
