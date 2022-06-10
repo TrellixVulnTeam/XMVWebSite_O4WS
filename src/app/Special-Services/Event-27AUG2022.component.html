@@ -491,7 +491,6 @@
 <div class="myText">
   <br><br>
     <span id='targetMenu'></span>
-    
 
       <h2 style="color:blue; font-weight:bold;"> {{LanguageLabels[19]}}</h2>
       
@@ -544,12 +543,44 @@ Pain, beurre, confiture Viennoiseries
 <ng-template #manageInvite>
 <div>
   <span id='targetInvitees'></span>
-  <h1>Manage the invitees</h1>
+  <h1 style="margin-top:2px;"><br></h1>
+  
+  <h1 style="margin-top:100px;">Manage the invitees</h1>
+ 
+
+
   <h2 style="margin-top:20px;"><br></h2>
   <div *ngIf="Error_Access_Server!==''">
     <span style='margin-top:20px; color:red; font-size:16px;' >Error access to the server  ==> {{Error_Access_Server}}>
     </span>
-</div>
+  </div>
+
+  <h2 style="margin-top:20px; margin-left:90px;">Summary</h2>
+
+  <br> <br><span class="summary">Brunch</span>
+  <span>{{Total.brunch}}</span>
+  <br>  <br><span  class="summary">Practice Saturday</span>
+  <span>{{Total.practice}}</span>
+
+  <br> <br><span  class="summary">Petanque Saturday</span>
+  <span>{{Total.petanqueS}}</span>
+  <br>  <br><span  class="summary">Petanque Sunday</span>
+  <span>{{Total.petanqueS}}</span>
+
+  <br>  <br><span  class="summary">Golf Saturday</span>
+  <br><br><span  class="summaryB">8 holes</span>
+  <span>{{Total.golfS9}}</span>
+  <br><br><span  class="summaryB">18 holes</span>
+  <span>{{Total.golfS18}}</span>
+ 
+  <br>  <br> <br><span  class="summary">Golf Sunday</span>
+  <br>
+  <br><span  class="summaryB">8 holes</span>
+  <span>{{Total.golfD9}}</span>
+  <br><br><span  class="summaryB">18 holes</span>
+  <span>{{Total.golfD18}}</span>
+
+
   <form  [formGroup]="myForm">
       <span style="color:red; font-size:16px; height:30px; margin-left:30px;">{{error_message}}</span>
       <div>
@@ -629,8 +660,6 @@ Pain, beurre, confiture Viennoiseries
       </span>
 
 
- 
-
       <label class="field-name">Brunch </label>
      
         <span *ngIf="Table_User_Data[identification.id].brunch==='na'">
@@ -656,8 +685,6 @@ Pain, beurre, confiture Viennoiseries
           <option value="n" selected>{{LanguageLabels[7]}}</option>
         </select>
         </span>
-
-
 
       <div>
 
@@ -691,7 +718,6 @@ Pain, beurre, confiture Viennoiseries
               </span>
 
 
-            
             <label class="field-name" >Pétanque {{LanguageLabels[11]}}</label>
             <span *ngIf="CommentStructure.bouleSunday==='y'"> 
                 <select id="BSunday"  class="input_select "  formControlName="bouleSunday">

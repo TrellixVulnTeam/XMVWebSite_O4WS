@@ -39,6 +39,17 @@ export class Event27AugComponent {
       phone:'',
     };
 
+    Total={
+      brunch:0,
+      practice:0,
+      petanqueS:0,
+      petanqueD:0,
+      golfS9:0,
+      golfS18:0,
+      golfD9:0,
+      golfD18:0
+    }
+
     FrenchLabels=['Formulaire', 'Nombre de personnes','Plat principal','Bœuf', 'Poisson', "Reste la nuit à l'hotel", 'Oui', 'Non',
           "Si vous voulez jouer au golf merci d'indiquer",'jour','Samedi', 'Dimanche', 'nombre de joueurs', 'nombre de trous','trous',
           'Nos commentaires','Vos commentaires (i.e. restriction nourriture, autres)','Valider', 'Adresse',"Dîner"];
@@ -183,6 +194,16 @@ onWindowResize() {
       this.LanguageLabels=this.EnglishLabels;
       this.yourLanguage='UK';
 
+      this.Total.brunch=0;
+      this.Total.practice=0;
+      this.Total.petanqueS=0;
+      this.Total.petanqueD=0;
+      this.Total.golfS9=0;
+      this.Total.golfS18=0;
+      this.Total.golfD9=0;
+      this.Total.golfD18=0;
+
+
       this.myHeader=new HttpHeaders({
         'content-type': 'application/json',
         'Cache-Control': 'private, max-age=0'
@@ -291,7 +312,7 @@ onWindowResize() {
           )
     }
   
-  clear(){
+clear(){
     this.myForm.reset({
       userId: '',
       psw:'',
@@ -335,11 +356,9 @@ ResetAccess(){
       this.updateRecord=1;
       this.init=false;
       this.SaveRecord();
-
   }
 
   ValidateRecord(){
-
           if (this.recordToUpdate!==0){
             this.i=this.recordToUpdate;
             this.recordToUpdate=0;
@@ -437,13 +456,44 @@ count_invitees(ConvertComment:string){
 
     this.total_invitee = this.total_invitee + Number(this.Table_User_Data[this.i].nbinvitees);
     if (this.Table_User_Data[this.i].night==='y'){
-      this. total_rooms = this. total_rooms+Number(this.Table_User_Data[this.i].nbinvitees);
+      this.total_rooms = this.total_rooms+Number(this.Table_User_Data[this.i].nbinvitees);
     }
-    
+    if (this.Table_User_Data[this.i].brunch==='y'){
+      this.Total.brunch=this.Total.brunch+ Number(this.Table_User_Data[this.i].nbinvitees);
+    }
+
     if (ConvertComment==='Y'){
         this.identification.id=this.i;
         this.ConvertComment();
         this.Table_User_Data[this.i].yourComment=JSON.stringify(this.CommentStructure);
+        if (this.CommentStructure.practiceSaturday==='y'){
+            this.Total.practice=this.Total.practice+ Number(this.Table_User_Data[this.i].nbinvitees);
+          }
+        if (this.CommentStructure.bouleSaturday==='y'){
+            this.Total.petanqueS=this.Total.petanqueS+ Number(this.Table_User_Data[this.i].nbinvitees);
+          }
+        if (this.CommentStructure.bouleSunday==='y'){
+            this.Total.petanqueD=this.Total.petanqueD+ Number(this.Table_User_Data[this.i].nbinvitees);
+          }
+        if (this.CommentStructure.golf!==0){
+          if (this.CommentStructure.holes===9){
+            if (this.CommentStructure.day==='Sat'){
+                this.Total.golfS9=this.Total.golfS9+ this.CommentStructure.golf;
+            }
+            else if (this.CommentStructure.day==='Sun'){
+              this.Total.golfD9=this.Total.golfD9+ this.CommentStructure.golf;
+            }
+          }
+          else if (this.CommentStructure.holes===18){
+            if (this.CommentStructure.day==='Sat'){
+              this.Total.golfS18=this.Total.golfS18+ this.CommentStructure.golf;
+            }
+            else if (this.CommentStructure.day==='Sun'){
+              this.Total.golfD18=this.Total.golfD18+ this.CommentStructure.golf;
+            }
+          }
+        }
+
     }
   }
   this. total_rooms = this. total_rooms/2;

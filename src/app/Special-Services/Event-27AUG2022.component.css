@@ -175,7 +175,6 @@ img:hover{
     width:140px;
     margin-top:5px;
     height:40px;
-
 }
 
 .field-rowTwo{
@@ -187,8 +186,6 @@ img:hover{
     width:40px;
     margin-top:5px;
     height:40px;
-  
-
 }
 
 .yourComment{
@@ -202,22 +199,38 @@ img:hover{
     font-weight:bold;
 }
 
+.summary{
+    margin-left:20px;
+    color:blue;
+    width:250px;
+    display:block;
+    font-size:16px;
+    float:left;
+   
+}
+
+.summaryB{
+    margin-left:40px;
+    color:rgb(174, 36, 59);
+    width:230px;
+    display:block;
+    font-size:16px;
+    float:left;
+   
+}
+
     /*** ====================================== ***/
     /*** ============== @media 800 ================ ***/
     /*** ====================================== ***/
     @media only screen and (max-width:800px) {
         .posOptions{
- 
             margin-top:10px; 
             margin-left:20%; 
-
         }
         
         .dropdown-options{
-
             width:140px;
             max-width:18%;
-
           }
       
 h2{
