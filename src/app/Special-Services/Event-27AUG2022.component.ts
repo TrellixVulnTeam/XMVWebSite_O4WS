@@ -23,7 +23,7 @@ export class Event27AugComponent {
     ) {}
   
     myHeader=new HttpHeaders();
-    
+    isDeleted:boolean=false;
     getScreenWidth: any;
     getScreenHeight: any;
     device_type:string='';
@@ -193,16 +193,6 @@ onWindowResize() {
       // by default language is French
       this.LanguageLabels=this.EnglishLabels;
       this.yourLanguage='UK';
-
-      this.Total.brunch=0;
-      this.Total.practice=0;
-      this.Total.petanqueS=0;
-      this.Total.petanqueD=0;
-      this.Total.golfS9=0;
-      this.Total.golfS18=0;
-      this.Total.golfD9=0;
-      this.Total.golfD18=0;
-
 
       this.myHeader=new HttpHeaders({
         'content-type': 'application/json',
@@ -452,6 +442,15 @@ ReadRecord(){
 count_invitees(ConvertComment:string){
   this.total_invitee = 0;
   this. total_rooms = 0;
+  this.Total.brunch=0;
+  this.Total.practice=0;
+  this.Total.petanqueS=0;
+  this.Total.petanqueD=0;
+  this.Total.golfS9=0;
+  this.Total.golfS18=0;
+  this.Total.golfD9=0;
+  this.Total.golfD18=0;
+
   for (this.i=0; this.i<this.Table_User_Data.length; this.i ++){
 
     this.total_invitee = this.total_invitee + Number(this.Table_User_Data[this.i].nbinvitees);
@@ -603,11 +602,16 @@ ConvertComment(){
                   this.bucket_data=JSON.stringify(data);
                   var obj = JSON.parse(this.bucket_data);
                   this.Error_Access_Server='';
-                  if (this.invite===true){
+                  if (this.isDeleted===true){ // temporary
+                        this.isDeleted=false;
+                  }
+                  else{
+                  if (this.invite===false){
+                    // if length obj & Tale_User_data are different then should check if user-id is teh same otherwise should skip obj item
+                    // need to have i for Table_User and j for Obj
                       for (this.i=0; this.i<obj.length; this.i++){
-
                           if (obj[this.i].timeStamp!== undefined && obj[this.i].timeStamp!== this.Table_User_Data[this.i].timeStamp ){
- 
+
                             this.Error_Access_Server= 'record ' +this.i+ 'has been updated by another user; redo your updates'
                             this.Table_User_Data[this.i].timeStamp=obj[this.i].timeStamp;
                             this.AccessRecord(this.i);
@@ -622,6 +626,7 @@ ConvertComment(){
                       this.AccessRecord(this.i);
                       this.Error_Access_Server= 'record ' +this.i+ 'has been updated by another user; redo your updates'   
                     }
+                  }
                   }
                   if (this.Error_Access_Server===''){
                         this.resetAccess=false;
@@ -675,10 +680,12 @@ ConvertComment(){
 
   DeleteRecords(){
     this.Table_User_Data.splice(this.identification.id,1);
+    this.Table_DecryptPSW.splice(this.identification.id,1);
     for (this.i=this.identification.id; this.i< this.Table_User_Data.length; this.i++){
       this.Table_User_Data[this.i].id--;
     }
     this.count_invitees('N');
+    this.isDeleted=true;
   }
 
 }
