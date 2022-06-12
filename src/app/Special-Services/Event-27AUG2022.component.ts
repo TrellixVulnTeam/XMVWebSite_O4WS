@@ -156,7 +156,10 @@ export class Event27AugComponent {
     error_message:string='';
     HTTP_Address:string='';
     Error_Access_Server:string='';
+
     i:number=0;
+    j:number=0;
+    
     bucket_data:string='';
     Table_User_Data:Array<EventAug>=[];
     Table_DecryptPSW:Array<string>=[];
@@ -602,20 +605,30 @@ ConvertComment(){
                   this.bucket_data=JSON.stringify(data);
                   var obj = JSON.parse(this.bucket_data);
                   this.Error_Access_Server='';
-                  if (this.isDeleted===true){ // temporary
-                        this.isDeleted=false;
-                  }
-                  else{
+                 // if (this.isDeleted===true){ // temporary
+                 //       this.isDeleted=false;
+                 // }
+                 // else{
                   if (this.invite===false){
-                    // if length obj & Tale_User_data are different then should check if user-id is teh same otherwise should skip obj item
-                    // need to have i for Table_User and j for Obj
-                      for (this.i=0; this.i<obj.length; this.i++){
-                          if (obj[this.i].timeStamp!== undefined && obj[this.i].timeStamp!== this.Table_User_Data[this.i].timeStamp ){
+                      // To be tested
+                      this.i=0;
+                      for (this.j=1; this.j<obj.length; this.j++){
+                          if (obj.length!==this.Table_User_Data.length){ 
+                            while (obj[this.j].UserId !== this.Table_User_Data[this.i].UserId &&  this.j<obj.length){
+                              this.j++
+                            }
+                            this.i++
+                          }
+                          else {
+                            this.i=this.j;
+                          }
+                          if (this.j<obj.length && obj[this.j].timeStamp!== undefined && obj[this.j].timeStamp!== this.Table_User_Data[this.i].timeStamp ){
 
                             this.Error_Access_Server= 'record ' +this.i+ 'has been updated by another user; redo your updates'
-                            this.Table_User_Data[this.i].timeStamp=obj[this.i].timeStamp;
+                            this.Table_User_Data[this.i].timeStamp=obj[this.j].timeStamp;
                             this.AccessRecord(this.i);
-                            this.i=obj.length;
+                            // stop the process
+                            this.j=obj.length;
                           }
                       }
                     }
@@ -627,7 +640,7 @@ ConvertComment(){
                       this.Error_Access_Server= 'record ' +this.i+ 'has been updated by another user; redo your updates'   
                     }
                   }
-                  }
+                  // }
                   if (this.Error_Access_Server===''){
                         this.resetAccess=false;
                         if (this.invite===true){
