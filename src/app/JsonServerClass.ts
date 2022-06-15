@@ -20,7 +20,7 @@ export class BioData{
     };
 
   export class EventAug {
-    id: number=0;
+      id: number=0;
       key:number=0;
       method:string='';
       UserId:string='';

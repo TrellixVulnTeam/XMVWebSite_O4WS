@@ -128,33 +128,59 @@ export class Event27AugComponent {
     Google_Object_Name:string='';
 
     Bucket_Info_Array:any={
-      kind:'',
+      kind:'storage#object',
       items:[
       {
-          kind: "",
-          id: "", 
-          selfLink: "", // link to the general info of the bucket/objectobject
-          mediaLink: "", // link to get the content of the object
-          name: "", // name of the object
-          bucket: "", //name of the bucket
-          generation: "", 
-          metageneration: "",
-          contentType: "", //application/json
-          storageClass: "", //STANDARD
+          kind: "storage#object",
+          id: "manage-login/Event-27AUG2022.json/1655279866897148", 
+          selfLink: "https://www.googleapis.com/storage/v1/b/manage-login/o/Event-27AUG2022.json", // link to the general info of the bucket/objectobject
+          mediaLink: "https://storage.googleapis.com/download/storage/v1/b/manage-login/o/Event-27AUG2022.json?generation=1655279866897148&alt=media", // link to get the content of the object
+          name: "Event-27AUG2022.json", // name of the object
+          bucket: "manage-login", //name of the bucket
+          cacheControl:"max-age=0, private, no-store",
+          generation: "1655279866897148", 
+          metageneration: "1",
+          contentType: "application/json", 
+          storageClass: "STANDARD", 
           size: "", // number of bytes
-          md5Hash: "",
-          crc32c: "",
-          etag: "",
-          timeCreated: "",
+          md5Hash: "qdWPGdgcYW4N0Wc2lodB0g==",
+          crc32c: "oLhslw==",
+          etag: "CPzF4YP+rvgCEAE=",
+          timeCreated: "2022-06-15T07:57:46.909Z",
           updated: "",
           timeStorageClassUpdated: ""
       }
     ]
     
   };
+  PostData:any={
+    ObjectMetadata:{
+      kind: "storage#object",
+      id: "manage-login/Event-27AUG2022.json/1655279866897148", 
+      selfLink: "https://www.googleapis.com/storage/v1/b/manage-login/o/Event-27AUG2022.json", // link to the general info of the bucket/objectobject
+      mediaLink: "https://storage.googleapis.com/download/storage/v1/b/manage-login/o/Event-27AUG2022.json?generation=1655279866897148&alt=media", // link to get the content of the object
+      name: "Event-27AUG2022.json", // name of the object
+      bucket: "manage-login", //name of the bucket
+      cacheControl:"max-age=0, private, no-store",
+      generation: "1655279866897148", 
+      metageneration: "1",
+      contentType: "application/json", 
+      storageClass: "STANDARD", 
+      size: "", // number of bytes
+      md5Hash: "qdWPGdgcYW4N0Wc2lodB0g==",
+      crc32c: "oLhslw==",
+      etag: "CPzF4YP+rvgCEAE=",
+      timeCreated: "2022-06-15T07:57:46.909Z",
+      updated: "",
+      timeStorageClassUpdated: "",
+    },
+      User_Data:[],
+    }
+
     myKeyUp:any;
     error_message:string='';
     HTTP_Address:string='';
+    HTTP_AddressMetaData:string='';
     Error_Access_Server:string='';
 
     i:number=0;
@@ -181,9 +207,7 @@ onWindowResize() {
   ngOnInit(){
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
-
-      //this.httpHeader.append('content-type', 'application/json');
-      //this.httpHeader.append('Cache-Control', 'no-store, must-revalidate, private, max-age=0, no-transform');
+     
 
       this.myKeyUp='';
       this.myTime=new Date();
@@ -199,7 +223,7 @@ onWindowResize() {
 
       this.myHeader=new HttpHeaders({
         'content-type': 'application/json',
-        'Cache-Control': 'private, max-age=0'
+        'cache-control': 'private, max-age=0'
       });
 
       // Admin features which purpose is to list all the records and update any field
@@ -208,7 +232,6 @@ onWindowResize() {
         this.invite=false;
 
         this.Error_Access_Server='';    
-        // this.manageInvitees();
         this.count_invitees('Y');
 
       } else {
@@ -237,6 +260,7 @@ onWindowResize() {
         if (this.invite===false){
               this.scroller.scrollToAnchor('targetTOP');
           }
+        // this.patchMetaData();
   }    
 
   goDown(event:string){
@@ -252,7 +276,7 @@ onWindowResize() {
   }
 
 
-  manageInvitees(){
+  patchMetaData(){
    
     // get list of objects in bucket
     /*
@@ -275,28 +299,14 @@ onWindowResize() {
       */
     // ****** get content of object *******
     this.Google_Object_Name="Event-27AUG2022.json";
-    this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name   + "?alt=media"; 
-   
-    this.http.get(this.HTTP_Address, {'headers':this.myHeader} )
+    this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name +  "/o?name="  + this.Google_Object_Name +'TEST' ; 
+    this.HTTP_AddressMetaData=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name  +  'TEST&uploadType=metadata' + "?cacheControl='max-age=0, no-store'";
+    this.PostData.User_Data=this.Table_User_Data;
+    
+    this.http.post(this.HTTP_Address, this.Table_User_Data, {params: {'cacheControl':'max-age=0, no-store, private'}} )
           .subscribe((data ) => {
                
-                this.bucket_data=JSON.stringify(data);
-                var obj = JSON.parse(this.bucket_data);
-
-                this.total_invitee=0;
-                for (this.i=0; this.i<obj.length; this.i++){
-                    this.Individual_User_Data= new EventAug;
-                    this.Table_User_Data.push(this.Individual_User_Data);
-                    this.Table_User_Data[this.i] =obj[this.i];
-                    this.total_invitee=this.total_invitee+this.Table_User_Data[this.i].nbinvitees;
-
-                    this.Table_DecryptPSW.push(' ');
-                    this.Crypto_Key=this.Table_User_Data[this.i].key;
-                    this.Crypto_Method=this.Table_User_Data[this.i].method;
-                    this.Encrypt=this.Table_User_Data[this.i].psw;
-                    this.onCrypt("Decrypt");
-                    this.Table_DecryptPSW[this.i]= this.Decrypt;
-                }
+               console.log('patch metadata: ',data);
 
                 },
                 error_handler => {
@@ -366,7 +376,10 @@ ResetAccess(){
                 if (this.i>this.Table_User_Data.length-1) {     
                   this.Individual_User_Data= new EventAug;
                   this.Table_User_Data.push(this.Individual_User_Data);
+
                   this.i=this.Table_User_Data.length-1;
+                  this.Table_User_Data[this.i]=this.Table_User_Data[0];
+                  this.identification.id=this.i;
                 } 
               }
           this.Table_User_Data[this.i].UserId=this.myForm.controls['userId'].value;
@@ -453,9 +466,19 @@ count_invitees(ConvertComment:string){
   this.Total.golfS18=0;
   this.Total.golfD9=0;
   this.Total.golfD18=0;
+  //this.Table_User_Data[0].nbinvitees=0;
+  //this.Table_User_Data[0].id=0;
+  //this.Table_User_Data[0].night="n";
+  //this.Table_User_Data[0].brunch="n";
+  //this.Table_User_Data[0].UserId="master";
 
-  for (this.i=0; this.i<this.Table_User_Data.length; this.i ++){
-
+  for (this.i=1; this.i<this.Table_User_Data.length; this.i ++){
+//if (this.Table_User_Data[this.i].night===""){
+//  this.Table_User_Data[this.i].night="n";
+//}
+//if (this.Table_User_Data[this.i].brunch===""){
+//  this.Table_User_Data[this.i].brunch="n";
+//}
     this.total_invitee = this.total_invitee + Number(this.Table_User_Data[this.i].nbinvitees);
     if (this.Table_User_Data[this.i].night==='y'){
       this.total_rooms = this.total_rooms+Number(this.Table_User_Data[this.i].nbinvitees);
@@ -582,8 +605,8 @@ ConvertComment(){
    
     // save individual record in case reconciliation is needed
     if (this.invite===true && this.init===false){
-      this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Table_User_Data[this.identification.id].UserId  + '&uploadType=media';
-
+      this.HTTP_AddressMetaData=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Table_User_Data[this.identification.id].UserId  +  "?cacheControl=max-age=0, no-store, private";
+      this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Table_User_Data[this.identification.id].UserId ;
       this.http.post(this.HTTP_Address,  this.Table_User_Data[this.identification.id] , {'headers':this.myHeader} )
       .subscribe(res => {
            console.log('Individual Record is updated: ', this.Table_User_Data[this.identification.id].UserId );
@@ -597,7 +620,7 @@ ConvertComment(){
     }
 
       // ****** get content of object *******
-      // 'Cache-Control': 'no-store, must-revalidate, private, max-age=0, no-transform'
+    
       this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name   + "?alt=media";     
 
       this.http.get(this.HTTP_Address, {'headers':this.myHeader} )
@@ -613,23 +636,26 @@ ConvertComment(){
                       // To be tested
                       this.i=0;
                       for (this.j=1; this.j<obj.length; this.j++){
-                          if (obj.length!==this.Table_User_Data.length){ 
+                        if (this.i<this.Table_User_Data.length-1){
+                          if (obj.length!==this.Table_User_Data.length ){ 
+                            this.i++
                             while (obj[this.j].UserId !== this.Table_User_Data[this.i].UserId &&  this.j<obj.length){
                               this.j++
                             }
-                            this.i++
+                            
                           }
                           else {
                             this.i=this.j;
                           }
                           if (this.j<obj.length && obj[this.j].timeStamp!== undefined && obj[this.j].timeStamp!== this.Table_User_Data[this.i].timeStamp ){
 
-                            this.Error_Access_Server= 'record ' +this.i+ 'has been updated by another user; redo your updates'
+                            this.Error_Access_Server= 'record ' +this.j+ ' has been updated by another user; redo your updates'
                             this.Table_User_Data[this.i].timeStamp=obj[this.j].timeStamp;
-                            this.AccessRecord(this.i);
+                            this.AccessRecord(this.j);
                             // stop the process
                             this.j=obj.length;
                           }
+                        }
                       }
                     }
                   else {
@@ -643,7 +669,7 @@ ConvertComment(){
                   // }
                   if (this.Error_Access_Server===''){
                         this.resetAccess=false;
-                        if (this.invite===true){
+                        if (this.invite===false){
                               for (this.i=0; this.i<this.Tab_Record_Update.length; this.i++){
                                 if (this.Tab_Record_Update[this.i]===true){
                                       this.Table_User_Data[this.i].timeStamp=this.thetime;
@@ -654,8 +680,8 @@ ConvertComment(){
                           this.Table_User_Data[this.identification.id].timeStamp=this.thetime;
                         }
 
-                        this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name  + '&uploadType=media';
-
+                        this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name   + '&uploadType=media';
+                        this.HTTP_AddressMetaData=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name  + '&uploadType=media' +  "?cache-control=max-age=0, no-store, private";    
                         this.http.post(this.HTTP_Address,  this.Table_User_Data , {'headers':this.myHeader} )
                         .subscribe(res => {
                               this.returnDATA.emit(this.Table_User_Data);
@@ -692,13 +718,17 @@ ConvertComment(){
   }
 
   DeleteRecords(){
-    this.Table_User_Data.splice(this.identification.id,1);
-    this.Table_DecryptPSW.splice(this.identification.id,1);
-    for (this.i=this.identification.id; this.i< this.Table_User_Data.length; this.i++){
-      this.Table_User_Data[this.i].id--;
+    if (this.identification.id!==0){
+      this.Table_User_Data.splice(this.identification.id,1);
+      this.Table_DecryptPSW.splice(this.identification.id,1);
+      for (this.i=this.identification.id; this.i< this.Table_User_Data.length; this.i++){
+        this.Table_User_Data[this.i].id--;
+      }
+      this.count_invitees('N');
+      this.isDeleted=true;
+      this.identification.id=0;
+      this.clear();
     }
-    this.count_invitees('N');
-    this.isDeleted=true;
   }
 
 }
