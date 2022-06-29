@@ -128,8 +128,8 @@ export class LoginComponent {
       //this.myForm.controls['password'].setValue("LIM!12monica#Chin");
       //this.myForm.controls['userId'].setValue("XMVIT-Admin");
 
-      this.myForm.controls['userId'].setValue("XMVanstaen");
-      this.myForm.controls['password'].setValue("OPIO!27#AUG");
+      // this.myForm.controls['userId'].setValue("XMVanstaen");
+      // this.myForm.controls['password'].setValue("OPIO!27#AUG");
       
 
       if (this.identification.UserId!=='' && this.identification.psw!=='') {
@@ -174,7 +174,7 @@ export class LoginComponent {
                         this.routing_code=4;
                         // ************
                         // TO BE DELETED AFTER TESTING PERIOD
-                        this.myForm.controls['action'].setValue("Event-27AUG2022");
+                        // this.myForm.controls['action'].setValue("Event-27AUG2022");
                       } else if (this.myForm.controls['action'].value==='Manage Contact'){
                           this.routing_code=1; // go to Respond_Contact
                       } else if (this.myForm.controls['action'].value==='Event-27AUG2022'){

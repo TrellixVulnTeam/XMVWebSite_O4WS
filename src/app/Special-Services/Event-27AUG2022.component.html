@@ -32,14 +32,14 @@
                  <span  (click)="goDown('targetDirection')" class="dropdown-options dropdown-text">Adresse</span>
                  <span  (click)="goDown('targetForm')" class="dropdown-options dropdown-text">Formulaire</span>
                  <span  (click)="goDown('targetMenu')" class="dropdown-options dropdown-text">Menus</span>
-                 <span  (click)="displayPhotos()" class="dropdown-options dropdown-text">Photos mariage</span>
+                 <span  (click)="displayPhotos()" class="dropdown-options dropdown-text">Mariage</span>
               </div>
               <span *ngIf="yourLanguage==='UK'">
                 <span  (click)="goDown('targetRules')" class="dropdown-options dropdown-text">Details</span>
                 <span  (click)="goDown('targetDirection')" class="dropdown-options dropdown-text">Address</span>
                 <span  (click)="goDown('targetForm')" class="dropdown-options dropdown-text">Form</span>
                 <span  (click)="goDown('targetMenu')" class="dropdown-options dropdown-text">Menus</span>
-                <span  (click)="displayPhotos()" class="dropdown-options dropdown-text">Wedding photos</span>
+                <span  (click)="displayPhotos()" class="dropdown-options dropdown-text">Wedding</span>
             </span>
     </div >
 
@@ -551,11 +551,13 @@ Pain, beurre, confiture Viennoiseries
   <h1 style="margin-top:2px;"><br></h1>
  <h1 style="margin-top:140px;">Pictures of the wedding</h1>
  <br><br>
- <span style='color:blue; font-size:14px; margin-left:20px;'>Click on the picture to download it</span>
+ <span style='color:red; font-size:18px; font-weight:bold; font-size:14px; margin-left:20px;'>Click on the picture to download it</span>
  <br><br>
+ <!--
  <button class='butt' id="but1" (click)="next_prev_page('prev')" >Prev page</button>
  <button class='butt' id="but2" (click)="next_prev_page('next')" >Next page</button>
  <br><br>
+-->
  <div *ngFor="let WedPhotos of WeddingPhotos; let i=index" style="margin-left:20px; ">
   <span *ngIf="(i===0 || i===1) && nb_current_page===1">
     <span style="width:80%; display:block; font-size:14px; color:blue">  {{WedPhotos.name}} </span>
