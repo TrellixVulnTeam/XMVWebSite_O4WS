@@ -125,8 +125,11 @@ export class LoginComponent {
 
 
       // ================ TO BE DELETED AFTER TESTING
-      this.myForm.controls['password'].setValue("LIM!12monica#Chin");
-      this.myForm.controls['userId'].setValue("XMVIT-Admin");
+      //this.myForm.controls['password'].setValue("LIM!12monica#Chin");
+      //this.myForm.controls['userId'].setValue("XMVIT-Admin");
+
+      this.myForm.controls['userId'].setValue("XMVanstaen");
+      this.myForm.controls['password'].setValue("OPIO!27#AUG");
       
 
       if (this.identification.UserId!=='' && this.identification.psw!=='') {

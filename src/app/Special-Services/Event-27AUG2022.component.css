@@ -219,6 +219,28 @@ img:hover{
    
 }
 
+.photo{
+    width:50%; 
+    height:300px;
+}
+
+.photo:hover{
+    width:70%; 
+    height:400px;
+}
+
+.butt{
+    margin-left:20px;
+    font-size:12px;
+    width:80px;
+    height:40px;
+}
+
+.butt:hover{
+    background-color: rgb(116, 134, 216);
+    font-size:14px;
+}
+
     /*** ====================================== ***/
     /*** ============== @media 800 ================ ***/
     /*** ====================================== ***/

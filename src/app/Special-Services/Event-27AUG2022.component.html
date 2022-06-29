@@ -19,7 +19,7 @@
   --> 
   <span id='targetTOP'></span>
   <div *ngIf="Error_Access_Server!==''">
-      <span style='margin-top:20px; color:red; font-size:16px;' Error access to the server : {{Error_Access_Server}}>
+      <span style='margin-top:20px; color:red; font-size:16px;'> Error access to the server : {{Error_Access_Server}}
       </span>
   </div>
 
@@ -32,21 +32,25 @@
                  <span  (click)="goDown('targetDirection')" class="dropdown-options dropdown-text">Adresse</span>
                  <span  (click)="goDown('targetForm')" class="dropdown-options dropdown-text">Formulaire</span>
                  <span  (click)="goDown('targetMenu')" class="dropdown-options dropdown-text">Menus</span>
+                 <span  (click)="displayPhotos()" class="dropdown-options dropdown-text">Photos mariage</span>
               </div>
               <span *ngIf="yourLanguage==='UK'">
                 <span  (click)="goDown('targetRules')" class="dropdown-options dropdown-text">Details</span>
                 <span  (click)="goDown('targetDirection')" class="dropdown-options dropdown-text">Address</span>
                 <span  (click)="goDown('targetForm')" class="dropdown-options dropdown-text">Form</span>
                 <span  (click)="goDown('targetMenu')" class="dropdown-options dropdown-text">Menus</span>
+                <span  (click)="displayPhotos()" class="dropdown-options dropdown-text">Wedding photos</span>
             </span>
-    </div>
+    </div >
+
+    <div *ngIf="pagePhotos===false; else processPhotos">
     <div>
       <div *ngIf="getScreenWidth<800">
           <img   class='sizeMap'  src="./assets/ChateauBegude3.png" >
       </div>
       <div *ngIf="getScreenWidth>799">
         <img   class='sizeMap'  src="./assets/ChateauBegude1.png" >
-    </div>
+      </div>
       
       <span class="emoji  anim-name-slidedown" style="margin-left:2%; animation-duration: 10s;">🥂</span>
       <span class="emoji  anim-name-slidedown" style="margin-left:12%; animation-direction: alternate;animation-duration: 8s;">🍾</span>
@@ -537,7 +541,49 @@ Pain, beurre, confiture Viennoiseries
       <br>  Route de Roquefort les Pins - 06650 OPIO
       <br><br>
 </div>
+
+
+  </div>
+
 </div>
+
+<ng-template #processPhotos>
+  <h1 style="margin-top:2px;"><br></h1>
+ <h1 style="margin-top:140px;">Pictures of the wedding</h1>
+ <br><br>
+ <span style='color:blue; font-size:14px; margin-left:20px;'>Click on the picture to download it</span>
+ <br><br>
+ <button class='butt' id="but1" (click)="next_prev_page('prev')" >Prev page</button>
+ <button class='butt' id="but2" (click)="next_prev_page('next')" >Next page</button>
+ <br><br>
+ <div *ngFor="let WedPhotos of WeddingPhotos; let i=index" style="margin-left:20px; ">
+  <span *ngIf="(i===0 || i===1) && nb_current_page===1">
+    <span style="width:80%; display:block; font-size:14px; color:blue">  {{WedPhotos.name}} </span>
+    <video  (click)="onSaveFile(WedPhotos)" controls class="photo">
+        <source src={{WedPhotos.mediaLink}} type="video/mp4">
+    </video>
+    <br><br>  
+</span>
+  <span *ngIf="i>=nb_current_photo && i<nb_current_photo+nb_photo_per_page && i!==0 && i!==1">
+      <span style="width:80%; display:block; font-size:14px; color:blue">  {{WedPhotos.name}} </span>
+      <img  (click)="onSaveFile(WedPhotos)" class="photo" src={{WedPhotos.mediaLink}}>
+      <br><br>  
+  </span>
+ </div>
+ <br><br>
+ <button class='butt' id="but3" (click)="next_prev_page('prev')" >Prev page</button>
+ <button class='butt' id="but4" (click)="next_prev_page('next')" >Next page</button>
+ <br><br>
+<!--
+ <h1 style="margin-top:140px;">Pictures of the wedding - Outdoor</h1>
+ <br><br>
+ <div *ngFor="let WedPhotosOut of WeddingPhotosOutdoor; let i=index" style="margin-left:20px; ">
+  <span style="width:30%; display:block; font-size:14px;">  {{WedPhotosOut.name}} </span>
+  <img style="color:blue; width:80px; height:80px;" src={{WedPhotosOut.mediaLink}}>
+ </div>
+ -->
+</ng-template>
+
 
 
 <ng-template #manageInvite>
@@ -546,14 +592,8 @@ Pain, beurre, confiture Viennoiseries
   <h1 style="margin-top:2px;"><br></h1>
   
   <h1 style="margin-top:100px;">Manage the invitees</h1>
- 
 
 
-  <h2 style="margin-top:20px;"><br></h2>
-  <div *ngIf="Error_Access_Server!==''">
-    <span style='margin-top:20px; color:red; font-size:16px;' >Error access to the server  ==> {{Error_Access_Server}}>
-    </span>
-  </div>
 
   <h2 style="margin-top:20px; margin-left:90px;">Summary</h2>
 

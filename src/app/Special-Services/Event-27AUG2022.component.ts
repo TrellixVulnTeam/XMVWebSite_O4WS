@@ -8,6 +8,13 @@ import { ViewportScroller } from "@angular/common";
 import { EventAug } from '../JsonServerClass';
 import { encrypt, decrypt} from '../EncryptDecryptServices';
 
+export class StructurePhotos{
+  name:string='';
+  mediaLink:string='';
+  photo=new Image();
+ }
+
+
 @Component({
   selector: 'app-Event-27AUG2022',
   templateUrl: './Event-27AUG2022.component.html',
@@ -50,6 +57,8 @@ export class Event27AugComponent {
       golfD18:0
     }
 
+  pagePhotos:boolean=false;
+
     FrenchLabels=['Formulaire', 'Nombre de personnes','Plat principal','Bœuf', 'Poisson', "Reste la nuit à l'hotel", 'Oui', 'Non',
           "Si vous voulez jouer au golf merci d'indiquer",'jour','Samedi', 'Dimanche', 'nombre de joueurs', 'nombre de trous','trous',
           'Nos commentaires','Vos commentaires (i.e. restriction nourriture, autres)','Valider', 'Adresse',"Dîner"];
@@ -61,6 +70,14 @@ export class Event27AugComponent {
           '','Your feedback (e.g. food requirements, others)','Validate', 'Address',""];
 
     @Output() returnDATA= new EventEmitter<any>();
+
+   thePhotos = new Image();
+   WeddingPhotos:Array<StructurePhotos>=[];
+   WeddingPhotosOutdoor:Array<StructurePhotos>=[];
+   nb_total_page:number=0;
+   nb_photo_per_page:number=10;
+   nb_current_page:number=0;
+   nb_current_photo:number=0;
 
     Admin_UserId:string="XMVIT-Admin";
     invite:boolean=true;
@@ -261,9 +278,12 @@ onWindowResize() {
               this.scroller.scrollToAnchor('targetTOP');
           }
         // this.patchMetaData();
+        this.getListPhotos('xavier-monica-mariage', this.WeddingPhotos, 0);
+        // this.getListPhotos('xavier-monica-mariage-outdoor', this.WeddingPhotos, this.WeddingPhotos.length);
   }    
 
   goDown(event:string){
+    this.pagePhotos=false;
     if (event==='FR'){
       this.yourLanguage='FR';
       this.LanguageLabels=this.FrenchLabels;
@@ -278,25 +298,8 @@ onWindowResize() {
 
   patchMetaData(){
    
-    // get list of objects in bucket
-    /*
-    this.Google_Object_Name="Event-Aug2022/";
-    this.Google_Bucket_Access_Root='https://storage.cloud.google.com/storage/v1/b/';
-    this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o";
-    this.http.get<any>(this.HTTP_Address )
-          .subscribe(data => {
-                this.Bucket_Info_Array=data;
-                
-                for (this.i=0; this.i<this.Bucket_Info_Array.items.length-1; this.i++ ){
-                        this.Error_Access_Server= this.Error_Access_Server + ' ==== ' + this.Bucket_Info_Array.items[this.i].name ;
-                }
-              },   
-              error_handler => {
-                this.Error_Access_Server='error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
-                  // alert(this.message  + ' -- http get = ' + this.HTTP_Address);
-                } 
-          )
-      */
+    // NOT USED
+    
     // ****** get content of object *******
     this.Google_Object_Name="Event-27AUG2022.json";
     this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name +  "/o?name="  + this.Google_Object_Name +'TEST' ; 
@@ -730,5 +733,81 @@ ConvertComment(){
       this.clear();
     }
   }
+
+displayPhotos(){
+  this.pagePhotos=true;
+  //for (this.i=0; this.i< this.WeddingPhotos.length-1; this.i++ ){
+   // this.getPhoto(this.WeddingPhotos[this.i].mediaLink, this.WeddingPhotos[this.i].photo);
+  //}
+}
+
+next_prev_page(event:any){
+  if(event === 'prev' && this.nb_current_page > 1){
+    this.nb_current_page--
+    this.nb_current_photo=(this.nb_current_page-1)*this.nb_photo_per_page;
+  } else if (event === 'next' && this.nb_current_page < this.nb_total_page){
+    this.nb_current_page++
+    this.nb_current_photo=(this.nb_current_page-1)*this.nb_photo_per_page;
+  }
+}
+
+getPhoto(http_address:string, thePhoto:any){
+
+  this.http.get(http_address )
+  .subscribe(data => {
+    thePhoto=data;
+  })
+}
+
+  getListPhotos(BucketPhotos:string, WeddingPhotos:Array<StructurePhotos>, i_array:number){
+    // get list of objects in bucket
+    
+    const HTTP_Address='https://storage.googleapis.com/storage/v1/b/' + BucketPhotos + "/o";
+    this.http.get<any>(HTTP_Address )
+          .subscribe(data => {
+
+                console.log('BucketPhotos ',BucketPhotos)
+                console.log(data);
+                this.Bucket_Info_Array=data;
+                
+                for (this.i=0; this.i<this.Bucket_Info_Array.items.length-1; this.i++ ){
+                        const pushPhotos=new StructurePhotos;
+                        WeddingPhotos.push(pushPhotos);
+                        WeddingPhotos[i_array].name=this.Bucket_Info_Array.items[this.i].name;
+                        WeddingPhotos[i_array].mediaLink=this.Bucket_Info_Array.items[this.i].mediaLink;
+                        i_array++
+                }
+                this.nb_total_page = Math.floor(this.WeddingPhotos.length / this.nb_photo_per_page);
+                if (this.WeddingPhotos.length % this.nb_photo_per_page){
+                  this.nb_total_page++
+                }
+                this.nb_current_page = 1;
+                this.nb_current_photo = 0;
+
+              },   
+              error_handler => {
+                this.Error_Access_Server='error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
+                  // alert(this.message  + ' -- http get = ' + this.HTTP_Address);
+                } 
+          )
+  
+
+  }
+
+  public onSaveFile(event:any): void {
+    //let fileName =  event.name;
+   // let fileContent = '';
+  
+   // const file = new Blob([fileContent], { type: "text/plain" });
+  
+    const link = document.createElement("a");
+    //link.href = URL.createObjectURL(file);
+    link.href=event.mediaLink;
+    link.download = event.name;
+    link.click();
+    link.remove(); 
+  }
+
+
 
 }
