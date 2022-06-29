@@ -309,12 +309,12 @@ h2{
 
 .photo{
     width:50%; 
-    height:200px;
+    height:180px;
 }
 
 .photo:hover{
     width:70%; 
-    height:250px;
+    height:220px;
 }
 
 }
