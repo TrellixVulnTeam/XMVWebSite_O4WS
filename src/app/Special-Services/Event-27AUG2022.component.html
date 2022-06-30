@@ -549,10 +549,14 @@ Pain, beurre, confiture Viennoiseries
 
 <ng-template #processPhotos>
   <h1 style="margin-top:2px;"><br></h1>
- <h1 style="margin-top:140px;">Pictures of the wedding</h1>
+ <h1 style="margin-top:140px;">Pictures of our   wedding</h1>
  <br><br>
- <span style='color:red; font-size:18px; font-weight:bold; font-size:14px; margin-left:20px;'>
-        Click on the picture to zoom-out and on 
+ <span 
+  style='color:red; font-size:18px; font-weight:bold; font-size:14px; 
+          margin-left:40px; max-width:80%; display:block;
+          letter-spacing: 2px; line-height: 30px;'>
+        Click on the picture to zoom-out and 
+         on 
         <button  class="GOdownload" style="margin-left:0px;"> <span  class="material-symbols-outlined myIcon" >
                   download
             </span>
@@ -561,8 +565,9 @@ Pain, beurre, confiture Viennoiseries
 </span>
  <br><br>
  <!--
- <button class='butt' id="but1" (click)="next_prev_page('prev')" >Prev page</button>
- <button class='butt' id="but2" (click)="next_prev_page('next')" >Next page</button>
+ <button class='butt' id="but1" (click)="next_prev_page('prev')" >Previous</button>
+
+ <button class='butt' id="but2" (click)="next_prev_page('next')" >Next</button>
  <br><br>
 -->
  <div *ngFor="let WedPhotos of WeddingPhotos; let i=index" style="margin-left:20px; ">
@@ -590,6 +595,15 @@ Pain, beurre, confiture Viennoiseries
  </div>
  <br><br>
  <button class='butt' id="but3" (click)="next_prev_page('prev')" >Prev page</button>
+ <span *ngFor="let tab_pages of pages_to_display; let i=index" style="margin-left:20px; ">
+    <span *ngIf="tab_pages===nb_current_page" class="highlight_page" >
+        {{tab_pages}} 
+    </span> 
+    <span *ngIf="tab_pages!==nb_current_page" class="lowlight_page" (click)="display_page(tab_pages)">
+        {{tab_pages}} 
+    </span>
+    
+ </span>
  <button class='butt' id="but4" (click)="next_prev_page('next')" >Next page</button>
  <br><br>
 <!--

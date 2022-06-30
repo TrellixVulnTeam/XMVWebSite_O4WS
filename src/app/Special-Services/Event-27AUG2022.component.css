@@ -262,10 +262,41 @@ img:hover{
     background-color: blue;
 }
 
+.highlight_page{
+    font-size:16px;
+    font-weight:bold;
+    color:red;
+}
+
+.lowlight_page{
+    font-size:16px;
+    font-weight: bold;
+    color:blue;
+}
+
+
+.lowlight_page:hover{
+    background-color: cyan;
+    color:rgb(42, 36, 36);
+}
+
+
     /*** ====================================== ***/
-    /*** ============== @media 800 ================ ***/
+    /*** ============== @media 600 ================ ***/
     /*** ====================================== ***/
     @media only screen and (max-width:800px) {
+
+        .photo{
+            width:50%; 
+            height:200px;
+        }
+        
+    }
+
+    /*** ====================================== ***/
+    /*** ============== @media 600 ================ ***/
+    /*** ====================================== ***/
+    @media only screen and (max-width:600px) {
         .posOptions{
             margin-top:10px; 
             margin-left:22%; 
@@ -328,7 +359,7 @@ h2{
 
 .photo{
     width:50%; 
-    height:180px;
+    height:150px;
 }
 
 .photo:hover{
@@ -346,6 +377,27 @@ h2{
     margin-top:-4px;
     margin-left:-8px;
     
+}
+
+.highlight_page{
+    font-size:14px;
+}
+
+.lowlight_page{
+    font-size:14px;
+}
+
+.butt{
+    margin-left:20px;
+    font-size:12px;
+    width:40px;
+
+}
+.butt:hover{
+    background-color: rgb(116, 134, 216);
+    font-size:12px;
+    font-weight: bold;
+    color:white;
 }
 
 }

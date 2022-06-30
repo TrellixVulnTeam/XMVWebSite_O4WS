@@ -57,9 +57,7 @@ export class Event27AugComponent {
       golfD18:0
     }
 
-  pagePhotos:boolean=false;
-  display_download:boolean=false;
-  selected_photo:number=-1;
+
 
     FrenchLabels=['Formulaire', 'Nombre de personnes','Plat principal','Bœuf', 'Poisson', "Reste la nuit à l'hotel", 'Oui', 'Non',
           "Si vous voulez jouer au golf merci d'indiquer",'jour','Samedi', 'Dimanche', 'nombre de joueurs', 'nombre de trous','trous',
@@ -73,13 +71,18 @@ export class Event27AugComponent {
 
     @Output() returnDATA= new EventEmitter<any>();
 
-   thePhotos = new Image();
-   WeddingPhotos:Array<StructurePhotos>=[];
-   WeddingPhotosOutdoor:Array<StructurePhotos>=[];
-   nb_total_page:number=0;
-   nb_photo_per_page:number=10;
-   nb_current_page:number=0;
-   nb_current_photo:number=0;
+
+    pagePhotos:boolean=false;
+    display_download:boolean=false;
+    selected_photo:number=-1;
+    thePhotos = new Image();
+    WeddingPhotos:Array<StructurePhotos>=[];
+    WeddingPhotosOutdoor:Array<StructurePhotos>=[];
+    nb_total_page:number=0;
+    nb_photo_per_page:number=10;
+    nb_current_page:number=0;
+    nb_current_photo:number=0;
+    pages_to_display:Array<number>=[1,2,3,4,5,6,7,8,9,10]
 
     Admin_UserId:string="XMVIT-Admin";
     invite:boolean=true;
@@ -226,7 +229,6 @@ onWindowResize() {
   ngOnInit(){
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
-     
 
       this.myKeyUp='';
       this.myTime=new Date();
@@ -755,6 +757,22 @@ next_prev_page(event:any){
     this.nb_current_page++
     this.nb_current_photo=(this.nb_current_page-1)*this.nb_photo_per_page;
   }
+  this.j = this.nb_current_page-(this.pages_to_display.length/2)+1;
+  if ( this.j<1 ){this.j=1;}
+  if ( this.j + this.pages_to_display.length > this.nb_total_page){this.j=this.nb_total_page-this.pages_to_display.length+1;}
+  if ( this.pages_to_display[0]!== this.j ){
+      
+      for (this.i=0; this.i<10; this.i++){
+       
+        this.pages_to_display[this.i]=this.i+this.j;
+        
+      }
+  }
+}
+
+display_page(page_nb:number){
+  this.nb_current_page=page_nb-1;
+  this.next_prev_page('next');
 }
 
 getPhoto(http_address:string, thePhoto:any){
@@ -801,7 +819,6 @@ getPhoto(http_address:string, thePhoto:any){
   }
 
 onZoomPhoto(event:any){
-    console.log('selected photo: ', event)
     this.display_download=true;
     this.selected_photo=event;
 }

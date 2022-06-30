@@ -147,11 +147,8 @@ export class LoginComponent {
   GetObject(){
 // ****** get content of object *******
       this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name   + "?alt=media"; 
-      this.HTTP_AddressMetaData=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name ; 
+      // this.HTTP_AddressMetaData=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name ; 
       
-      this.http.get(this.HTTP_AddressMetaData )
-            .subscribe(data => {
-            // console.log('GetObject Metadata= ' , data);
             this.http.get(this.HTTP_Address, {'headers':this.myHeader} )
             .subscribe(data => {
             //console.log(data);
@@ -196,6 +193,7 @@ export class LoginComponent {
               }
             },
             error_handler => {
+              console.log('');
               console.log(error_handler);
               //if (error_handler.error.substring(0, 14)==='No such object'){
               //  this.text_error='identification failed; retry';
@@ -205,7 +203,6 @@ export class LoginComponent {
               
                 // alert(this.message  + ' -- http get = ' + this.HTTP_Address);
             } 
-            )}
         )
     }
 
@@ -263,9 +260,9 @@ getEventAug(){
   this.HTTP_AddressMetaData=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name  + "?cacheContro=max-age=0, no-store, private"; 
   
 
-  this.http.get(this.HTTP_AddressMetaData)
-        .subscribe((data ) => {
-          console.log('GetEventAug MetaData= ' , data);
+  //this.http.get(this.HTTP_AddressMetaData)
+  //      .subscribe((data ) => {
+  //        console.log('GetEventAug MetaData= ' , data);
           
           this.http.get(this.HTTP_Address, {'headers':this.myHeader} )
             .subscribe((data ) => {
@@ -292,7 +289,7 @@ getEventAug(){
                 this.text_error='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
               } 
 
-        )}
+        //)}
         )
   }
 
