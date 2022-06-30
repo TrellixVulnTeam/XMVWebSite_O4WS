@@ -12,6 +12,7 @@ export class StructurePhotos{
   name:string='';
   mediaLink:string='';
   photo=new Image();
+  vertical:boolean=false;
  }
 
 
@@ -799,6 +800,12 @@ getPhoto(http_address:string, thePhoto:any){
                         WeddingPhotos.push(pushPhotos);
                         WeddingPhotos[i_array].name=this.Bucket_Info_Array.items[this.i].name;
                         WeddingPhotos[i_array].mediaLink=this.Bucket_Info_Array.items[this.i].mediaLink;
+                        if (this.Bucket_Info_Array.items[this.i].name.indexOf('Vertical')!==-1){
+                          WeddingPhotos[i_array].vertical=true;
+                        }
+                        else{
+                          WeddingPhotos[i_array].vertical=false;
+                        }
                         i_array++
                 }
                 this.nb_total_page = Math.floor(this.WeddingPhotos.length / this.nb_photo_per_page);

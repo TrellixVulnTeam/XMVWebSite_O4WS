@@ -220,13 +220,23 @@ img:hover{
 }
 
 .photo{
-    width:50%; 
+    width:400px; 
     height:300px;
 }
 
 .photo:hover{
-    width:70%; 
+    width:550px; 
     height:400px;
+}
+
+.photoVertical{
+    width:400px; 
+    height:600px;
+}
+
+.photoVertical:hover{
+    width:550px; 
+    height:750px;
 }
 
 .butt{
@@ -358,13 +368,23 @@ h2{
 }
 
 .photo{
-    width:50%; 
-    height:150px;
+    width:300px; 
+    height:200px;
 }
 
 .photo:hover{
-    width:80%; 
-    height:220px;
+    width:380px; 
+    height:250px;
+}
+
+.photoVertical{
+    width:200px; 
+    height:300px;
+}
+
+.photoVertical:hover{
+    width:350px; 
+    height:550px;
 }
 
 .GOdownload{
