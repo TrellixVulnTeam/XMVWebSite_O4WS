@@ -58,6 +58,8 @@ export class Event27AugComponent {
     }
 
   pagePhotos:boolean=false;
+  display_download:boolean=false;
+  selected_photo:number=-1;
 
     FrenchLabels=['Formulaire', 'Nombre de personnes','Plat principal','Bœuf', 'Poisson', "Reste la nuit à l'hotel", 'Oui', 'Non',
           "Si vous voulez jouer au golf merci d'indiquer",'jour','Samedi', 'Dimanche', 'nombre de joueurs', 'nombre de trous','trous',
@@ -736,12 +738,16 @@ ConvertComment(){
 
 displayPhotos(){
   this.pagePhotos=true;
+  this.display_download=false;
+  this.selected_photo=-1;
   //for (this.i=0; this.i< this.WeddingPhotos.length-1; this.i++ ){
    // this.getPhoto(this.WeddingPhotos[this.i].mediaLink, this.WeddingPhotos[this.i].photo);
   //}
 }
 
 next_prev_page(event:any){
+  this.selected_photo=-1;
+  this.display_download=false;
   if(event === 'prev' && this.nb_current_page > 1){
     this.nb_current_page--
     this.nb_current_photo=(this.nb_current_page-1)*this.nb_photo_per_page;
@@ -794,16 +800,19 @@ getPhoto(http_address:string, thePhoto:any){
 
   }
 
-  public onSaveFile(event:any): void {
-    //let fileName =  event.name;
-   // let fileContent = '';
-  
-   // const file = new Blob([fileContent], { type: "text/plain" });
-  
+onZoomPhoto(event:any){
+    console.log('selected photo: ', event)
+    this.display_download=true;
+    this.selected_photo=event;
+}
+
+onSaveFile(event:any): void {
+    this.selected_photo=-1;
+    this.display_download=false;
     const link = document.createElement("a");
     //link.href = URL.createObjectURL(file);
     link.href=event.mediaLink;
-    link.download = event.name;
+    link.download = event.name; // filename
     link.click();
     link.remove(); 
   }

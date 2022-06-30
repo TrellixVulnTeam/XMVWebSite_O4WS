@@ -551,7 +551,14 @@ Pain, beurre, confiture Viennoiseries
   <h1 style="margin-top:2px;"><br></h1>
  <h1 style="margin-top:140px;">Pictures of the wedding</h1>
  <br><br>
- <span style='color:red; font-size:18px; font-weight:bold; font-size:14px; margin-left:20px;'>Click on the picture to download it</span>
+ <span style='color:red; font-size:18px; font-weight:bold; font-size:14px; margin-left:20px;'>
+        Click on the picture to zoom-out and on 
+        <button  class="GOdownload" style="margin-left:0px;"> <span  class="material-symbols-outlined myIcon" >
+                  download
+            </span>
+        </button>
+        if you want to download it
+</span>
  <br><br>
  <!--
  <button class='butt' id="but1" (click)="next_prev_page('prev')" >Prev page</button>
@@ -561,14 +568,23 @@ Pain, beurre, confiture Viennoiseries
  <div *ngFor="let WedPhotos of WeddingPhotos; let i=index" style="margin-left:20px; ">
   <span *ngIf="(i===0 || i===1) && nb_current_page===1">
     <span style="width:80%; display:block; font-size:14px; color:blue">  {{WedPhotos.name}} </span>
-    <video  (click)="onSaveFile(WedPhotos)" controls class="photo">
+    <video  (mouseover)="onZoomPhoto(i)" controls class="photo">
         <source src={{WedPhotos.mediaLink}} type="video/mp4">
     </video>
+
+    <button  class="GOdownload"><span  class="material-symbols-outlined myIcon" (click)="onSaveFile(WedPhotos)">
+                  download
+              </span>
+    </button>
     <br><br>  
 </span>
   <span *ngIf="i>=nb_current_photo && i<nb_current_photo+nb_photo_per_page && i!==0 && i!==1">
       <span style="width:80%; display:block; font-size:14px; color:blue">  {{WedPhotos.name}} </span>
-      <img  (click)="onSaveFile(WedPhotos)" class="photo" src={{WedPhotos.mediaLink}}>
+      <img  (mouseover)="onZoomPhoto(i)" class="photo" src={{WedPhotos.mediaLink}}>
+      <button  class="GOdownload"><span  class="material-symbols-outlined myIcon" (click)="onSaveFile(WedPhotos)">
+                    download
+              </span>
+      </button>
       <br><br>  
   </span>
  </div>
