@@ -432,13 +432,13 @@ h2{
 
 .butt{
     margin-left:20px;
-    font-size:12px;
-    width:40px;
+    font-size:10px;
+    width:50px;
 
 }
 .butt:hover{
     background-color: rgb(116, 134, 216);
-    font-size:12px;
+    font-size:10px;
     font-weight: bold;
     color:white;
 }
