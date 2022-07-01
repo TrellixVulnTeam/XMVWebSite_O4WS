@@ -778,6 +778,7 @@ displayPhotos(){
   this.pagePhotos=true;
   this.display_download=false;
   this.selected_photo=-1;
+
   /*
   this.myHeader=new HttpHeaders({
     'content-type': 'image/jpg'
@@ -906,11 +907,16 @@ onSaveFile(event:any): void {
 
   drawPhotoCanvas(){
     this.message='';
+
     this.ctx.canvas.width=this.PhotoNbForm.controls['Width'].value;
     this.ctx.canvas.height=this.PhotoNbForm.controls['Height'].value;
     if (this.PhotoNbForm.controls['SelectNb'].value<1 || this.PhotoNbForm.controls['SelectNb'].value>this.WeddingPhotos.length){
+      this.i=0;
+      if (this.i<10000 && this.WeddingPhotos.length!==0){
+        this.i++
+      }
         this.message='value must be between 1 and '+ this.WeddingPhotos.length + ' Nb captured:'+this.PhotoNbForm.controls['SelectNb'].value+
-        'length of the table ' + this.WeddingPhotos.length;
+        'length of the table ' + this.WeddingPhotos.length + '     i='+ this.i;
     }
     else {
       this.message='Photo => nb: '+this.PhotoNbForm.controls['SelectNb'].value+'  Name: ' + this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].name;
