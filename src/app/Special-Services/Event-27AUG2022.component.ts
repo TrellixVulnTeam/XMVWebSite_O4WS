@@ -857,17 +857,16 @@ getPhoto(http_address:string, thePhoto:any){
                         WeddingPhotos[i_array].name=this.Bucket_Info_Array.items[this.i].name;
                         WeddingPhotos[i_array].mediaLink=this.Bucket_Info_Array.items[this.i].mediaLink;
                         WeddingPhotos[i_array].selfLink=this.Bucket_Info_Array.items[this.i].selfLink;
-                        WeddingPhotos[i_array].photo.src=this.Bucket_Info_Array.items[this.i].mediaLink;
+                        if (this.i!==0 && this.i!==1){
+                            WeddingPhotos[i_array].photo.src=this.Bucket_Info_Array.items[this.i].mediaLink;
+                        }
                         if (this.Bucket_Info_Array.items[this.i].name.indexOf('Vertical')!==-1){
                           WeddingPhotos[i_array].vertical=true;
                         }
                         else{
                           WeddingPhotos[i_array].vertical=false;
                         }
-                        
-                       
-                           
-                   
+
                         i_array++
                 }
                 this.nb_total_page = Math.floor(this.WeddingPhotos.length / this.nb_photo_per_page);
@@ -881,7 +880,7 @@ getPhoto(http_address:string, thePhoto:any){
               },   
               error_handler => {
                 this.Error_Access_Server='getListPhoto : error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
-                  // alert(this.message  + ' -- http get = ' + this.HTTP_Address);
+                  alert(this.message  + ' -- http get = ' + this.HTTP_Address);
                 } 
           )
   
@@ -917,7 +916,12 @@ onSaveFile(event:any): void {
       this.message='Photo => nb: '+this.PhotoNbForm.controls['SelectNb'].value+'  Name: ' + this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].name;
     }
     this.ctx.beginPath();
-    this.ctx.drawImage(this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].photo,0,0,this.ctx.canvas.width,this.ctx.canvas.height);
+    if (this.PhotoNbForm.controls['SelectNb'].value===1 || this.PhotoNbForm.controls['SelectNb'].value===2){
+      this.ctx.font = 'bold 18px serif';
+      this.ctx.strokeText('Video is not displayed there', 10, 10);
+    } else {
+      this.ctx.drawImage(this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].photo,0,0,this.ctx.canvas.width,this.ctx.canvas.height);
+    }
     this.ctx.stroke();
   }
 
