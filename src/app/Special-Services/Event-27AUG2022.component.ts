@@ -301,7 +301,7 @@ onWindowResize() {
           this.PhotoNbForm.controls['Height'].setValue(this.getScreenWidth*0.6);
         } else{
           this.PhotoNbForm.controls['Width'].setValue(450);
-          this.PhotoNbForm.controls['Height'].setValue(500);
+          this.PhotoNbForm.controls['Height'].setValue(300);
         }
         this.PhotoNbForm.controls['SelectNb'].setValue(14);
         this.getListPhotos('xavier-monica-mariage', this.WeddingPhotos, 0);
