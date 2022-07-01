@@ -910,10 +910,11 @@ onSaveFile(event:any): void {
     this.ctx.canvas.width=this.PhotoNbForm.controls['Width'].value;
     this.ctx.canvas.height=this.PhotoNbForm.controls['Height'].value;
     if (this.PhotoNbForm.controls['SelectNb'].value<1 || this.PhotoNbForm.controls['SelectNb'].value>this.WeddingPhotos.length){
-        this.message='value must be between 1 and '+ this.WeddingPhotos.length;
+        this.message='value must be between 1 and '+ this.WeddingPhotos.length + ' Nb captured:'+this.PhotoNbForm.controls['SelectNb'].value+
+        'length of the table ' + this.WeddingPhotos.length;
     }
     else {
-      this.message='Photo => nb: '+this.PhotoNbForm.controls['SelectNb'].value+'Name: ' + this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1];
+      this.message='Photo => nb: '+this.PhotoNbForm.controls['SelectNb'].value+'  Name: ' + this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].name;
     }
     this.ctx.beginPath();
     this.ctx.drawImage(this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].photo,0,0,this.ctx.canvas.width,this.ctx.canvas.height);
