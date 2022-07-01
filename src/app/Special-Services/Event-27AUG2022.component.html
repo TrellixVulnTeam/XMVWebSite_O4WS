@@ -549,7 +549,8 @@ Pain, beurre, confiture Viennoiseries
 
 <ng-template #processPhotos>
   <h1 style="margin-top:2px;"><br></h1>
- <h1 style="margin-top:140px;">Pictures of our   wedding</h1>
+ <h1 style="margin-top:140px;">Pictures of our wedding</h1>
+ <h3 >Total number of photos: {{WeddingPhotos.length}}</h3>
  <br><br>
  <span 
   style='color:red; font-size:18px; font-weight:bold; font-size:14px; 
@@ -572,7 +573,9 @@ Pain, beurre, confiture Viennoiseries
 -->
  <div *ngFor="let WedPhotos of WeddingPhotos; let i=index" style="margin-left:20px; ">
   <span *ngIf="(i===0 || i===1) && nb_current_page===1">
-    <span style="width:80%; display:block; font-size:14px; color:blue">  {{WedPhotos.name}} </span>
+   
+    <span style="width:80%; display:block; font-size:14px; color:blue">  {{WedPhotos.name}}
+      <br>Photo nb:  <label style="color:red; font-size:18px;"> {{i+1}} </label></span>
     <video  (mouseover)="onZoomPhoto(i)" controls class="photo">
         <source src={{WedPhotos.mediaLink}} type="video/mp4">
     </video>
@@ -584,7 +587,8 @@ Pain, beurre, confiture Viennoiseries
     <br><br>  
 </span>
   <span *ngIf="i>=nb_current_photo && i<nb_current_photo+nb_photo_per_page && i!==0 && i!==1">
-      <span style="width:80%; display:block; font-size:14px; color:blue">  {{WedPhotos.name}} </span>
+      <span style="width:80%; display:block; font-size:14px; color:blue">  {{WedPhotos.name}}
+        <br>Photo nb:  <label style="color:red; font-size:18px;"> {{i+1}} </label></span>
       <span *ngIf="WedPhotos.vertical===false">
             <img  (mouseover)="onZoomPhoto(i)" class="photo" src={{WedPhotos.mediaLink}}>
       </span>
@@ -594,24 +598,42 @@ Pain, beurre, confiture Viennoiseries
       <button  class="GOdownload"><span  class="material-symbols-outlined myIcon" (click)="onSaveFile(WedPhotos)">
                     download
               </span>
-      </button>
+      </button> 
       <br><br>  
   </span>
  </div>
  <br><br>
+
+
  <button class='butt' id="but3" (click)="next_prev_page('prev')" >Prev page</button>
- <span *ngFor="let tab_pages of pages_to_display; let i=index" style="margin-left:20px; ">
-    <span *ngIf="tab_pages===nb_current_page" class="highlight_page" >
-        {{tab_pages}} 
+ <span style="margin-left:20px; font-size:6px;">&nbsp;</span>
+ <span *ngFor="let tab_pages of pages_to_display; let i=index">
+
+    <span *ngIf="tab_pages===nb_current_page" class="highlight_page"  >
+        {{tab_pages}} <span style="font-size:6px;">&nbsp;</span>
     </span> 
     <span *ngIf="tab_pages!==nb_current_page" class="lowlight_page" (click)="display_page(tab_pages)">
-        {{tab_pages}} 
+        {{tab_pages}} <span style="font-size:6px;">&nbsp;</span>
     </span>
     
  </span>
  <button class='butt' id="but4" (click)="next_prev_page('next')" >Next page</button>
  <br><br>
 <!--
+<span class="material-symbols-outlined">
+arrow_forward_ios
+</span>
+
+<span class="material-symbols-outlined">
+arrow_back_ios_new
+</span>
+
+<span class="material-symbols-outlined">
+arrow_back
+</span>
+
+
+
  <h1 style="margin-top:140px;">Pictures of the wedding - Outdoor</h1>
  <br><br>
  <div *ngFor="let WedPhotosOut of WeddingPhotosOutdoor; let i=index" style="margin-left:20px; ">
@@ -619,9 +641,27 @@ Pain, beurre, confiture Viennoiseries
   <img style="color:blue; width:80px; height:80px;" src={{WedPhotosOut.mediaLink}}>
  </div>
  -->
+
+<h2 style="margin-left:20px;">Display a specific picture</h2>
+<br><span style="color:red; font-size:14px; margin-left:20px;">{{message}}</span>
+ <div [formGroup]="PhotoNbForm" class="position-parameters">
+        <span ><label class="posParamPhoto">Number </label><input formControlName="SelectNb" type="number" class="position-field" ></span>
+    <br><span><label class="posParamPhoto">Width </label><input formControlName="Width" type="number" class="position-field" ></span>
+    <br><span><label class="posParamPhoto">Height </label><input formControlName="Height" type="number" class="position-field" ></span>
+<br>
+<button style="margin-left:190px; margin-top:10px;" id="'but6" (click)="drawPhotoCanvas()">Submit</button>
+<br><br>
+</div>
+
 </ng-template>
-
-
+<canvas 
+#ImageCanvas 
+id='canvasElem' 
+class="position" 
+width="550" 
+height="600" 
+>
+</canvas>
 
 <ng-template #manageInvite>
 <div>

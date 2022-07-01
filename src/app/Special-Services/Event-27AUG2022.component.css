@@ -15,7 +15,16 @@ h2{
     margin-top:50px;
   
     }
-
+h3{
+    display:block;
+    width:90%;
+    font-size:28px;
+    font-weight: bold;
+    font-family: 'Tangerine', cursive;
+    letter-spacing: 2px;
+    margin-top:50px;
+    text-align:center;
+}
 .flag{
     position:absolute; 
     margin-top:-30px; 
@@ -244,6 +253,7 @@ img:hover{
     font-size:12px;
     width:80px;
     height:40px;
+    border-radius: 20%;
 }
 
 .butt:hover{
@@ -275,13 +285,14 @@ img:hover{
 .highlight_page{
     font-size:16px;
     font-weight:bold;
-    color:red;
+    color:red;    
 }
 
 .lowlight_page{
     font-size:16px;
     font-weight: bold;
     color:blue;
+    margin-top:20px;
 }
 
 
@@ -290,23 +301,35 @@ img:hover{
     color:rgb(42, 36, 36);
 }
 
+.position{
+    margin-left:20px;
+    border: 2px blue solid;
+}
+
+.posParamPhoto{
+    margin-left:20px;
+    width:30%;
+    max-width:300px;
+    color:blue;
+    font-size:16px;
+    padding-left:10px;
+
+}
+
+.position-field{
+    width:60px;
+    font-size:16px;
+
+
+}
+
+
+
 
     /*** ====================================== ***/
-    /*** ============== @media 600 ================ ***/
+    /*** ============== @media 800 ================ ***/
     /*** ====================================== ***/
     @media only screen and (max-width:800px) {
-
-        .photo{
-            width:50%; 
-            height:200px;
-        }
-        
-    }
-
-    /*** ====================================== ***/
-    /*** ============== @media 600 ================ ***/
-    /*** ====================================== ***/
-    @media only screen and (max-width:600px) {
         .posOptions{
             margin-top:10px; 
             margin-left:22%; 

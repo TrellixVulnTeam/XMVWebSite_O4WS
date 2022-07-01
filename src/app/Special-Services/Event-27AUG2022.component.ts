@@ -11,6 +11,7 @@ import { encrypt, decrypt} from '../EncryptDecryptServices';
 export class StructurePhotos{
   name:string='';
   mediaLink:string='';
+  selfLink:string='';
   photo=new Image();
   vertical:boolean=false;
  }
@@ -30,12 +31,24 @@ export class Event27AugComponent {
     private scroller: ViewportScroller,
     ) {}
   
+    @ViewChild('ImageCanvas', { static: true })
+    myImage = new Image();
+    theCanvas:any;
+    ctx:any;
+    PhotoNbForm: FormGroup = new FormGroup({ 
+      SelectNb: new FormControl(),
+      Width: new FormControl(),
+      Height: new FormControl(),
+    });
+    
+
     myHeader=new HttpHeaders();
     isDeleted:boolean=false;
     getScreenWidth: any;
     getScreenHeight: any;
     device_type:string='';
     yourLanguage:string='FR';
+
     @Input() LoginTable_User_Data:Array<EventAug>=[];
     @Input() LoginTable_DecryptPSW:Array<string>=[];
     @Input() identification={
@@ -283,9 +296,28 @@ onWindowResize() {
               this.scroller.scrollToAnchor('targetTOP');
           }
         // this.patchMetaData();
+        if (this.getScreenWidth<800){
+          this.PhotoNbForm.controls['Width'].setValue(this.getScreenWidth*0.9);
+          this.PhotoNbForm.controls['Height'].setValue(this.getScreenWidth*0.6);
+        } else{
+          this.PhotoNbForm.controls['Width'].setValue(450);
+          this.PhotoNbForm.controls['Height'].setValue(500);
+        }
+        this.PhotoNbForm.controls['SelectNb'].setValue(14);
         this.getListPhotos('xavier-monica-mariage', this.WeddingPhotos, 0);
         // this.getListPhotos('xavier-monica-mariage-outdoor', this.WeddingPhotos, this.WeddingPhotos.length);
   }    
+
+  ngAfterViewInit() { 
+    this.theCanvas=document.getElementById('canvasElem');
+          
+    if (!this.ctx) { //true
+        this.ctx=this.theCanvas.getContext('2d');
+        this.ctx.canvas.width=this.PhotoNbForm.controls['Width'].value;
+        this.ctx.canvas.height=this.PhotoNbForm.controls['Height'].value;
+    }
+
+  }
 
   goDown(event:string){
     this.pagePhotos=false;
@@ -687,7 +719,7 @@ ConvertComment(){
                         else{
                           this.Table_User_Data[this.identification.id].timeStamp=this.thetime;
                         }
-
+                        this.message='';
                         this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name   + '&uploadType=media';
                         this.HTTP_AddressMetaData=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name  + '&uploadType=media' +  "?cache-control=max-age=0, no-store, private";    
                         this.http.post(this.HTTP_Address,  this.Table_User_Data , {'headers':this.myHeader} )
@@ -720,12 +752,14 @@ ConvertComment(){
   }
 
   AccessRecord(id:number){
+    this.message='';
     this.myForm.controls['readRecord'].setValue(id);
     this.ReadRecord();
     this.scroller.scrollToAnchor('targetInvitees');
   }
 
   DeleteRecords(){
+    this.message='';
     if (this.identification.id!==0){
       this.Table_User_Data.splice(this.identification.id,1);
       this.Table_DecryptPSW.splice(this.identification.id,1);
@@ -743,9 +777,27 @@ displayPhotos(){
   this.pagePhotos=true;
   this.display_download=false;
   this.selected_photo=-1;
-  //for (this.i=0; this.i< this.WeddingPhotos.length-1; this.i++ ){
-   // this.getPhoto(this.WeddingPhotos[this.i].mediaLink, this.WeddingPhotos[this.i].photo);
-  //}
+  /*
+  this.myHeader=new HttpHeaders({
+    'content-type': 'image/jpg'
+  });
+  
+  for (this.i=0; this.i<10; this.i++ ){
+    this.http.get<any>(this.Bucket_Info_Array.items[this.i].selfLink+'?alt=media', {'headers':this.myHeader} )
+    .subscribe(data => {
+      this.WeddingPhotos[this.i].photo=data;
+      if (this.i===4){
+          this.myImage = this.WeddingPhotos[4].photo;
+          this.drawCanvas();
+      }
+    },
+    error_handler => {
+      console.log('does not work ', error_handler);
+    })
+  }
+  */
+  this.drawPhotoCanvas();
+
 }
 
 next_prev_page(event:any){
@@ -778,10 +830,13 @@ display_page(page_nb:number){
 
 getPhoto(http_address:string, thePhoto:any){
 
-  this.http.get(http_address )
+  this.http.get<any>(http_address )
   .subscribe(data => {
     thePhoto=data;
-  })
+  },
+  error_handler => {
+    console.log('getPhoto ', error_handler);
+      })
 }
 
   getListPhotos(BucketPhotos:string, WeddingPhotos:Array<StructurePhotos>, i_array:number){
@@ -800,12 +855,18 @@ getPhoto(http_address:string, thePhoto:any){
                         WeddingPhotos.push(pushPhotos);
                         WeddingPhotos[i_array].name=this.Bucket_Info_Array.items[this.i].name;
                         WeddingPhotos[i_array].mediaLink=this.Bucket_Info_Array.items[this.i].mediaLink;
+                        WeddingPhotos[i_array].selfLink=this.Bucket_Info_Array.items[this.i].selfLink;
+                        WeddingPhotos[i_array].photo.src=this.Bucket_Info_Array.items[this.i].mediaLink;
                         if (this.Bucket_Info_Array.items[this.i].name.indexOf('Vertical')!==-1){
                           WeddingPhotos[i_array].vertical=true;
                         }
                         else{
                           WeddingPhotos[i_array].vertical=false;
                         }
+                        
+                       
+                           
+                   
                         i_array++
                 }
                 this.nb_total_page = Math.floor(this.WeddingPhotos.length / this.nb_photo_per_page);
@@ -815,9 +876,10 @@ getPhoto(http_address:string, thePhoto:any){
                 this.nb_current_page = 1;
                 this.nb_current_photo = 0;
 
+
               },   
               error_handler => {
-                this.Error_Access_Server='error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
+                this.Error_Access_Server='getListPhoto : error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
                   // alert(this.message  + ' -- http get = ' + this.HTTP_Address);
                 } 
           )
@@ -842,5 +904,16 @@ onSaveFile(event:any): void {
   }
 
 
+  drawPhotoCanvas(){
+    this.message='';
+    this.ctx.canvas.width=this.PhotoNbForm.controls['Width'].value;
+    this.ctx.canvas.height=this.PhotoNbForm.controls['Height'].value;
+    if (this.PhotoNbForm.controls['SelectNb'].value<1 || this.PhotoNbForm.controls['SelectNb'].value>this.WeddingPhotos.length){
+        this.message='value must be between 1 and '+ this.WeddingPhotos.length;
+    }
+    this.ctx.beginPath();
+    this.ctx.drawImage(this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].photo,0,0,this.ctx.canvas.width,this.ctx.canvas.height);
+    this.ctx.stroke();
+  }
 
 }
