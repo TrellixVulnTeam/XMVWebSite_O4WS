@@ -297,8 +297,9 @@ onWindowResize() {
           }
         // this.patchMetaData();
         if (this.getScreenWidth<800){
-          this.PhotoNbForm.controls['Width'].setValue(this.getScreenWidth*0.9);
-          this.PhotoNbForm.controls['Height'].setValue(this.getScreenWidth*0.6);
+       
+          this.PhotoNbForm.controls['Width'].setValue(Math.floor(this.getScreenWidth*0.9));
+          this.PhotoNbForm.controls['Height'].setValue(Math.floor(this.getScreenWidth*0.6);
         } else{
           this.PhotoNbForm.controls['Width'].setValue(450);
           this.PhotoNbForm.controls['Height'].setValue(300);
@@ -910,6 +911,9 @@ onSaveFile(event:any): void {
     this.ctx.canvas.height=this.PhotoNbForm.controls['Height'].value;
     if (this.PhotoNbForm.controls['SelectNb'].value<1 || this.PhotoNbForm.controls['SelectNb'].value>this.WeddingPhotos.length){
         this.message='value must be between 1 and '+ this.WeddingPhotos.length;
+    }
+    else {
+      this.message='Photo => nb: '+this.PhotoNbForm.controls['SelectNb'].value+'Name: ' + this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1];
     }
     this.ctx.beginPath();
     this.ctx.drawImage(this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].photo,0,0,this.ctx.canvas.width,this.ctx.canvas.height);
