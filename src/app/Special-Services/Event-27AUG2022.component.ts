@@ -299,7 +299,7 @@ onWindowResize() {
         if (this.getScreenWidth<800){
        
           this.PhotoNbForm.controls['Width'].setValue(Math.floor(this.getScreenWidth*0.9));
-          this.PhotoNbForm.controls['Height'].setValue(Math.floor(this.getScreenWidth*0.6);
+          this.PhotoNbForm.controls['Height'].setValue(Math.floor(this.getScreenWidth*0.6));
         } else{
           this.PhotoNbForm.controls['Width'].setValue(450);
           this.PhotoNbForm.controls['Height'].setValue(300);
