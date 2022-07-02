@@ -572,6 +572,7 @@ Pain, beurre, confiture Viennoiseries
  <br><br>
 -->
  <div *ngFor="let WedPhotos of WeddingPhotos; let i=index" style="margin-left:20px; ">
+  
   <span *ngIf="(i===0 || i===1) && nb_current_page===1">
    
     <span style="width:80%; display:block; font-size:14px; color:blue">  {{WedPhotos.name}}
@@ -643,7 +644,8 @@ arrow_back
  -->
 
 <h2 style="margin-left:20px;">Display a specific picture</h2>
-<br><span style="color:red; font-size:14px; margin-left:20px;">{{message}}</span>
+
+<br><span style="color:red; font-size:14px; margin-left:20px;">{{message_canvas}}</span>
  <div [formGroup]="PhotoNbForm" class="position-parameters">
         <span ><label class="posParamPhoto">Number </label><input formControlName="SelectNb" type="number" class="position-field" ></span>
     <br><span><label class="posParamPhoto">Width </label><input formControlName="Width" type="number" class="position-field" ></span>

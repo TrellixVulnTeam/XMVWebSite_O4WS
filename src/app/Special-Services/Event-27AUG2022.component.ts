@@ -40,6 +40,9 @@ export class Event27AugComponent {
       Width: new FormControl(),
       Height: new FormControl(),
     });
+    prevCanvasPhoto:number=0;
+    initialdrawCanvas:boolean=false;
+    message_canvas:string='';
     
 
     myHeader=new HttpHeaders();
@@ -241,6 +244,7 @@ onWindowResize() {
 
 
   ngOnInit(){
+    console.log('ngOnInit()');
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
 
@@ -304,12 +308,13 @@ onWindowResize() {
           this.PhotoNbForm.controls['Width'].setValue(450);
           this.PhotoNbForm.controls['Height'].setValue(300);
         }
-        this.PhotoNbForm.controls['SelectNb'].setValue(14);
+        this.PhotoNbForm.controls['SelectNb'].setValue(null);
         this.getListPhotos('xavier-monica-mariage', this.WeddingPhotos, 0);
         // this.getListPhotos('xavier-monica-mariage-outdoor', this.WeddingPhotos, this.WeddingPhotos.length);
   }    
 
   ngAfterViewInit() { 
+    console.log(' ngAfterViewInit() ');
     this.theCanvas=document.getElementById('canvasElem');
           
     if (!this.ctx) { //true
@@ -468,7 +473,7 @@ ResetAccess(){
   }  
 
 ReadRecord(){
-
+  console.log('ReadRecord()');
   if (this.myForm.controls['readRecord'].value<=this.Table_User_Data.length){
     // read the item
         this.i=this.myForm.controls['readRecord'].value;
@@ -648,6 +653,7 @@ ConvertComment(){
     if (this.invite===true && this.init===false){
       this.HTTP_AddressMetaData=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Table_User_Data[this.identification.id].UserId  +  "?cacheControl=max-age=0, no-store, private";
       this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Table_User_Data[this.identification.id].UserId ;
+      console.log('SaveRecord(), update individual object ', this.Table_User_Data[this.identification.id].UserId);
       this.http.post(this.HTTP_Address,  this.Table_User_Data[this.identification.id] , {'headers':this.myHeader} )
       .subscribe(res => {
            console.log('Individual Record is updated: ', this.Table_User_Data[this.identification.id].UserId );
@@ -663,12 +669,13 @@ ConvertComment(){
       // ****** get content of object *******
     
       this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name   + "?alt=media";     
-
+      console.log('SaveRecord(), read object ', this.Google_Object_Name );
       this.http.get(this.HTTP_Address, {'headers':this.myHeader} )
                   .subscribe(data => {
                   this.bucket_data=JSON.stringify(data);
                   var obj = JSON.parse(this.bucket_data);
                   this.Error_Access_Server='';
+                  console.log('SaveRecord(),  data received for object ', this.Google_Object_Name );
                  // if (this.isDeleted===true){ // temporary
                  //       this.isDeleted=false;
                  // }
@@ -720,16 +727,20 @@ ConvertComment(){
                         else{
                           this.Table_User_Data[this.identification.id].timeStamp=this.thetime;
                         }
-                        this.message='';
+                        this.message='record to be saved';
                         this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name   + '&uploadType=media';
                         this.HTTP_AddressMetaData=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name  + '&uploadType=media' +  "?cache-control=max-age=0, no-store, private";    
+                        console.log('SaveRecord() - object Event-27AUG2022 to be saved');
                         this.http.post(this.HTTP_Address,  this.Table_User_Data , {'headers':this.myHeader} )
                         .subscribe(res => {
                               this.returnDATA.emit(this.Table_User_Data);
-                              this.message='Record is updated / Mise à jour réussie'
+                              this.message='Record is updated / Mise à jour réussie';
+                              console.log('SaveRecord() ; data received ');
 
                               },
                               error_handler => {
+                                this.message='error to save save record';
+                                console.log('SaveRecord() ; data not received - error');
                                 this.Error_Access_Server= "  object ===>   " + JSON.stringify( this.Table_User_Data)  + '   error message: ' + error_handler.message + ' error status: '+ error_handler.statusText+' name: '+ error_handler.name + ' url: '+ error_handler.url;
                                 // alert(this.Error_Access_Server_Post + ' --- ' +  this.Sent_Message + ' -- http post = ' + this.HTTP_AddressPOST);
                               } 
@@ -753,6 +764,7 @@ ConvertComment(){
   }
 
   AccessRecord(id:number){
+    console.log('AccessRecord(id:number)');
     this.message='';
     this.myForm.controls['readRecord'].setValue(id);
     this.ReadRecord();
@@ -760,6 +772,7 @@ ConvertComment(){
   }
 
   DeleteRecords(){
+
     this.message='';
     if (this.identification.id!==0){
       this.Table_User_Data.splice(this.identification.id,1);
@@ -775,6 +788,7 @@ ConvertComment(){
   }
 
 displayPhotos(){
+  console.log('displayPhotos()');
   this.pagePhotos=true;
   this.display_download=false;
   this.selected_photo=-1;
@@ -798,8 +812,10 @@ displayPhotos(){
     })
   }
   */
-  this.drawPhotoCanvas();
 
+     
+        this.drawPhotoCanvas();
+ 
 }
 
 next_prev_page(event:any){
@@ -843,16 +859,16 @@ getPhoto(http_address:string, thePhoto:any){
 
   getListPhotos(BucketPhotos:string, WeddingPhotos:Array<StructurePhotos>, i_array:number){
     // get list of objects in bucket
-    
+    console.log('getListPhotos()');
     const HTTP_Address='https://storage.googleapis.com/storage/v1/b/' + BucketPhotos + "/o";
     this.http.get<any>(HTTP_Address )
           .subscribe(data => {
 
-                console.log('BucketPhotos ',BucketPhotos)
+                console.log('getListPhotos() - received data from BucketPhotos ',BucketPhotos);
                 console.log(data);
                 this.Bucket_Info_Array=data;
-                
-                for (this.i=0; this.i<this.Bucket_Info_Array.items.length-1; this.i++ ){
+                console.log('getListPhotos() - Bucket_Info_Array.items.length =  ',this.Bucket_Info_Array.items.length);
+                for (this.i=0; this.i<this.Bucket_Info_Array.items.length; this.i++ ){
                         const pushPhotos=new StructurePhotos;
                         WeddingPhotos.push(pushPhotos);
                         WeddingPhotos[i_array].name=this.Bucket_Info_Array.items[this.i].name;
@@ -906,29 +922,55 @@ onSaveFile(event:any): void {
 
 
   drawPhotoCanvas(){
-    this.message='';
 
-    this.ctx.canvas.width=this.PhotoNbForm.controls['Width'].value;
-    this.ctx.canvas.height=this.PhotoNbForm.controls['Height'].value;
-    if (this.PhotoNbForm.controls['SelectNb'].value<1 || this.PhotoNbForm.controls['SelectNb'].value>this.WeddingPhotos.length){
-      this.i=0;
-      if (this.i<10000 && this.WeddingPhotos.length!==0){
-        this.i++
+        this.initialdrawCanvas=true;
+    console.log('drawPhotoCanvas & message is ', this.message_canvas, ' length of table is ', this.WeddingPhotos.length);
+        this.message_canvas='';
+        this.prevCanvasPhoto=this.PhotoNbForm.controls['SelectNb'].value;
+        this.ctx.canvas.width=this.PhotoNbForm.controls['Width'].value;
+        this.ctx.canvas.height=this.PhotoNbForm.controls['Height'].value;
+        if (this.PhotoNbForm.controls['SelectNb'].value!==null){
+            if (this.PhotoNbForm.controls['SelectNb'].value<1 || this.PhotoNbForm.controls['SelectNb'].value>this.WeddingPhotos.length){
+              
+                this.message_canvas='value must be between 1 and '+ this.WeddingPhotos.length + ' Nb captured:'+this.PhotoNbForm.controls['SelectNb'].value+
+                'length of the table ' + this.WeddingPhotos.length + '     i='+ this.i;
+            }
+            else {
+              this.message_canvas='Photo => nb: '+this.PhotoNbForm.controls['SelectNb'].value+'  Name: ' + this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].name;
+            }
+        
+       
+        if (this.PhotoNbForm.controls['SelectNb'].value===1 || this.PhotoNbForm.controls['SelectNb'].value===2){
+          this.ctx.beginPath();
+          this.ctx.font = 'bold 18px serif';
+          this.ctx.strokeText('Video is not displayed there', 40, 40);
+        } else {
+          console.log('this.ctx.drawImage, nb=', this.PhotoNbForm.controls['SelectNb'].value-1);
+          this.ctx.beginPath();
+          const myImage=this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].photo;
+          console.log('myImage = ', myImage);
+          this.ctx.drawImage(myImage,0,0,this.ctx.canvas.width,this.ctx.canvas.height);
+          this.ctx.stroke(); 
+        }
+      } else {
+          this.ctx.beginPath(); 
+          this.myImage.src='./assets/GA00 - M&X indoor 3.jpg';
+          this.myImage.onload = () => this.ctx.drawImage(this.myImage, 0, 0);
+          this.ctx.drawImage(this.myImage,0,0,this.ctx.canvas.width,this.ctx.canvas.height);
       }
-        this.message='value must be between 1 and '+ this.WeddingPhotos.length + ' Nb captured:'+this.PhotoNbForm.controls['SelectNb'].value+
-        'length of the table ' + this.WeddingPhotos.length + '     i='+ this.i;
-    }
-    else {
-      this.message='Photo => nb: '+this.PhotoNbForm.controls['SelectNb'].value+'  Name: ' + this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].name;
-    }
-    this.ctx.beginPath();
-    if (this.PhotoNbForm.controls['SelectNb'].value===1 || this.PhotoNbForm.controls['SelectNb'].value===2){
-      this.ctx.font = 'bold 18px serif';
-      this.ctx.strokeText('Video is not displayed there', 10, 10);
-    } else {
-      this.ctx.drawImage(this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].photo,0,0,this.ctx.canvas.width,this.ctx.canvas.height);
-    }
-    this.ctx.stroke();
+      this.ctx.stroke(); 
+
   }
+
+  /*
+  ngAfterViewChecked(){
+    console.log('ngAfterViewChecked() & this.WeddingPhotos.length= ', this.WeddingPhotos.length, ' & message is = ' , this.message);
+    //if (this.WeddingPhotos.length!==0 ){
+    if (this.WeddingPhotos.length!==0 && this.prevCanvasPhoto!==this.PhotoNbForm.controls['SelectNb'].value && this.initialdrawCanvas===false){
+      console.log('call drawPhotoCanvas; preCanvasPhoto is', this.prevCanvasPhoto, 'required is ', this.PhotoNbForm.controls['SelectNb'].value);
+      this.drawPhotoCanvas();
+    }
+  }
+*/
 
 }
