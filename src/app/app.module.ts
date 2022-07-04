@@ -16,6 +16,7 @@ import { RespondContactComponent } from './Special-Services/Respond-Contact.comp
 import { LoginComponent } from './Login/login.component';
 import { Event27AugComponent}  from './Special-Services/Event-27AUG2022.component';
 import { Event02JULComponent}  from './Special-Services/Event-02JUL2022.component';
+import { WeddingPhotosComponent}  from './Special-Services/WeddingPhotos.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { Event02JULComponent}  from './Special-Services/Event-02JUL2022.componen
     RespondContactComponent,
     LoginComponent,
     Event27AugComponent,
-    Event02JULComponent
+    Event02JULComponent,
+    WeddingPhotosComponent
   ],
   imports: [
     AppRoutingModule,

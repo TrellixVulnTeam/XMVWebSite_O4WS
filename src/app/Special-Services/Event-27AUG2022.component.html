@@ -8,14 +8,11 @@
   <br> Screen width = {{getScreenWidth}}
   <br> Screen height = {{getScreenHeight}}
   <br><br>
-  </div>
 
-          <audio  controls autoplay loop height="" width="">
-        <source src="./It's A Beautiful Day.mp3" type="audio/mpeg">
-      </audio>
+        <audio  controls autoplay loop height="" width="">
+            <source src="./It's A Beautiful Day.mp3" type="audio/mpeg">
+        </audio>
 
-
-      
   --> 
   <span id='targetTOP'></span>
   <div *ngIf="Error_Access_Server!==''">
@@ -545,10 +542,13 @@ Pain, beurre, confiture Viennoiseries
 
   </div>
 
-</div>
+</div> 
 
 <ng-template #processPhotos>
-  <h1 style="margin-top:2px;"><br></h1>
+  Here we are
+  <app-WeddingPhotos [WeddingPhotos]="WeddingPhotos"> </app-WeddingPhotos>
+<!--
+<h1 style="margin-top:2px;"><br></h1>
  <h1 style="margin-top:140px;">Pictures of our wedding</h1>
  <h3 >Total number of photos: {{WeddingPhotos.length}}</h3>
  <br><br>
@@ -565,12 +565,7 @@ Pain, beurre, confiture Viennoiseries
         if you want to download it
 </span>
  <br><br>
- <!--
- <button class='butt' id="but1" (click)="next_prev_page('prev')" >Previous</button>
 
- <button class='butt' id="but2" (click)="next_prev_page('next')" >Next</button>
- <br><br>
--->
  <div *ngFor="let WedPhotos of WeddingPhotos; let i=index" style="margin-left:20px; ">
   
   <span *ngIf="(i===0 || i===1) && nb_current_page===1">
@@ -620,28 +615,7 @@ Pain, beurre, confiture Viennoiseries
  </span>
  <button class='butt' id="but4" (click)="next_prev_page('next')" >Next page</button>
  <br><br>
-<!--
-<span class="material-symbols-outlined">
-arrow_forward_ios
-</span>
 
-<span class="material-symbols-outlined">
-arrow_back_ios_new
-</span>
-
-<span class="material-symbols-outlined">
-arrow_back
-</span>
-
-
-
- <h1 style="margin-top:140px;">Pictures of the wedding - Outdoor</h1>
- <br><br>
- <div *ngFor="let WedPhotosOut of WeddingPhotosOutdoor; let i=index" style="margin-left:20px; ">
-  <span style="width:30%; display:block; font-size:14px;">  {{WedPhotosOut.name}} </span>
-  <img style="color:blue; width:80px; height:80px;" src={{WedPhotosOut.mediaLink}}>
- </div>
- -->
 
 <h2 style="margin-left:20px;">Display a specific picture</h2>
 
@@ -654,16 +628,18 @@ arrow_back
 <button class="butt" id="but6" (click)="drawPhotoCanvas()">Submit</button>
 <br><br>
 </div>
-
+-->
 </ng-template>
+<!--
 <canvas 
-#ImageCanvas 
-id='canvasElem' 
-class="position" 
-width="550" 
-height="600" 
->
+    #ImageCanvas 
+    id='canvasElem' 
+    class="position" 
+    width="550" 
+    height="600" 
+    >
 </canvas>
+-->
 
 <ng-template #manageInvite>
 <div>

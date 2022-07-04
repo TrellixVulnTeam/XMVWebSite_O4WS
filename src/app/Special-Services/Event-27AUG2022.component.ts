@@ -312,7 +312,7 @@ onWindowResize() {
         this.getListPhotos('xavier-monica-mariage', this.WeddingPhotos, 0);
         // this.getListPhotos('xavier-monica-mariage-outdoor', this.WeddingPhotos, this.WeddingPhotos.length);
   }    
-
+/*
   ngAfterViewInit() { 
     console.log(' ngAfterViewInit() ');
     this.theCanvas=document.getElementById('canvasElem');
@@ -324,6 +324,7 @@ onWindowResize() {
     }
 
   }
+*/
 
   goDown(event:string){
     this.pagePhotos=false;
@@ -790,8 +791,8 @@ ConvertComment(){
 displayPhotos(){
   console.log('displayPhotos()');
   this.pagePhotos=true;
-  this.display_download=false;
-  this.selected_photo=-1;
+ // this.display_download=false;
+ // this.selected_photo=-1;
 
   /*
   this.myHeader=new HttpHeaders({
@@ -814,10 +815,10 @@ displayPhotos(){
   */
 
      
-        this.drawPhotoCanvas();
- 
+//        this.drawPhotoCanvas();
 }
 
+/********************
 next_prev_page(event:any){
   this.selected_photo=-1;
   this.display_download=false;
@@ -856,7 +857,7 @@ getPhoto(http_address:string, thePhoto:any){
     console.log('getPhoto ', error_handler);
       })
 }
-
+ *******************/
   getListPhotos(BucketPhotos:string, WeddingPhotos:Array<StructurePhotos>, i_array:number){
     // get list of objects in bucket
     console.log('getListPhotos()');
@@ -903,7 +904,7 @@ getPhoto(http_address:string, thePhoto:any){
   
 
   }
-
+/***********************
 onZoomPhoto(event:any){
     this.display_download=true;
     this.selected_photo=event;
@@ -961,7 +962,7 @@ onSaveFile(event:any): void {
       this.ctx.stroke(); 
 
   }
-
+ */
   /*
   ngAfterViewChecked(){
     console.log('ngAfterViewChecked() & this.WeddingPhotos.length= ', this.WeddingPhotos.length, ' & message is = ' , this.message);
