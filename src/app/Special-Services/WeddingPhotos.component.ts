@@ -233,9 +233,6 @@ waiting_function(loop:number, max_loop:number, event:any){
       
     };
 
-  if (this.nb_current_page===2){
-          this.SlowShowImage(0, 600, this.nb_photo_per_page+1, this.nb_photo_per_page*this.nb_current_page);
-      } 
 }
 
 display_page(page_nb:number){
@@ -489,13 +486,10 @@ waitingB_photo(){
       }
       this.ctx.fillText(this.compteur,this.ctx.canvas.width/2-8,this.ctx.canvas.height/2+4);
 
-      
       this.ctx.drawImage(photo1,this.tab_x[0],this.tab_y[0],this.ctx.canvas.width*widthPic,this.ctx.canvas.height*heightPic); 
       this.ctx.drawImage(photo2,this.tab_x[1],this.tab_y[1],this.ctx.canvas.width*widthPic,this.ctx.canvas.height*heightPic); 
       this.ctx.drawImage(photo3,this.tab_x[2],this.tab_y[2],this.ctx.canvas.width*widthPic,this.ctx.canvas.height*heightPic); 
       this.ctx.drawImage(photo4,this.tab_x[3],this.tab_y[3],this.ctx.canvas.width*widthPic,this.ctx.canvas.height*heightPic); 
-
-
 
       this.ctx.stroke();
    
@@ -513,19 +507,7 @@ waitingB_photo(){
       this.ctx.lineWidth = 2; // weight of the line
       this.ctx.fill();
       this.ctx.stroke();
-      
-      
-      
-      /****
-      this.ctx.translate(90,90);
-      this.ctx.rotate(angle*10);
-      this.ctx.fillStyle = 'cyan';
-      this.ctx.font = 'bold 18px sans-serif';
-      this.ctx.fillText(this.j_loop,50,0);
-      this.ctx.stroke();
-       */
 
- 
       this.j_loop++;
       this.id_Animation_three=window.requestAnimationFrame(() => this.waitingB_photo());
     }
@@ -587,21 +569,7 @@ wait_WeddingPhotos(){
   } 
 }
 
-/*** NOT USED *****/
-SlowShowImage(loop:number, max_loop:number, i:number, max_i:number){
-  const pas=500;
-  if (loop%pas === 0){
-    console.log('SlowShowImage ==> loop=', loop, ' max_loop=', max_loop, ' this.first_canvas_displayed=', this.first_canvas_displayed);
-  }
-  if (i===1){ loop=max_loop+1}
-  else {loop++}
-  
-  this.id_Animation=window.requestAnimationFrame(() => this.SlowShowImage(loop, max_loop, i, max_i));
-  if (loop>max_loop || this.first_canvas_displayed===true){
-            window.cancelAnimationFrame(this.id_Animation);
-      }  
 
-}
 
 ngOnChanges(changes: SimpleChanges) {   
   // console.log('onChanges ', changes, 'buckets_all_processed=', this.buckets_all_processed, '  length weddingPhotos=', this.WeddingPhotos.length);
@@ -612,43 +580,5 @@ ngOnChanges(changes: SimpleChanges) {
   }
 }
 
-showImage(){ //NOT USED 
-     
-    const width=550;
-    const height=400;
-    this.j=0;
-    for (let i=this.nb_current_photo; i<this.nb_current_photo+this.nb_photo_per_page; i++){
-      setTimeout(() => {
-          //const toto=document.getElementById("myimage2").src;
-          //document.getElementById("demo").innerHTML =toto;
-  
 
-          const para = document.createElement("p");
-          para.innerText = this.WeddingPhotos[i].name;
-          document.body.appendChild(para);
-
-          console.log('showImage', this.WeddingPhotos[i].mediaLink);
-          this.j++;
-          var img = document.createElement('img')  
-          var myloc = new Image();
-          myloc.useMap = this.WeddingPhotos[i].mediaLink; 
-          img.setAttribute('src', myloc.useMap);  
-          let margin_top= (20)*this.j;
-          const attribute="height:300px;width:400px; margin-top:"+margin_top+"px; margin-left:20px;";
-          img.setAttribute('style', attribute);  
-          document.body.appendChild(img);  
-
-          var x = document.createElement("img");
-          x.setAttribute("src", this.WeddingPhotos[i].mediaLink);
-          x.setAttribute("width", "304");
-          x.setAttribute("height", "228");
-          x.setAttribute("margin_top", "30px");
-          x.setAttribute("margin_left", "20px");
-          x.setAttribute("alt", "The Pulpit Rock"+i);
-          document.body.appendChild(x);
-      },0);
-         
-      }
-     
-    }  
 }

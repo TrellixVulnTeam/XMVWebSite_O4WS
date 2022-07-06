@@ -546,7 +546,10 @@ Pain, beurre, confiture Viennoiseries
 </div> 
 
 <ng-template #processPhotos>
+  <div *ngIf="this.buckets_all_processed===true">
   <app-WeddingPhotos [buckets_all_processed]="buckets_all_processed" [WeddingPhotos]="WeddingPhotos"  > </app-WeddingPhotos>
+</div>
+<div *ngIf="this.buckets_all_processed===false">LOADING PHOTOS</div>
 </ng-template>
 
 

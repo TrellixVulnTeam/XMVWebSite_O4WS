@@ -47,7 +47,7 @@
  <br><br>
 
 
-<div *ngIf="first_canvas_displayed===true">
+
     <button class='butt' id="but3" (click)="next_prev_page('prev')" >Prev page</button>
     <span style="margin-left:20px; font-size:6px;">&nbsp;</span>
     <span *ngFor="let tab_pages of pages_to_display; let i=index">
@@ -62,13 +62,14 @@
     </span>
     <button class='butt' id="but4" (click)="next_prev_page('next')" >Next page</button>
 
-</div>
+
 
 
 <h2 style="margin-left:20px;">Display a specific picture</h2>
 <br>
-<span style="color:black; font-size:16px; margin-left:20px;">{{message_canvas}}</span>
-<h3></h3>
+<div *ngIf="first_canvas_displayed===true">
+      <span style="color:black; font-size:16px; margin-left:20px;">{{message_canvas}}</span>
+</div>
 <div [formGroup]="PhotoNbForm" class="position-parameters">
         <span ><label class="posParamPhoto">Number </label><input formControlName="SelectNb" type="number" class="position-field" >
   <button class="butt" id="but6" (click)="drawPhotoCanvas()">Submit</button>
