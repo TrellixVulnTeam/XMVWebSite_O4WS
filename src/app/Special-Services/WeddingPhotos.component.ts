@@ -298,8 +298,12 @@ ManageCanvas(){
         }, 10);
        
           
-        } else {
+    } else {
 
+      //To be deleted when comments below are removed
+      this.stop_waiting_photo=true;
+      this.first_canvas_displayed=true;
+/**                 
           console.log('draw first canvas image');
           this.myImage=new Image();
           this.stop_waiting_photo=false;
@@ -325,9 +329,9 @@ ManageCanvas(){
               this.myImage.src=this.WeddingPhotos[this.initialCanvasPhoto].mediaLink;
               this.j_loop=0;
            },1);
-
+ */
            this.nb_current_page=1;
-           //this.SlowShowImage(0, 800, 1, this.nb_photo_per_page);
+
 
            console.log('end of the drawing');
 
