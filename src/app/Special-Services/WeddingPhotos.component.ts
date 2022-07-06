@@ -9,6 +9,7 @@ import { EventAug } from '../JsonServerClass';
 import { StructurePhotos } from '../JsonServerClass';
 import { encrypt, decrypt} from '../EncryptDecryptServices';
 
+
 @Component({
   selector: 'app-WeddingPhotos',
   templateUrl: './WeddingPhotos.component.html',
@@ -99,11 +100,11 @@ onWindowResize() {
 
 SizeImage(){
   if (this.getScreenWidth<900){
-    this.theWidthH=Math.floor(this.getScreenWidth*0.9);
-    this.theHeightH=Math.floor(this.getScreenWidth*0.55);
+    this.theWidthH=Math.floor(this.getScreenWidth*0.85);
+    this.theHeightH=Math.floor(this.getScreenWidth*0.50);
 
-    this.theWidthV=Math.floor(this.getScreenWidth*0.55);
-    this.theHeightV=Math.floor(this.getScreenWidth*0.8);
+    this.theWidthV=Math.floor(this.getScreenWidth*0.50);
+    this.theHeightV=Math.floor(this.getScreenWidth*0.75);
     this.PhotoNbForm.controls['Width'].setValue(this.theWidthH);
     this.PhotoNbForm.controls['Height'].setValue(this.theHeightH);
   } else{
@@ -332,8 +333,12 @@ change_canvas_size(nb_photo:number){
   if (this.WeddingPhotos[nb_photo].vertical===true){
     this.ctx.canvas.width=this.theWidthV;
     this.ctx.canvas.height=this.theHeightV;
+    this.ctx.canvas.width=this.theWidthV;
+    this.ctx.canvas.height=this.theHeightV;
     this.ctx.drawImage(this.myImage,0,0,this.theWidthV,this.theHeightV);
   } else {
+    this.ctx.canvas.width=this.theWidthH;
+    this.ctx.canvas.height=this.theHeightH;
     this.ctx.canvas.width=this.theWidthH;
     this.ctx.canvas.height=this.theHeightH;
     this.ctx.drawImage(this.myImage,0,0,this.theWidthH,this.theHeightH);
@@ -343,25 +348,121 @@ change_canvas_size(nb_photo:number){
   this.ctx.closePath();
 }
 
-
+ii:number=0;
+jj:number=0;
+kk:number=0;
+tab_x:Array<number>=[0,0,0,0,0,0,0,0,0,0];
+tab_y:Array<number>=[0,0,0,0,0,0,0,0,0,0];
+second_photo=new Date;
+mysecond:number=0;
 waiting_photo(){
   const time = new Date();
-
+  const photo1=new Image;
+  const photo2=new Image;
+  const photo3=new Image;
+  const photo4=new Image;
+  const widthPic=0.45;
+  const heightPic=0.39;
+  photo1.src='./assets/Photo1.PNG';
+  photo2.src='./assets/Photo2.PNG';
+  photo3.src='./assets/Photo3.PNG';
+  photo4.src='./assets/Photo4.jpg';
+  const pas=600;
+  const nbPhoto=4;
+  if (this.j_loop===0){
+     const refSecond=new Date;
+      // const mysecond= this.second_photo.getHours()*60+this.second_photo.getMinutes()*60+this.second_photo.getSeconds();
+     this.mysecond=this.second_photo.getSeconds();
+  }
     // setTimeout(() => {},1000); // 1 second
     if (this.j_loop<this.max_j_loop && this.stop_waiting_photo===false)
     {
-     
-      this.ClearCanvas();
+      
       this.ctx.beginPath(); // critical
-      this.ctx.rotate(((2 * Math.PI) / 600000) * time.getSeconds() + ((2 * Math.PI) / 600000000) * time.getMilliseconds());
+      this.ctx.setTransform(1, 0, 0, 1, 0, 0); 
+      this.ctx.fillStyle = 'grey';
+      this.ctx.rect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
+      this.ctx.fill();
+     // this.ctx.stroke();
+      let i=this.j_loop%pas;
+      
+      if (i===0){
+        this.ii++
+        if (this.ii>nbPhoto){this.ii=1};
+        if (this.jj===nbPhoto){this.jj=0};
+            this.tab_x[this.jj]=20;
+            this.tab_y[this.jj]=20;
+        this.jj++;
+        if (this.jj===nbPhoto){this.jj=0};
+            this.tab_x[this.jj]=20;
+            this.tab_y[this.jj]=this.ctx.canvas.height-20-this.ctx.canvas.height*heightPic;
+        this.jj++;
+        if (this.jj===nbPhoto){this.jj=0};
+            this.tab_x[this.jj]=this.ctx.canvas.width-20-this.ctx.canvas.width*widthPic;
+            this.tab_y[this.jj]=20;
+        this.jj++;
+        if (this.jj===nbPhoto){this.jj=0};
+            this.tab_x[this.jj]=this.ctx.canvas.width-20-this.ctx.canvas.width*widthPic;
+            this.tab_y[this.jj]=this.ctx.canvas.height-20-this.ctx.canvas.height*heightPic;
+      }
+      
+      this.jj=this.ii;
+      this.ctx.beginPath(); // critical
+      this.ctx.arc(this.ctx.canvas.width/2,this.ctx.canvas.height/2, 20, 0, 2 * Math.PI); 
+      this.ctx.fillStyle = 'yellow';
+      this.ctx.strokeStyle = 'rgba(0, 153, 255, 0.4)';
+      this.ctx.lineWidth = 2; // weight of the line
+      this.ctx.fill();
+      //this.ctx.setTransform(1, 0, 0, 1, 0, 0); 
+      this.ctx.font = 'bold 14px sans-serif';
+      this.ctx.fillStyle = 'black';
+  
+      this.ctx.fillText(time.getSeconds()-this.mysecond,this.ctx.canvas.width/2-8,this.ctx.canvas.height/2+4);
 
-      this.ctx.arc(80, 80, 15, 0, 2 * Math.PI); 
+      
+      this.ctx.drawImage(photo1,this.tab_x[0],this.tab_y[0],this.ctx.canvas.width*widthPic,this.ctx.canvas.height*heightPic); 
+      this.ctx.drawImage(photo2,this.tab_x[1],this.tab_y[1],this.ctx.canvas.width*widthPic,this.ctx.canvas.height*heightPic); 
+      this.ctx.drawImage(photo3,this.tab_x[2],this.tab_y[2],this.ctx.canvas.width*widthPic,this.ctx.canvas.height*heightPic); 
+      this.ctx.drawImage(photo4,this.tab_x[3],this.tab_y[3],this.ctx.canvas.width*widthPic,this.ctx.canvas.height*heightPic); 
 
-      this.ctx.fillText(this.j_loop,400,300);
+
+
       this.ctx.stroke();
+   
+      this.ctx.translate(this.ctx.canvas.width/2,this.ctx.canvas.height/2);
+  
+      const angle=((2 * Math.PI) / 60) * time.getSeconds() + ((2 * Math.PI) / 60000) * time.getMilliseconds();
+      this.ctx.rotate(angle*15);
+      //this.ctx.translate(this.ctx.canvas.width/1.5,this.ctx.canvas.height/1.5);
+      this.ctx.beginPath(); // critical
+      // this.ctx.arc(this.ctx.canvas.width/2,this.ctx.canvas.height/2, 20, 0, 2 * Math.PI); 
+      this.ctx.arc(30,30, 10, 0, 2 * Math.PI); 
+      
+      this.ctx.fillStyle = 'red';
+      this.ctx.strokeStyle = 'rgba(0, 153, 255, 0.4)';
+      this.ctx.lineWidth = 2; // weight of the line
+      this.ctx.fill();
+      this.ctx.stroke();
+      
+      
+      
+      /****
+      this.ctx.translate(90,90);
+      this.ctx.rotate(angle*10);
+      this.ctx.fillStyle = 'cyan';
+      this.ctx.font = 'bold 18px sans-serif';
+      this.ctx.fillText(this.j_loop,50,0);
+      this.ctx.stroke();
+       */
+
+ 
       this.j_loop++;
       this.id_Animation_three=window.requestAnimationFrame(() => this.waiting_photo());
     }
+    
+//if (this.j_loop===8000) {this.j_loop=this.max_j_loop+1}
+
+ // if (this.j_loop>=this.max_j_loop )
   if (this.j_loop>this.max_j_loop || this.stop_waiting_photo===true)
      {
         window.cancelAnimationFrame(this.id_Animation_three);

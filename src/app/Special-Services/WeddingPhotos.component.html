@@ -20,19 +20,6 @@
  <h3 >Total number of photos: {{WeddingPhotos.length}}</h3>
  <br><br>
 
- <span 
-  style='color:red; font-size:18px; font-weight:bold; font-size:14px; 
-          margin-left:40px; max-width:80%; display:block;
-          letter-spacing: 2px; line-height: 30px;'>
-        Click on the picture to zoom-out and 
-         on 
-        <button  class="GOdownload" style="margin-left:0px; font-size:10px;"> <span  class="material-symbols-outlined myIcon" >
-                  download
-            </span>
-        </button>
-        if you want to download it
-</span>
- <br><br>
 
 <br><br>
 
@@ -80,16 +67,12 @@
 
 <h2 style="margin-left:20px;">Display a specific picture</h2>
 <br>
-<span style="color:red; font-size:14px; margin-left:20px;">{{message_canvas}}</span>
+<span style="color:black; font-size:16px; margin-left:20px;">{{message_canvas}}</span>
+<h3></h3>
 <div [formGroup]="PhotoNbForm" class="position-parameters">
-        <span ><label class="posParamPhoto">Number </label><input formControlName="SelectNb" type="number" class="position-field" ></span>
-   <!--
-        <br><span><label class="posParamPhoto">Width </label><input formControlName="Width" type="number" class="position-field" ></span>
-        <br><span><label class="posParamPhoto">Height </label><input formControlName="Height" type="number" class="position-field" ></span>
-  -->
-    <br>
+        <span ><label class="posParamPhoto">Number </label><input formControlName="SelectNb" type="number" class="position-field" >
   <button class="butt" id="but6" (click)="drawPhotoCanvas()">Submit</button>
- 
+</span>
 </div>
 <br>
 
