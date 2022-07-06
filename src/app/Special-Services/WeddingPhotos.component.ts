@@ -90,6 +90,17 @@ export class WeddingPhotosComponent {
     first_canvas_displayed:boolean=false;
     slow_table:Array<string>=[];
 
+    ii:number=0;
+jj:number=0;
+kk:number=0;
+tab_x:Array<number>=[0,0,0,0,0,0,0,0,0,0];
+tab_y:Array<number>=[0,0,0,0,0,0,0,0,0,0];
+second_photo=new Date;
+mysecond:number=0;
+compteur:number=0;
+
+
+
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
       this.getScreenWidth = window.innerWidth;
@@ -310,6 +321,7 @@ ManageCanvas(){
 
                 };
               this.i_loop++;
+              this.ii=0;
               this.waiting_photo();
               console.log('draw first canvas image -- start onLoad ===> j_loop=', this.j_loop, ' i_loop=', this.i_loop);
               this.PhotoNbForm.controls['SelectNb'].setValue(this.initialCanvasPhoto);
@@ -348,14 +360,70 @@ change_canvas_size(nb_photo:number){
   this.ctx.closePath();
 }
 
-ii:number=0;
-jj:number=0;
-kk:number=0;
-tab_x:Array<number>=[0,0,0,0,0,0,0,0,0,0];
-tab_y:Array<number>=[0,0,0,0,0,0,0,0,0,0];
-second_photo=new Date;
-mysecond:number=0;
 waiting_photo(){
+  const time = new Date();
+  const photo1=new Image;
+  const photo2=new Image;
+  const photo3=new Image;
+  const photo4=new Image;
+  const widthPic=0.45;
+  const heightPic=0.39;
+  photo1.src='./assets/Photo1.jpg';
+  photo2.src='./assets/Photo2.PNG';
+  photo3.src='./assets/Photo3.PNG';
+  photo4.src='./assets/Photo4.jpg';
+  const pas=600;
+  const nbPhoto=4;
+
+    if (this.j_loop<this.max_j_loop && this.stop_waiting_photo===false)
+    {
+      //this.ctx.beginPath(); // critical
+      this.ctx.setTransform(1, 0, 0, 1, 0, 0); 
+ 
+      let i=this.j_loop%pas;
+      
+      if (i===0){
+        this.ii++
+        if (this.ii>nbPhoto){this.ii=1};
+       
+      }
+      
+
+
+      if (this.ii===0){
+            this.ctx.drawImage(photo1,0,0,this.ctx.canvas.width, this.ctx.canvas.height); 
+      }
+      if (this.ii===1){
+      this.ctx.drawImage(photo2,0,0,this.ctx.canvas.width, this.ctx.canvas.height); 
+    }
+    if (this.ii===2){
+      this.ctx.drawImage(photo3,0,0,this.ctx.canvas.width, this.ctx.canvas.height); 
+    }
+    if (this.ii===3){
+      this.ctx.drawImage(photo4,0,0,this.ctx.canvas.width, this.ctx.canvas.height); 
+    }
+
+
+
+      //this.ctx.stroke();
+   
+
+ 
+      this.j_loop++;
+      this.id_Animation_three=window.requestAnimationFrame(() => this.waiting_photo());
+    }
+
+  if (this.j_loop>this.max_j_loop || this.stop_waiting_photo===true)
+     {
+        window.cancelAnimationFrame(this.id_Animation_three);
+       
+    }
+}
+
+
+
+
+waitingB_photo(){
   const time = new Date();
   const photo1=new Image;
   const photo2=new Image;
@@ -416,8 +484,10 @@ waiting_photo(){
       //this.ctx.setTransform(1, 0, 0, 1, 0, 0); 
       this.ctx.font = 'bold 14px sans-serif';
       this.ctx.fillStyle = 'black';
-  
-      this.ctx.fillText(time.getSeconds()-this.mysecond,this.ctx.canvas.width/2-8,this.ctx.canvas.height/2+4);
+      if (this.j_loop%80===0){
+        this.compteur++
+      }
+      this.ctx.fillText(this.compteur,this.ctx.canvas.width/2-8,this.ctx.canvas.height/2+4);
 
       
       this.ctx.drawImage(photo1,this.tab_x[0],this.tab_y[0],this.ctx.canvas.width*widthPic,this.ctx.canvas.height*heightPic); 
@@ -457,7 +527,7 @@ waiting_photo(){
 
  
       this.j_loop++;
-      this.id_Animation_three=window.requestAnimationFrame(() => this.waiting_photo());
+      this.id_Animation_three=window.requestAnimationFrame(() => this.waitingB_photo());
     }
     
 //if (this.j_loop===8000) {this.j_loop=this.max_j_loop+1}

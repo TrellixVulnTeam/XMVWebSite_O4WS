@@ -47,7 +47,7 @@ h3{
   margin-left:4%;
   margin-top:-500px;
   background:rgb(16, 146, 211);
-  opacity: 0.6;
+  opacity: 0.8;
   
 }
 
@@ -102,11 +102,12 @@ h3{
 .input_field{
     width:70%;
     height:40px;
-    font-size:14px;
+    font-size:16px;
+    font-weight:bold;
   }
 
 .input_field:hover{
-    background-color:aqua;
+    background-color:white;
   }
   
 .sizeButtons{
