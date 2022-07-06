@@ -6,16 +6,8 @@ import { Router} from '@angular/router';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { ViewportScroller } from "@angular/common";
 import { EventAug } from '../JsonServerClass';
+import { StructurePhotos } from '../JsonServerClass';
 import { encrypt, decrypt} from '../EncryptDecryptServices';
-
-export class StructurePhotos{
-  name:string='';
-  mediaLink:string='';
-  selfLink:string='';
-  photo=new Image();
-  vertical:boolean=false;
- }
-
 
 @Component({
   selector: 'app-WeddingPhotos',
@@ -48,8 +40,11 @@ export class WeddingPhotosComponent {
     getScreenHeight: any;
     device_type:string='';
     yourLanguage:string='FR';
+
     @Input() WeddingPhotos:Array<StructurePhotos>=[];
-   
+    DisplayPhotos:Array<StructurePhotos>=[];
+    PhotoNumber:Array<number>=[];
+
     pagePhotos:boolean=false;
     display_download:boolean=false;
     selected_photo:number=-1;
@@ -127,9 +122,20 @@ SizeImage(){
     
     this.scroller.scrollToAnchor('targetTop');
 
-    for (let i=0; i<20; i++){
+    // for the first 20 pages
+    //for (let i=0; i<20; i++){
+    //  this.slow_table.push('');
+    //}
+    for (this.i=0; this.i<this.nb_photo_per_page; this.i++){
+      const pushPhotos=new StructurePhotos;
+      this.DisplayPhotos.push(pushPhotos);
       this.slow_table.push('');
-    }
+      this.PhotoNumber.push(0);
+      this.j=(this.nb_current_page-1)*this.nb_photo_per_page+1;
+      this.DisplayPhotos[this.i]=this.WeddingPhotos[this.i];
+      this.slow_table[this.i]=this.WeddingPhotos[this.i].mediaLink;
+      this.PhotoNumber[this.i]=this.j;
+    };
 
   }    
 
@@ -275,6 +281,14 @@ waiting_function(loop:number, max_loop:number, event:any){
         this.pages_to_display[this.i]=this.i+this.j;
       }
   }
+
+  for (this.i=0; this.i<this.nb_photo_per_page; this.i++){
+      this.j=(this.nb_current_page-1)*this.nb_photo_per_page+1;
+      this.DisplayPhotos[this.i]=this.WeddingPhotos[this.i];
+      this.slow_table[this.i]=this.WeddingPhotos[this.i].mediaLink;
+      this.PhotoNumber[this.i]=this.j;
+    };
+
   if (this.nb_current_page===2){
           this.SlowShowImage(0, 600, this.nb_photo_per_page+1, this.nb_photo_per_page*this.nb_current_page);
       } 
@@ -292,7 +306,7 @@ onZoomPhoto(event:any){
     this.selected_photo=event;
 }
 
-onSaveFile(event:any): void {
+onSaveFile(event:any): void { // ===================== to be changed
     this.selected_photo=-1;
     this.display_download=false;
     const link = document.createElement("a");
@@ -332,42 +346,24 @@ ManageCanvas(){
             this.message_canvas='Photo => nb: '+this.PhotoNbForm.controls['SelectNb'].value+'  Name: ' + this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].name;
           }
 
-        if (this.PhotoNbForm.controls['SelectNb'].value===1 || this.PhotoNbForm.controls['SelectNb'].value===2){
-              
-            this.ctx.font = 'bold 18px serif';
-            this.ctx.strokeText('Video is not displayed there', 40, 40);
-          } else {
-              console.log('this.ctx.drawImage, nb=', this.PhotoNbForm.controls['SelectNb'].value-1);
-              let img=new Image();
-              
-              this.nb_current_photo=this.PhotoNbForm.controls['SelectNb'].value;
-              this.ctx.font = 'bold 18px red sans-serif roboto';
-              this.ctx.strokeText('Image is being processed .... please wait', 40, 40);
-              setTimeout(() => {
-                img.onload = () => {
-                    this.ctx.globalCompositeOperation = 'source-over';
-                    this.ctx.drawImage(img,0,0,this.ctx.canvas.width,this.ctx.canvas.height);
-                  };
-                  //img.src='./assets/GA1 - Ceremony admin 4.jpg';
-                  img.src=this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink;
+        let img=new Image();         
+        this.nb_current_photo=this.PhotoNbForm.controls['SelectNb'].value;
+        this.ctx.font = 'bold 18px red sans-serif roboto';
+        this.ctx.strokeText('Image is being processed .... please wait', 40, 40);
+        setTimeout(() => {
+            img.onload = () => {
+            this.ctx.globalCompositeOperation = 'source-over';
+            this.ctx.drawImage(img,0,0,this.ctx.canvas.width,this.ctx.canvas.height);
+          };
+          img.src=this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink;
                   console.log(' img.src = ', this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink);
-            }, 100);
-          }
+        }, 10);
        
           
         } else {
 
-          // this.showImage();
-          
-          
-            //this.ctx.font = 'bold 18px Tangerine';
-            //this.ctx.strokeText('Photo will be displayed here', 40, 40);
           console.log('draw first canvas image');
           this.myImage=new Image();
-           // this.ctx.font = 'bold 18px red sans-serif roboto';
-           // this.ctx.strokeText('Image is being processed .... please wait', 40, 40);
-           // this.ctx.beginPath(); 
-      
           this.stop_waiting_photo=false;
           this.j_loop=0;
           this.i_loop=0;
@@ -376,7 +372,7 @@ ManageCanvas(){
           this.first_canvas_displayed=false;
           setTimeout(() => {
              this.myImage.onload = () => {
-                  console.log('==== this.i_loop ====', this.i_loop);
+                  console.log('==== first_canvas_displayed after', this.i_loop, ' loops');
                   this.first_canvas_displayed=true;
                   this.ClearCanvas();
                   
@@ -387,17 +383,13 @@ ManageCanvas(){
                   this.ctx.stroke();
                   this.ctx.closePath();
                 };
-              
-              
               this.i_loop++;
               this.waiting_photo();
               console.log('draw first canvas image -- start onLoad ===> j_loop=', this.j_loop, ' i_loop=', this.i_loop);
-              //this.myImage.src=this.WeddingPhotos[Math.floor(this.WeddingPhotos.length/2)].mediaLink;
-              this.myImage.src=this.WeddingPhotos[22].mediaLink;
+              this.myImage.src=this.slow_table[10]
+              // this.myImage.src=this.WeddingPhotos[22].mediaLink;
               this.j_loop=0;
-             
-
-           }, 9);
+           }, 10);
 
            this.nb_current_page=1;
            this.SlowShowImage(0, 800, 1, this.nb_photo_per_page);

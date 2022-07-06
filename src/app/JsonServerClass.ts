@@ -61,3 +61,11 @@ export class BioData{
       timeStorageClassUpdated: "",
   }]
 };
+
+export class StructurePhotos{
+  name:string='';
+  mediaLink:string='';
+  selfLink:string='';
+  photo=new Image();
+  vertical:boolean=false;
+ }

@@ -102,6 +102,7 @@ export class LoginComponent {
       this.routing_code=0;
       this.EventHTTPReceived=false;
       this.getEventAug();
+      this.waitHTTP(0, 30000);
 
       if (this.identification.UserId!=='' && this.identification.psw!=='') {
        // go through login panel again to allow the change of user id if needed SIN!02#JUL
@@ -214,7 +215,7 @@ ValidateData(){
   else
   {
     // check first if data has been received and if it's related to Event of 27Aug2022
-    this.waitHTTP(0, 30000);
+
     this.ValidateEventAug();
     console.log('after ValidateEventAug()');
     

@@ -8,15 +8,7 @@ import { ViewportScroller } from "@angular/common";
 import { EventAug } from '../JsonServerClass';
 import { encrypt, decrypt} from '../EncryptDecryptServices';
 import {Bucket_List_Info} from '../JsonServerClass';
-
-export class StructurePhotos{
-  name:string='';
-  mediaLink:string='';
-  selfLink:string='';
-  photo=new Image();
-  vertical:boolean=false;
- }
-
+import { StructurePhotos } from '../JsonServerClass';
 
 @Component({
   selector: 'app-Event-27AUG2022',
@@ -32,19 +24,11 @@ export class Event27AugComponent {
     private scroller: ViewportScroller,
     ) {}
   
-    @ViewChild('ImageCanvas', { static: true })
-    myImage = new Image();
-    theCanvas:any;
-    ctx:any;
     PhotoNbForm: FormGroup = new FormGroup({ 
       SelectNb: new FormControl(),
       Width: new FormControl(),
       Height: new FormControl(),
     });
-    prevCanvasPhoto:number=0;
-    initialdrawCanvas:boolean=false;
-    message_canvas:string='';
-    
 
     myHeader=new HttpHeaders();
     isDeleted:boolean=false;
@@ -89,18 +73,9 @@ export class Event27AugComponent {
 
     @Output() returnDATA= new EventEmitter<any>();
 
-
     pagePhotos:boolean=false;
-    display_download:boolean=false;
-    selected_photo:number=-1;
-    thePhotos = new Image();
+
     WeddingPhotos:Array<StructurePhotos>=[];
-    WeddingPhotosOutdoor:Array<StructurePhotos>=[];
-    nb_total_page:number=0;
-    nb_photo_per_page:number=10;
-    nb_current_page:number=0;
-    nb_current_photo:number=0;
-    pages_to_display:Array<number>=[1,2,3,4,5,6,7,8,9,10]
 
     Admin_UserId:string="XMVIT-Admin";
     invite:boolean=true;
@@ -173,8 +148,8 @@ export class Event27AugComponent {
 
     i_loop:number=0;
     j_loop:number=0;
-    max_i_loop:number=20000;
-    max_j_loop:number=20000;
+    max_i_loop:number=30000;
+    max_j_loop:number=30000;
     id_Animation:number=0;
     i:number=0;
     j:number=0;
@@ -292,19 +267,7 @@ onWindowResize() {
               this.scroller.scrollToAnchor('targetTOP');
           }
         // this.patchMetaData();
-        if (this.getScreenWidth<800){
-       
-          this.PhotoNbForm.controls['Width'].setValue(Math.floor(this.getScreenWidth*0.9));
-          this.PhotoNbForm.controls['Height'].setValue(Math.floor(this.getScreenWidth*0.6));
-        } else{
-          this.PhotoNbForm.controls['Width'].setValue(450);
-          this.PhotoNbForm.controls['Height'].setValue(300);
-        }
-        this.PhotoNbForm.controls['SelectNb'].setValue(null);
-
-        this.max_i_loop=20000;
-        this.i_Bucket=1
-        this.bucket_wedding_name='xavier-monica-mariage-01';
+        this.max_i_loop=30000;
         for (this.i_Bucket=1; this.i_Bucket<=this.Max_Nb_Bucket_Wedding; this.i_Bucket++){
           this.ref_Bucket_List_Info=new Bucket_List_Info;
           this.Bucket_Info_Array.push(this.ref_Bucket_List_Info);
@@ -318,8 +281,7 @@ onWindowResize() {
           this.bucket_list_returned[this.i_Bucket-1]='0';
           this.array_i_loop.push(0);
           this.array_i_loop[this.i_Bucket-1]=0;
-          this.getListPhotos(this.bucket_wedding_name, this.i_Bucket);
-          console.log('I call access_all_buckets() from ngOnInit() and bucket is ', this.bucket_wedding_name );       
+          this.getListPhotos(this.bucket_wedding_name, this.i_Bucket);    
         }
         // want to be sure that all buckets have been accessed
         this.i_Bucket=1;
@@ -350,7 +312,8 @@ onWindowResize() {
                         const pushPhotos=new StructurePhotos;
                         this.WeddingPhotos.push(pushPhotos);
                         this.WeddingPhotos[this.j].name=this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].name;
-                        if (this.i_Bucket===1){
+        // to be updated
+                        if (this.i_Bucket===-1){
                           this.WeddingPhotos[this.j].photo.src=this.WeddingPhotos[this.j].mediaLink;
                           this.WeddingPhotos[this.j].mediaLink='./assets/Marriage/'+this.WeddingPhotos[this.j].name;
                           this.WeddingPhotos[this.j].selfLink=this.WeddingPhotos[this.j].mediaLink;
@@ -724,10 +687,7 @@ ConvertComment(){
                   var obj = JSON.parse(this.bucket_data);
                   this.Error_Access_Server='';
                   console.log('SaveRecord(),  data received for object ', this.Google_Object_Name );
-                 // if (this.isDeleted===true){ // temporary
-                 //       this.isDeleted=false;
-                 // }
-                 // else{
+
                   if (this.invite===false){
                       // To be tested
                       this.i=0;

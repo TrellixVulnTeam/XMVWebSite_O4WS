@@ -39,17 +39,14 @@
 <img id="myimage" [src]='thumbnail' />
 
 -->
-<div *ngFor="let WedPhotos of WeddingPhotos; let i=index" style="margin-left:20px; ">
-  
 
-</div>
 <br><br>
-<div *ngIf="nb_current_page<3">
+<div *ngIf="nb_current_page<30">
     <div *ngFor="let slowDisplay of slow_table let i=index" style="margin-left:20px;">
-      <span *ngIf="i>=nb_current_photo && i<nb_current_photo+nb_photo_per_page">
+      
         <span *ngIf="slowDisplay!==''">
-              <span style="width:80%; display:block; font-size:14px; color:blue">  {{WeddingPhotos[i].name}}
-                <br>Photo nb:  <label style="color:red; font-size:18px;"> {{i+1}} </label></span>
+              <span style="width:80%; display:block; font-size:14px; color:blue">  {{WeddingPhotos[PhotoNumber[i]].name}}
+                <br>Photo nb:  <label style="color:red; font-size:18px;"> {{PhotoNumber[i]+1}} </label></span>
               
               <span *ngIf="WeddingPhotos[i].vertical===false && slowDisplay!=='' ">
                     <img  (mouseover)="onZoomPhoto(i)" class="photo" src={{slowDisplay}}>
@@ -63,7 +60,7 @@
               </button> 
               <br><br>  
             </span>
-          </span>
+          
     </div>
 </div>
 <div *ngIf="nb_current_page>2">
