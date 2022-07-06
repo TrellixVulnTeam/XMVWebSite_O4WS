@@ -22,6 +22,7 @@
 
   <div class="flag flagone" (click)="goDown('FR')"> <span><img   style="width:20px; height:20px;"  src="./assets/FlagFrance.png" ></span></div>
   <div class="flag flagtwo" (click)="goDown('UK')"> <span><img   style="width:20px; height:20px;"  src="./assets/FlagUK.png" ></span></div>
+  
   <div *ngIf="invite===true; else manageInvite" >
     <div  class="posOptions"  >
               <div *ngIf="yourLanguage==='FR'">
@@ -545,7 +546,6 @@ Pain, beurre, confiture Viennoiseries
 </div> 
 
 <ng-template #processPhotos>
-  Here we are
   <app-WeddingPhotos [WeddingPhotos]="WeddingPhotos"> </app-WeddingPhotos>
 <!--
 <h1 style="margin-top:2px;"><br></h1>

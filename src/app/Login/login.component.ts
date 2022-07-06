@@ -4,6 +4,7 @@ import { Router} from '@angular/router';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { encrypt, decrypt} from '../EncryptDecryptServices';
 import { EventAug } from '../JsonServerClass';
+import {Bucket_List_Info} from '../JsonServerClass';
 
 @Component({
   selector: 'app-login',
@@ -76,29 +77,9 @@ export class LoginComponent {
     Google_Bucket_Name:string='manage-login'; 
     Google_Object_Name:string='';
     Google_Object_Name_Extension:string='.json';
-    Bucket_Info_Array:any={
-      kind:'',
-      items:[
-      {
-          kind: "",
-          id: "", 
-          selfLink: "", // link to the general info of the bucket/objectobject
-          mediaLink: "", // link to get the content of the object
-          name: "", // name of the object
-          bucket: "", //name of the bucket
-          generation: "", 
-          metageneration: "",
-          contentType: "", //application/json
-          storageClass: "", //STANDARD
-          size: "", // number of bytes
-          md5Hash: "",
-          crc32c: "",
-          etag: "",
-          timeCreated: "",
-          updated: "",
-          timeStorageClassUpdated: ""
-        }]
-      };
+    Bucket_Info_Array=new Bucket_List_Info;
+
+    EventHTTPReceived:boolean=false;
   
   @HostListener('window:resize', ['$event'])
   onWindowResize() {
@@ -119,7 +100,9 @@ export class LoginComponent {
       //this.httpHeader.append('content-type', 'application/json');
       //this.httpHeader.append('Cache-Control', 'no-store, must-revalidate, private, max-age=0, no-transform');
       this.routing_code=0;
+      this.EventHTTPReceived=false;
       this.getEventAug();
+      this.waitHTTP(0, 30000);
 
       if (this.identification.UserId!=='' && this.identification.psw!=='') {
        // go through login panel again to allow the change of user id if needed SIN!02#JUL
@@ -133,15 +116,32 @@ export class LoginComponent {
       } else {this.myForm.controls['action'].setValue("");}
     }
 
+  waitHTTP(loop:number, max_loop:number){
+    const pas=500;
+    if (loop%pas === 0){
+      console.log('waitHTTP ==> loop=', loop, ' max_loop=', max_loop, ' this.EventHTTPReceived=', this.EventHTTPReceived);
+    }
+   loop++
+    
+    this.id_Animation=window.requestAnimationFrame(() => this.waitHTTP(loop, max_loop));
+    if (loop>max_loop || this.EventHTTPReceived===true){
+              console.log('exit waitHTTP ==> loop=', loop, ' max_loop=', max_loop, ' this.EventHTTPReceived=', this.EventHTTPReceived);
+              window.cancelAnimationFrame(this.id_Animation);
+        }  
+
+    }
+
   GetObject(){
 // ****** get content of object *******
       this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name   + "?alt=media"; 
       // this.HTTP_AddressMetaData=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name ; 
       console.log('GetObject() - object:', this.Google_Object_Name);
+      this.EventHTTPReceived=false;
             this.http.get(this.HTTP_Address, {'headers':this.myHeader} )
             .subscribe(data => {
             //console.log(data);
             this.Encrypt_Data = data;
+            this.EventHTTPReceived=true;
             console.log('GetObject(); data received');
             this.Crypto_Key=this.Encrypt_Data.key;
             this.Crypto_Method=this.Encrypt_Data.method;
@@ -180,6 +180,8 @@ export class LoginComponent {
             },
             error_handler => {
                   // user id not found
+                  this.EventHTTPReceived=true;
+                  console.log('INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url);
                   this.text_error='identification failed; retry';
                   this.routing_code=0;
             } 
@@ -198,12 +200,11 @@ ValidateEventAug(){
     this.routing_code=0;
   } 
 
-
 }
 
 ValidateData(){
   this.Google_Object_Name = this.myForm.controls['userId'].value;
-
+  console.log('validateData()');
   if (this.Google_Object_Name==='')  {
     this.text_error=" provide your user id";
   }
@@ -215,6 +216,8 @@ ValidateData(){
   {
     // check first if it's related to Event of 27Aug2022
     this.ValidateEventAug();
+    console.log('after ValidateEventAug()');
+    // ====== CHEK IF THIS IS NOS NEEDED AS waitHTTP() IS IMPLEMENTED
     if (this.text_error!== ''){
         // user id not found so go through through next validation step
         this.Google_Object_Name=this.Google_Object_Name+this.Google_Object_Name_Extension;
@@ -228,8 +231,11 @@ ValidateData(){
               } 
             }
           j();
-        } 
-        this.GetObject();
+        }
+        this.EventHTTPReceived=false;
+        this.GetObject(); 
+        this.waitHTTP(0, 30000); 
+        console.log('after getObject()');
     } else {
       this.routing_code=3;
       this.Encrypt_Data.UserId=this.Table_User_Data[this.i].UserId;
@@ -253,6 +259,7 @@ getEventAug(){
           this.http.get(this.HTTP_Address, {'headers':this.myHeader} )
             .subscribe((data ) => {
               console.log('getEventAug() - data received');
+              this.EventHTTPReceived=true;
               this.bucket_data=JSON.stringify(data);
               var obj = JSON.parse(this.bucket_data);
         
@@ -272,12 +279,14 @@ getEventAug(){
 
               },
               error_handler => {
+                this.EventHTTPReceived=true;
                 console.log('getEventAug() - error handler');
                 this.text_error='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
               } 
 
         )
   }
+
 
 GetUpdatedTable(event:any){
   this.Table_User_Data=event;

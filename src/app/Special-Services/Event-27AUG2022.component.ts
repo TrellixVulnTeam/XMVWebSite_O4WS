@@ -7,6 +7,7 @@ import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { ViewportScroller } from "@angular/common";
 import { EventAug } from '../JsonServerClass';
 import { encrypt, decrypt} from '../EncryptDecryptServices';
+import {Bucket_List_Info} from '../JsonServerClass';
 
 export class StructurePhotos{
   name:string='';
@@ -165,33 +166,25 @@ export class Event27AugComponent {
     //Google_Bucket_Name:string='my-db-json'; // if "MyJson"
     Google_Bucket_Name:string='manage-login'; 
     Google_Object_Name:string='';
+   
+    bucket_wedding_name:string='';
+    bucket_list_returned:Array<string>=[];
+    array_i_loop:Array<number>=[];
 
-    Bucket_Info_Array:any={
-      kind:'storage#object',
-      items:[
-      {
-          kind: "storage#object",
-          id: "manage-login/Event-27AUG2022.json/1655279866897148", 
-          selfLink: "https://www.googleapis.com/storage/v1/b/manage-login/o/Event-27AUG2022.json", // link to the general info of the bucket/objectobject
-          mediaLink: "https://storage.googleapis.com/download/storage/v1/b/manage-login/o/Event-27AUG2022.json?generation=1655279866897148&alt=media", // link to get the content of the object
-          name: "Event-27AUG2022.json", // name of the object
-          bucket: "manage-login", //name of the bucket
-          cacheControl:"max-age=0, private, no-store",
-          generation: "1655279866897148", 
-          metageneration: "1",
-          contentType: "application/json", 
-          storageClass: "STANDARD", 
-          size: "", // number of bytes
-          md5Hash: "qdWPGdgcYW4N0Wc2lodB0g==",
-          crc32c: "oLhslw==",
-          etag: "CPzF4YP+rvgCEAE=",
-          timeCreated: "2022-06-15T07:57:46.909Z",
-          updated: "",
-          timeStorageClassUpdated: ""
-      }
-    ]
-    
-  };
+    i_loop:number=0;
+    j_loop:number=0;
+    max_i_loop:number=20000;
+    max_j_loop:number=20000;
+    id_Animation:number=0;
+    i:number=0;
+    j:number=0;
+    i_Bucket:number=0;
+    Max_Nb_Bucket_Wedding:number=6;
+
+    Bucket_Info_Array:Array<Bucket_List_Info>=[];
+    ref_Bucket_List_Info=new Bucket_List_Info;
+
+  // for patchData() which is not used indeed
   PostData:any={
     ObjectMetadata:{
       kind: "storage#object",
@@ -222,8 +215,7 @@ export class Event27AugComponent {
     HTTP_AddressMetaData:string='';
     Error_Access_Server:string='';
 
-    i:number=0;
-    j:number=0;
+
     
     bucket_data:string='';
     Table_User_Data:Array<EventAug>=[];
@@ -309,22 +301,77 @@ onWindowResize() {
           this.PhotoNbForm.controls['Height'].setValue(300);
         }
         this.PhotoNbForm.controls['SelectNb'].setValue(null);
-        this.getListPhotos('xavier-monica-mariage', this.WeddingPhotos, 0);
-        // this.getListPhotos('xavier-monica-mariage-outdoor', this.WeddingPhotos, this.WeddingPhotos.length);
-  }    
-/*
-  ngAfterViewInit() { 
-    console.log(' ngAfterViewInit() ');
-    this.theCanvas=document.getElementById('canvasElem');
-          
-    if (!this.ctx) { //true
-        this.ctx=this.theCanvas.getContext('2d');
-        this.ctx.canvas.width=this.PhotoNbForm.controls['Width'].value;
-        this.ctx.canvas.height=this.PhotoNbForm.controls['Height'].value;
-    }
 
+        this.max_i_loop=20000;
+        this.i_Bucket=1
+        this.bucket_wedding_name='xavier-monica-mariage-01';
+        for (this.i_Bucket=1; this.i_Bucket<=this.Max_Nb_Bucket_Wedding; this.i_Bucket++){
+          this.ref_Bucket_List_Info=new Bucket_List_Info;
+          this.Bucket_Info_Array.push(this.ref_Bucket_List_Info);
+          const bucket_str_nb=this.i_Bucket-1;
+          if (this.i_Bucket<10){
+              this.bucket_wedding_name='xavier-monica-mariage-0'+bucket_str_nb.toString();
+          } else { 
+              this.bucket_wedding_name='xavier-monica-mariage-'+bucket_str_nb.toString()
+            };
+          this.bucket_list_returned.push('0');
+          this.bucket_list_returned[this.i_Bucket-1]='0';
+          this.array_i_loop.push(0);
+          this.array_i_loop[this.i_Bucket-1]=0;
+          this.getListPhotos(this.bucket_wedding_name, this.i_Bucket);
+          console.log('I call access_all_buckets() from ngOnInit() and bucket is ', this.bucket_wedding_name );       
+        }
+        // want to be sure that all buckets have been accessed
+        this.i_Bucket=1;
+        this.access_all_buckets();
+  }    
+
+
+  access_all_buckets(){
+    if (this.array_i_loop[this.i_Bucket-1]%50===0){
+      console.log('access bucket '+this.bucket_wedding_name, '  i_loop=', this.array_i_loop[this.i_Bucket-1], '  bucket_list_returned', this.bucket_list_returned[this.i_Bucket-1]);
+    }
+    this.id_Animation=window.requestAnimationFrame(() => this. access_all_buckets());
+    this.array_i_loop[this.i_Bucket-1]++;
+    // check how to manage error_server
+    if (this.array_i_loop[this.i_Bucket-1]>this.max_i_loop || this.bucket_list_returned[this.i_Bucket-1]==='1'){
+       
+        console.log('bucket ', this.bucket_wedding_name, 'processed; this.i_loop=', this.array_i_loop[this.i_Bucket-1], 'length global table=', 
+                  this.WeddingPhotos.length, 'length specific table=', this.Bucket_Info_Array[this.i_Bucket-1].items.length);
+        this.i_Bucket++
+        if (this.i_Bucket===this.Max_Nb_Bucket_Wedding+1){
+            window.cancelAnimationFrame(this.id_Animation);
+            // fill in the main page
+            this.j=-1;
+            for (this.i_Bucket=1; this.i_Bucket<=this.Max_Nb_Bucket_Wedding; this.i_Bucket++){
+        
+                for (this.i=0; this.i<this.Bucket_Info_Array[this.i_Bucket-1].items.length; this.i++ ){
+                        this.j++
+                        const pushPhotos=new StructurePhotos;
+                        this.WeddingPhotos.push(pushPhotos);
+                        this.WeddingPhotos[this.j].name=this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].name;
+                        if (this.i_Bucket===1){
+                          this.WeddingPhotos[this.j].photo.src=this.WeddingPhotos[this.j].mediaLink;
+                          this.WeddingPhotos[this.j].mediaLink='./assets/Marriage/'+this.WeddingPhotos[this.j].name;
+                          this.WeddingPhotos[this.j].selfLink=this.WeddingPhotos[this.j].mediaLink;
+                        } else {
+                            this.WeddingPhotos[this.j].mediaLink=this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].mediaLink;
+                            this.WeddingPhotos[this.j].selfLink=this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].selfLink;
+                            this.WeddingPhotos[this.j].photo.src=this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].mediaLink;
+                          }
+                        if (this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].name.indexOf('Vertical')!==-1){
+                          this.WeddingPhotos[this.j].vertical=true;
+                        }
+                        else{
+                          this.WeddingPhotos[this.j].vertical=false;
+                        }
+                }
+                
+            }
+
+          }
+    }
   }
-*/
 
   goDown(event:string){
     this.pagePhotos=false;
@@ -791,187 +838,32 @@ ConvertComment(){
 displayPhotos(){
   console.log('displayPhotos()');
   this.pagePhotos=true;
- // this.display_download=false;
- // this.selected_photo=-1;
-
-  /*
-  this.myHeader=new HttpHeaders({
-    'content-type': 'image/jpg'
-  });
-  
-  for (this.i=0; this.i<10; this.i++ ){
-    this.http.get<any>(this.Bucket_Info_Array.items[this.i].selfLink+'?alt=media', {'headers':this.myHeader} )
-    .subscribe(data => {
-      this.WeddingPhotos[this.i].photo=data;
-      if (this.i===4){
-          this.myImage = this.WeddingPhotos[4].photo;
-          this.drawCanvas();
-      }
-    },
-    error_handler => {
-      console.log('does not work ', error_handler);
-    })
-  }
-  */
-
-     
-//        this.drawPhotoCanvas();
+ 
 }
 
-/********************
-next_prev_page(event:any){
-  this.selected_photo=-1;
-  this.display_download=false;
-  if(event === 'prev' && this.nb_current_page > 1){
-    this.nb_current_page--
-    this.nb_current_photo=(this.nb_current_page-1)*this.nb_photo_per_page;
-  } else if (event === 'next' && this.nb_current_page < this.nb_total_page){
-    this.nb_current_page++
-    this.nb_current_photo=(this.nb_current_page-1)*this.nb_photo_per_page;
-  }
-  this.j = this.nb_current_page-(this.pages_to_display.length/2)+1;
-  if ( this.j<1 ){this.j=1;}
-  if ( this.j + this.pages_to_display.length > this.nb_total_page){this.j=this.nb_total_page-this.pages_to_display.length+1;}
-  if ( this.pages_to_display[0]!== this.j ){
-      
-      for (this.i=0; this.i<10; this.i++){
-       
-        this.pages_to_display[this.i]=this.i+this.j;
-        
-      }
-  }
-}
 
-display_page(page_nb:number){
-  this.nb_current_page=page_nb-1;
-  this.next_prev_page('next');
-}
-
-getPhoto(http_address:string, thePhoto:any){
-
-  this.http.get<any>(http_address )
-  .subscribe(data => {
-    thePhoto=data;
-  },
-  error_handler => {
-    console.log('getPhoto ', error_handler);
-      })
-}
- *******************/
-  getListPhotos(BucketPhotos:string, WeddingPhotos:Array<StructurePhotos>, i_array:number){
+  getListPhotos(BucketPhotos:string, bucket_nb:number){
     // get list of objects in bucket
     console.log('getListPhotos()');
+    this.bucket_list_returned[bucket_nb-1]='0';
     const HTTP_Address='https://storage.googleapis.com/storage/v1/b/' + BucketPhotos + "/o";
     this.http.get<any>(HTTP_Address )
           .subscribe(data => {
-
+                this.bucket_list_returned[bucket_nb-1]='1';
                 console.log('getListPhotos() - received data from BucketPhotos ',BucketPhotos);
                 console.log(data);
-                this.Bucket_Info_Array=data;
-                console.log('getListPhotos() - Bucket_Info_Array.items.length =  ',this.Bucket_Info_Array.items.length);
-                for (this.i=0; this.i<this.Bucket_Info_Array.items.length; this.i++ ){
-                        const pushPhotos=new StructurePhotos;
-                        WeddingPhotos.push(pushPhotos);
-                        WeddingPhotos[i_array].name=this.Bucket_Info_Array.items[this.i].name;
-                        WeddingPhotos[i_array].mediaLink=this.Bucket_Info_Array.items[this.i].mediaLink;
-                        WeddingPhotos[i_array].selfLink=this.Bucket_Info_Array.items[this.i].selfLink;
-                        if (this.i!==0 && this.i!==1){
-                            WeddingPhotos[i_array].photo.src=this.Bucket_Info_Array.items[this.i].mediaLink;
-                        }
-                        if (this.Bucket_Info_Array.items[this.i].name.indexOf('Vertical')!==-1){
-                          WeddingPhotos[i_array].vertical=true;
-                        }
-                        else{
-                          WeddingPhotos[i_array].vertical=false;
-                        }
-
-                        i_array++
-                }
-                this.nb_total_page = Math.floor(this.WeddingPhotos.length / this.nb_photo_per_page);
-                if (this.WeddingPhotos.length % this.nb_photo_per_page){
-                  this.nb_total_page++
-                }
-                this.nb_current_page = 1;
-                this.nb_current_photo = 0;
-
-
+                this.Bucket_Info_Array[bucket_nb-1]=data;
+                console.log('getListPhotos() - Bucket_Info_Array.items.length =  ',this.Bucket_Info_Array[bucket_nb-1].items.length);
               },   
               error_handler => {
                 this.Error_Access_Server='getListPhoto : error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
                   alert(this.message  + ' -- http get = ' + this.HTTP_Address);
+                  this.bucket_list_returned[bucket_nb-1]='402';
                 } 
           )
   
 
   }
-/***********************
-onZoomPhoto(event:any){
-    this.display_download=true;
-    this.selected_photo=event;
-}
 
-onSaveFile(event:any): void {
-    this.selected_photo=-1;
-    this.display_download=false;
-    const link = document.createElement("a");
-    //link.href = URL.createObjectURL(file);
-    link.href=event.mediaLink;
-    link.download = event.name; // filename
-    link.click();
-    link.remove(); 
-  }
-
-
-  drawPhotoCanvas(){
-
-        this.initialdrawCanvas=true;
-    console.log('drawPhotoCanvas & message is ', this.message_canvas, ' length of table is ', this.WeddingPhotos.length);
-        this.message_canvas='';
-        this.prevCanvasPhoto=this.PhotoNbForm.controls['SelectNb'].value;
-        this.ctx.canvas.width=this.PhotoNbForm.controls['Width'].value;
-        this.ctx.canvas.height=this.PhotoNbForm.controls['Height'].value;
-        if (this.PhotoNbForm.controls['SelectNb'].value!==null){
-            if (this.PhotoNbForm.controls['SelectNb'].value<1 || this.PhotoNbForm.controls['SelectNb'].value>this.WeddingPhotos.length){
-              
-                this.message_canvas='value must be between 1 and '+ this.WeddingPhotos.length + ' Nb captured:'+this.PhotoNbForm.controls['SelectNb'].value+
-                'length of the table ' + this.WeddingPhotos.length + '     i='+ this.i;
-            }
-            else {
-              this.message_canvas='Photo => nb: '+this.PhotoNbForm.controls['SelectNb'].value+'  Name: ' + this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].name;
-            }
-        
-       
-        if (this.PhotoNbForm.controls['SelectNb'].value===1 || this.PhotoNbForm.controls['SelectNb'].value===2){
-          this.ctx.beginPath();
-          this.ctx.font = 'bold 18px serif';
-          this.ctx.strokeText('Video is not displayed there', 40, 40);
-        } else {
-          console.log('this.ctx.drawImage, nb=', this.PhotoNbForm.controls['SelectNb'].value-1);
-          this.ctx.beginPath();
-          const myImage=this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].photo;
-          console.log('myImage = ', myImage);
-          this.ctx.drawImage(myImage,0,0,this.ctx.canvas.width,this.ctx.canvas.height);
-          this.ctx.stroke(); 
-        }
-      } else {
-          this.ctx.beginPath(); 
-          this.myImage.src='./assets/GA00 - M&X indoor 3.jpg';
-          this.myImage.onload = () => this.ctx.drawImage(this.myImage, 0, 0);
-          this.ctx.drawImage(this.myImage,0,0,this.ctx.canvas.width,this.ctx.canvas.height);
-      }
-      this.ctx.stroke(); 
-
-  }
- */
-  /*
-  ngAfterViewChecked(){
-    console.log('ngAfterViewChecked() & this.WeddingPhotos.length= ', this.WeddingPhotos.length, ' & message is = ' , this.message);
-    //if (this.WeddingPhotos.length!==0 ){
-    if (this.WeddingPhotos.length!==0 && this.prevCanvasPhoto!==this.PhotoNbForm.controls['SelectNb'].value && this.initialdrawCanvas===false){
-      console.log('call drawPhotoCanvas; preCanvasPhoto is', this.prevCanvasPhoto, 'required is ', this.PhotoNbForm.controls['SelectNb'].value);
-      this.drawPhotoCanvas();
-    }
-  }
-*/
 
 }
