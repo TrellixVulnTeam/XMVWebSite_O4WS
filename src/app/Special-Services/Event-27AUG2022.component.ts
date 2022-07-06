@@ -145,6 +145,7 @@ export class Event27AugComponent {
     bucket_wedding_name:string='';
     bucket_list_returned:Array<string>=[];
     array_i_loop:Array<number>=[];
+    buckets_all_processed:boolean=false;
 
     i_loop:number=0;
     j_loop:number=0;
@@ -285,25 +286,28 @@ onWindowResize() {
         }
         // want to be sure that all buckets have been accessed
         this.i_Bucket=1;
+        console.log('before calling access_all_buckets() ',this.buckets_all_processed);
         this.access_all_buckets();
   }    
 
 
   access_all_buckets(){
-    if (this.array_i_loop[this.i_Bucket-1]%50===0){
-      console.log('access bucket '+this.bucket_wedding_name, '  i_loop=', this.array_i_loop[this.i_Bucket-1], '  bucket_list_returned', this.bucket_list_returned[this.i_Bucket-1]);
+
+    if (this.array_i_loop[this.i_Bucket-1]%20===0){
+      console.log('access bucket '+this.bucket_wedding_name + ' i_Bucket='+ this.i_Bucket+ ' + i_loop=' + this.array_i_loop[this.i_Bucket-1]+ '  bucket_list_returned'+ this.bucket_list_returned[this.i_Bucket-1]);
     }
     this.id_Animation=window.requestAnimationFrame(() => this. access_all_buckets());
     this.array_i_loop[this.i_Bucket-1]++;
     // check how to manage error_server
     if (this.array_i_loop[this.i_Bucket-1]>this.max_i_loop || this.bucket_list_returned[this.i_Bucket-1]==='1'){
        
-        console.log('bucket ', this.bucket_wedding_name, 'processed; this.i_loop=', this.array_i_loop[this.i_Bucket-1], 'length global table=', 
+        console.log('===== bucket# ', this.i_Bucket, 'processed; this.i_loop=', this.array_i_loop[this.i_Bucket-1], 'length global table=', 
                   this.WeddingPhotos.length, 'length specific table=', this.Bucket_Info_Array[this.i_Bucket-1].items.length);
         this.i_Bucket++
+        console.log('===== bucket - process next bucket which is ', this.i_Bucket);
         if (this.i_Bucket===this.Max_Nb_Bucket_Wedding+1){
-            window.cancelAnimationFrame(this.id_Animation);
-            // fill in the main page
+            
+            console.log('===== bucket - all buckets processed; fill-in now WeddimgPhotos ');
             this.j=-1;
             for (this.i_Bucket=1; this.i_Bucket<=this.Max_Nb_Bucket_Wedding; this.i_Bucket++){
         
@@ -312,16 +316,17 @@ onWindowResize() {
                         const pushPhotos=new StructurePhotos;
                         this.WeddingPhotos.push(pushPhotos);
                         this.WeddingPhotos[this.j].name=this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].name;
-        // to be updated
-                        if (this.i_Bucket===-1){
+                        /*
+                        if (this.i_Bucket===1){
                           this.WeddingPhotos[this.j].photo.src=this.WeddingPhotos[this.j].mediaLink;
                           this.WeddingPhotos[this.j].mediaLink='./assets/Marriage/'+this.WeddingPhotos[this.j].name;
                           this.WeddingPhotos[this.j].selfLink=this.WeddingPhotos[this.j].mediaLink;
                         } else {
+                        */
                             this.WeddingPhotos[this.j].mediaLink=this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].mediaLink;
                             this.WeddingPhotos[this.j].selfLink=this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].selfLink;
                             this.WeddingPhotos[this.j].photo.src=this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].mediaLink;
-                          }
+                         /* } */
                         if (this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].name.indexOf('Vertical')!==-1){
                           this.WeddingPhotos[this.j].vertical=true;
                         }
@@ -331,7 +336,9 @@ onWindowResize() {
                 }
                 
             }
-
+            this.buckets_all_processed=true;
+            console.log('this.buckets_all_processed', this.buckets_all_processed);
+            window.cancelAnimationFrame(this.id_Animation);
           }
     }
   }
@@ -349,29 +356,6 @@ onWindowResize() {
     }
   }
 
-
-  patchMetaData(){
-   
-    // NOT USED
-    
-    // ****** get content of object *******
-    this.Google_Object_Name="Event-27AUG2022.json";
-    this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name +  "/o?name="  + this.Google_Object_Name +'TEST' ; 
-    this.HTTP_AddressMetaData=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name  +  'TEST&uploadType=metadata' + "?cacheControl='max-age=0, no-store'";
-    this.PostData.User_Data=this.Table_User_Data;
-    
-    this.http.post(this.HTTP_Address, this.Table_User_Data, {params: {'cacheControl':'max-age=0, no-store, private'}} )
-          .subscribe((data ) => {
-               
-               console.log('patch metadata: ',data);
-
-                },
-                error_handler => {
-                  this.Error_Access_Server='error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
-                } 
-          )
-    }
-  
 clear(){
     this.myForm.reset({
       userId: '',
@@ -795,10 +779,21 @@ ConvertComment(){
     }
   }
 
-displayPhotos(){
-  console.log('displayPhotos()');
+displayWedPhotos(){
+  console.log('displayWedPhotos() in Event-27Aug');
+  const pas=20;
   this.pagePhotos=true;
- 
+  /***
+  for (this.i=0; this.i<this.Max_Nb_Bucket_Wedding; this.i++){
+    console.log('displayWedPhotos() in Event-27Aug ', 'this.bucket_list_returned of ', this.i, ' is ' + this.bucket_list_returned[this.i]);
+    for (this.j=0; this.j<this.max_j_loop && this.bucket_list_returned[this.i]==='0'; this.j++){
+        // waiting for all buckets content to be received
+        if (this.j%pas === 0){
+          console.log('displayWedPhotos() in Event-27Aug ==> loop=', this.j, 'this.bucket_list_returned of ', this.i, ' is ' + this.bucket_list_returned[this.i]);
+        }
+    }
+  }
+   */
 }
 
 
@@ -825,5 +820,28 @@ displayPhotos(){
 
   }
 
+
+  patchMetaData(){
+   
+    // NOT USED
+    
+    // ****** get content of object *******
+    this.Google_Object_Name="Event-27AUG2022.json";
+    this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name +  "/o?name="  + this.Google_Object_Name +'TEST' ; 
+    this.HTTP_AddressMetaData=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name  +  'TEST&uploadType=metadata' + "?cacheControl='max-age=0, no-store'";
+    this.PostData.User_Data=this.Table_User_Data;
+    
+    this.http.post(this.HTTP_Address, this.Table_User_Data, {params: {'cacheControl':'max-age=0, no-store, private'}} )
+          .subscribe((data ) => {
+               
+               console.log('patch metadata: ',data);
+
+                },
+                error_handler => {
+                  this.Error_Access_Server='error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
+                } 
+          )
+    }
+  
 
 }

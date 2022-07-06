@@ -29,7 +29,9 @@ export class LoginComponent {
     };
 
     id_Animation:number=0;
+    id_Animation_Two:number=0;
     j_loop:number=0;
+    max_j_loop:number=20000;
 
     @Output() my_output1= new EventEmitter<any>();
     @Output() my_output2= new EventEmitter<string>();
@@ -102,7 +104,7 @@ export class LoginComponent {
       this.routing_code=0;
       this.EventHTTPReceived=false;
       this.getEventAug();
-      this.waitHTTP(0, 30000);
+      // this.waitHTTP(0, 30000);
 
       if (this.identification.UserId!=='' && this.identification.psw!=='') {
        // go through login panel again to allow the change of user id if needed SIN!02#JUL
@@ -116,7 +118,7 @@ export class LoginComponent {
           this.myForm.controls['action'].setValue("");}
     }
 
-  waitHTTP(loop:number, max_loop:number){
+waitHTTP(loop:number, max_loop:number){
     const pas=500;
     if (loop%pas === 0){
       console.log('waitHTTP ==> loop=', loop, ' max_loop=', max_loop, ' this.EventHTTPReceived=', this.EventHTTPReceived);
@@ -199,10 +201,32 @@ ValidateEventAug(){
     this.text_error='identification failed; retry';
     this.routing_code=0;
   } 
-
 }
 
+
 ValidateData(){
+    this.j_loop=0;
+    this.max_j_loop=20000;
+    this.ValidateDataTer();
+}
+
+ValidateDataTer(){
+  const pas=10;
+  if (this.j_loop%pas === 0){
+    console.log('ValidateDataTer ==> loop=', this.j_loop, ' max_loop=', this.max_j_loop, ' this.EventHTTPReceived=', this.EventHTTPReceived);
+  }
+  this.j_loop++
+  
+  this.id_Animation=window.requestAnimationFrame(() => this.ValidateDataTer());
+  if (this.j_loop>this.max_j_loop || this.EventHTTPReceived===true){
+            console.log('exit ValidateDataTer ==> loop=', this.j_loop, ' max_loop=', this.max_j_loop, ' this.EventHTTPReceived=', this.EventHTTPReceived);
+            window.cancelAnimationFrame(this.id_Animation);
+            this.ValidateDataBis();
+      }  
+}
+
+ValidateDataBis(){
+
   this.Google_Object_Name = this.myForm.controls['userId'].value;
   console.log('validateData()');
   if (this.Google_Object_Name==='')  {

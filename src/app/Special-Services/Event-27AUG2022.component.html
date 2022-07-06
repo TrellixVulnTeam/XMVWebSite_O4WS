@@ -30,14 +30,14 @@
                  <span  (click)="goDown('targetDirection')" class="dropdown-options dropdown-text">Adresse</span>
                  <span  (click)="goDown('targetForm')" class="dropdown-options dropdown-text">Formulaire</span>
                  <span  (click)="goDown('targetMenu')" class="dropdown-options dropdown-text">Menus</span>
-                 <span  (click)="displayPhotos()" class="dropdown-options dropdown-text">Mariage</span>
+                 <span  (click)="displayWedPhotos()" class="dropdown-options dropdown-text">Mariage</span>
               </div>
               <span *ngIf="yourLanguage==='UK'">
                 <span  (click)="goDown('targetRules')" class="dropdown-options dropdown-text">Details</span>
                 <span  (click)="goDown('targetDirection')" class="dropdown-options dropdown-text">Address</span>
                 <span  (click)="goDown('targetForm')" class="dropdown-options dropdown-text">Form</span>
                 <span  (click)="goDown('targetMenu')" class="dropdown-options dropdown-text">Menus</span>
-                <span  (click)="displayPhotos()" class="dropdown-options dropdown-text">Wedding</span>
+                <span  (click)="displayWedPhotos()" class="dropdown-options dropdown-text">Wedding</span>
             </span>
     </div >
 
@@ -546,100 +546,9 @@ Pain, beurre, confiture Viennoiseries
 </div> 
 
 <ng-template #processPhotos>
-  <app-WeddingPhotos [WeddingPhotos]="WeddingPhotos"> </app-WeddingPhotos>
-<!--
-<h1 style="margin-top:2px;"><br></h1>
- <h1 style="margin-top:140px;">Pictures of our wedding</h1>
- <h3 >Total number of photos: {{WeddingPhotos.length}}</h3>
- <br><br>
- <span 
-  style='color:red; font-size:18px; font-weight:bold; font-size:14px; 
-          margin-left:40px; max-width:80%; display:block;
-          letter-spacing: 2px; line-height: 30px;'>
-        Click on the picture to zoom-out and 
-         on 
-        <button  class="GOdownload" style="margin-left:0px;"> <span  class="material-symbols-outlined myIcon" >
-                  download
-            </span>
-        </button>
-        if you want to download it
-</span>
- <br><br>
-
- <div *ngFor="let WedPhotos of WeddingPhotos; let i=index" style="margin-left:20px; ">
-  
-  <span *ngIf="(i===0 || i===1) && nb_current_page===1">
-   
-    <span style="width:80%; display:block; font-size:14px; color:blue">  {{WedPhotos.name}}
-      <br>Photo nb:  <label style="color:red; font-size:18px;"> {{i+1}} </label></span>
-    <video  (mouseover)="onZoomPhoto(i)" controls class="photo">
-        <source src={{WedPhotos.mediaLink}} type="video/mp4">
-    </video>
-
-    <button  class="GOdownload"><span  class="material-symbols-outlined myIcon" (click)="onSaveFile(WedPhotos)">
-                  download
-              </span>
-    </button>
-    <br><br>  
-</span>
-  <span *ngIf="i>=nb_current_photo && i<nb_current_photo+nb_photo_per_page && i!==0 && i!==1">
-      <span style="width:80%; display:block; font-size:14px; color:blue">  {{WedPhotos.name}}
-        <br>Photo nb:  <label style="color:red; font-size:18px;"> {{i+1}} </label></span>
-      <span *ngIf="WedPhotos.vertical===false">
-            <img  (mouseover)="onZoomPhoto(i)" class="photo" src={{WedPhotos.mediaLink}}>
-      </span>
-      <span *ngIf="WedPhotos.vertical===true">
-        <img  (mouseover)="onZoomPhoto(i)" class="photoVertical" src={{WedPhotos.mediaLink}}>
-      </span>
-      <button  class="GOdownload"><span  class="material-symbols-outlined myIcon" (click)="onSaveFile(WedPhotos)">
-                    download
-              </span>
-      </button> 
-      <br><br>  
-  </span>
- </div>
- <br><br>
-
-
- <button class='butt' id="but3" (click)="next_prev_page('prev')" >Prev page</button>
- <span style="margin-left:20px; font-size:6px;">&nbsp;</span>
- <span *ngFor="let tab_pages of pages_to_display; let i=index">
-
-    <span *ngIf="tab_pages===nb_current_page" class="highlight_page"  >
-        {{tab_pages}} <span style="font-size:6px;">&nbsp;</span>
-    </span> 
-    <span *ngIf="tab_pages!==nb_current_page" class="lowlight_page" (click)="display_page(tab_pages)">
-        {{tab_pages}} <span style="font-size:6px;">&nbsp;</span>
-    </span>
-    
- </span>
- <button class='butt' id="but4" (click)="next_prev_page('next')" >Next page</button>
- <br><br>
-
-
-<h2 style="margin-left:20px;">Display a specific picture</h2>
-
-<br><span style="color:red; font-size:14px; margin-left:20px;">{{message_canvas}}</span>
- <div [formGroup]="PhotoNbForm" class="position-parameters">
-        <span ><label class="posParamPhoto">Number </label><input formControlName="SelectNb" type="number" class="position-field" ></span>
-    <br><span><label class="posParamPhoto">Width </label><input formControlName="Width" type="number" class="position-field" ></span>
-    <br><span><label class="posParamPhoto">Height </label><input formControlName="Height" type="number" class="position-field" ></span>
-<br>
-<button class="butt" id="but6" (click)="drawPhotoCanvas()">Submit</button>
-<br><br>
-</div>
--->
+  <app-WeddingPhotos [buckets_all_processed]="buckets_all_processed" [WeddingPhotos]="WeddingPhotos"  > </app-WeddingPhotos>
 </ng-template>
-<!--
-<canvas 
-    #ImageCanvas 
-    id='canvasElem' 
-    class="position" 
-    width="550" 
-    height="600" 
-    >
-</canvas>
--->
+
 
 <ng-template #manageInvite>
 <div>
