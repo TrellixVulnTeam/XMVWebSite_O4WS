@@ -102,7 +102,6 @@ export class LoginComponent {
       this.routing_code=0;
       this.EventHTTPReceived=false;
       this.getEventAug();
-      this.waitHTTP(0, 30000);
 
       if (this.identification.UserId!=='' && this.identification.psw!=='') {
        // go through login panel again to allow the change of user id if needed SIN!02#JUL
@@ -110,10 +109,10 @@ export class LoginComponent {
           this.Crypto_Key=this.identification.key;
           this.Crypto_Method=this.identification.method;
           this.Encrypt=this.identification.psw;
-            
           this.onCrypt("Decrypt");
           this.myForm.controls['password'].setValue(this.Decrypt);
-      } else {this.myForm.controls['action'].setValue("");}
+      } else {
+          this.myForm.controls['action'].setValue("");}
     }
 
   waitHTTP(loop:number, max_loop:number){
@@ -214,14 +213,16 @@ ValidateData(){
   }
   else
   {
-    // check first if it's related to Event of 27Aug2022
+    // check first if data has been received and if it's related to Event of 27Aug2022
+    this.waitHTTP(0, 30000);
     this.ValidateEventAug();
     console.log('after ValidateEventAug()');
-    // ====== CHEK IF THIS IS NOS NEEDED AS waitHTTP() IS IMPLEMENTED
+    
     if (this.text_error!== ''){
-        // user id not found so go through through next validation step
+        // user id not found in EventAug so go through through next validation step which is to check if other objects in the bucket (e.g. EventJuly)
         this.Google_Object_Name=this.Google_Object_Name+this.Google_Object_Name_Extension;
         this.text_error='';
+        /********* 
         if (this.Table_User_Data.length===0){
           const j= () => {
             this.id_Animation=window.requestAnimationFrame(j) ;
@@ -232,17 +233,20 @@ ValidateData(){
             }
           j();
         }
+        ******************/
         this.EventHTTPReceived=false;
+        // once data is received all validation checks are performed in GetObject() and routing_code is assigned
         this.GetObject(); 
-        this.waitHTTP(0, 30000); 
+        // wait for the data from GetObject()
+        this.waitHTTP(0, 40000); 
         console.log('after getObject()');
     } else {
-      this.routing_code=3;
-      this.Encrypt_Data.UserId=this.Table_User_Data[this.i].UserId;
-      this.Encrypt_Data.id=this.Table_User_Data[this.i].id;
-      this.Encrypt_Data.invitees=this.Table_User_Data[this.i].nbinvitees;
-      this.Encrypt_Data.night=this.Table_User_Data[this.i].night;
-      this.Encrypt_Data.brunch=this.Table_User_Data[this.i].brunch;
+        this.routing_code=3;
+        this.Encrypt_Data.UserId=this.Table_User_Data[this.i].UserId;
+        this.Encrypt_Data.id=this.Table_User_Data[this.i].id;
+        this.Encrypt_Data.invitees=this.Table_User_Data[this.i].nbinvitees;
+        this.Encrypt_Data.night=this.Table_User_Data[this.i].night;
+        this.Encrypt_Data.brunch=this.Table_User_Data[this.i].brunch;
     }
   }
 }
