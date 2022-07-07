@@ -39,13 +39,21 @@
                             download
                       </span>
               </button> 
+              <br><br>
+              <span *ngIf="PhotoNumber[i]===1">
+                    If page is not displayed click on 
+              <button  ><span  class="material-symbols-outlined myIcon" (click)="Redisplay()">
+               Redisplay
+             </span></button> 
+             </span>
+
               <br><br>  
           </span>
       </span>
     </div>
 
  <br><br>
-
+ 
 
  <span *ngIf="first_canvas_displayed===true">
     <button class='butt' id="but3" (click)="next_prev_page('prev')" >Prev page</button>

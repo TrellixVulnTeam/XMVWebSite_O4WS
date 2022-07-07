@@ -155,6 +155,7 @@ SizeImage(){
   }    
 
   ngAfterViewInit() { 
+    this.LogMsgConsole('ngAfterViewInit() - WeddingPhotos.length'+this.WeddingPhotos.length+' isWeddingPhotoEmpty'+this.isWeddingPhotoEmpty);
     this.theCanvas=document.getElementById('canvasElem');
     if (!this.ctx) { //true
         this.ctx=this.theCanvas.getContext('2d');
@@ -306,7 +307,9 @@ drawPhotoCanvas(){
 }
 
 ManageCanvas(){
-  this.LogMsgConsole('ManageCanvas & message is '+ this.message_canvas + ' length of table is ' + this.WeddingPhotos.length);
+  this.LogMsgConsole('ManageCanvas & message is '+ this.message_canvas + ' length of table is ' + this.WeddingPhotos.length+
+    '  this.PhotoNbForm.controls["SelectNb"].value='+this.PhotoNbForm.controls['SelectNb'].value+ ' first_canvas_displayed'+
+    this.first_canvas_displayed);
 
  
   this.message_canvas='';
@@ -314,10 +317,11 @@ ManageCanvas(){
   this.ctx.canvas.width=this.PhotoNbForm.controls['Width'].value;
   this.ctx.canvas.height=this.PhotoNbForm.controls['Height'].value;
   if (this.PhotoNbForm.controls['SelectNb'].value!==null){
+    if (this.first_canvas_displayed===true){
         if (this.PhotoNbForm.controls['SelectNb'].value<1 || this.PhotoNbForm.controls['SelectNb'].value>this.WeddingPhotos.length){
                   
             this.message_canvas='value must be between 1 and '+ this.WeddingPhotos.length + ' Nb captured:'+this.PhotoNbForm.controls['SelectNb'].value+
-                    'length of the table ' + this.WeddingPhotos.length + '     i='+ this.i;
+                    'length of the table ' + this.WeddingPhotos.length ;
           }
         else {
             this.message_canvas= this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].name;
@@ -330,9 +334,9 @@ ManageCanvas(){
               this.change_canvas_size(this.PhotoNbForm.controls['SelectNb'].value-1);
           };
           this.myImage.src=this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink;
-                  console.log(' img.src = ', this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink);
+          this.LogMsgConsole(' img.src = '+this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink);
         //}, 10);
-       
+      }
           
     } else {
 
@@ -391,7 +395,7 @@ ManageCanvas(){
          
   }
 change_canvas_size(nb_photo:number){
-                  
+  this.LogMsgConsole('change_canvas_size & nb_photo is ' + nb_photo + '  WeddingPhotos[nb_photo].vertical' + this.WeddingPhotos[nb_photo].vertical);
   this.ctx.beginPath(); // critical
                   
   this.ctx.globalCompositeOperation = 'source-over';
@@ -506,10 +510,12 @@ wait_WeddingPhotos(){
   } 
 }
 
-
+Redisplay(){
+  
+}
 
 ngOnChanges(changes: SimpleChanges) {   
-  this.LogMsgConsole('onChanges '+changes+ 'buckets_all_processed='+ this.buckets_all_processed+'  length weddingPhotos='+ this.WeddingPhotos.length);
+  this.LogMsgConsole('onChanges ==> buckets_all_processed='+ this.buckets_all_processed+'  length weddingPhotos='+ this.WeddingPhotos.length);
   if (this.WeddingPhotos.length!==0 &&  this.isWeddingPhotoEmpty===true){
     setTimeout(() => {
       this.LogMsgConsole('onChanges call this.displayPhotos() after a timeout of 1 second');
