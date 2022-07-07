@@ -443,11 +443,8 @@ waiting_photo(){
         this.ii++
         if (this.ii>nbPhoto){this.ii=1};
         this.LogMsgConsole('waiting_photo() - this.j_loop='+this.j_loop+'  stop_waiting_photo='+this.stop_waiting_photo);
-       
       }
       
-
-
       if (this.ii===0){
             this.ctx.drawImage(photo1,0,0,this.ctx.canvas.width, this.ctx.canvas.height); 
       }
