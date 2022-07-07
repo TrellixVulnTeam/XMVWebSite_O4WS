@@ -506,8 +506,8 @@ wait_WeddingPhotos(){
   } 
 }
 
-Redisplay(){
-  
+Redisplay(event:string){
+  this.LogMsgConsole('Redisplay(event)='+event);
 }
 
 ngOnChanges(changes: SimpleChanges) {   

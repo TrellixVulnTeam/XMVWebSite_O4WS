@@ -30,7 +30,8 @@
                 <br>Photo nb:  <label style="color:red; font-size:18px;"> {{PhotoNumber[i]}} </label></span>
               
               <span *ngIf="WeddingPhotos[PhotoNumber[i]-1].vertical===false && slowDisplay!=='' ">
-                    <img  (mouseover)="onZoomPhoto(i)" class="photo" [ngStyle]="{'width.px':theWidthH, 'height.px':theHeightH}" src={{slowDisplay}}>
+                    <img  (mouseover)="onZoomPhoto(i)" class="photo" [ngStyle]="{'width.px':theWidthH, 'height.px':theHeightH}" 
+                        src={{slowDisplay}} onload="Redisplay('loaded')" onerror="Redisplay('failed')">
               </span>
               <span *ngIf="WeddingPhotos[PhotoNumber[i]-1].vertical===true && slowDisplay!==''">
                 <img  (mouseover)="onZoomPhoto(i)" class="photoVertical"  [ngStyle]="{'width.px':theWidthV, 'height.px':theHeightV}" src={{slowDisplay}}>
@@ -40,12 +41,7 @@
                       </span>
               </button> 
               <br><br>
-              <span *ngIf="PhotoNumber[i]===1">
-                    If page is not displayed click on 
-              <button  ><span  class="material-symbols-outlined myIcon" (click)="Redisplay()">
-               Redisplay
-             </span></button> 
-             </span>
+     
 
               <br><br>  
           </span>
