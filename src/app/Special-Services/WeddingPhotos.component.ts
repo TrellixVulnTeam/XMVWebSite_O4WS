@@ -38,7 +38,7 @@ export class WeddingPhotosComponent {
     prevCanvasPhoto:number=0;
     initialdrawCanvas:boolean=false;
     message_canvas:string='';
-    initialCanvasPhoto:number=160;
+    initialCanvasPhoto:number=1;
     first_onload:boolean=true;
     getScreenWidth: any;
     getScreenHeight: any;
@@ -108,6 +108,7 @@ compteur:number=0;
 
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
+      this.LogMsgConsole('onWindowResize()');
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
       this.SizeImage();
@@ -331,6 +332,7 @@ ManageCanvas(){
 
         //setTimeout(() => {
           this.myImage.onload = () => {
+              this.LogMsgConsole(' image ' + this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink + ' is loaded');
               this.change_canvas_size(this.PhotoNbForm.controls['SelectNb'].value-1);
           };
           this.myImage.src=this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink;
@@ -340,10 +342,6 @@ ManageCanvas(){
           
     } else {
 
-      //To be deleted when comments below are removed
-      //this.stop_waiting_photo=true;
-      //this.first_canvas_displayed=true;
-               
           console.log('draw first canvas image');
           this.myImage=new Image();
           this.stop_waiting_photo=false;
@@ -354,7 +352,7 @@ ManageCanvas(){
           this.first_canvas_displayed=false;
           //setTimeout(() => {
           this.myImage.onload = () => {
-              this.LogMsgConsole('this.myImage.onload ==== first_canvas_displayed after '+ this.j_loop+ ' loops'+ ' initialCanvasPhoto='+this.initialCanvasPhoto);
+                  this.LogMsgConsole('this.myImage.onload ==== first_canvas_displayed after '+ this.j_loop+ ' loops'+ ' initialCanvasPhoto='+this.initialCanvasPhoto);
                   this.stop_waiting_photo=true;
                   this.first_canvas_displayed=true;
                   this.ClearCanvas();
@@ -394,6 +392,7 @@ ManageCanvas(){
      }
          
   }
+
 change_canvas_size(nb_photo:number){
   this.LogMsgConsole('change_canvas_size & nb_photo is ' + nb_photo + '  WeddingPhotos[nb_photo].vertical' + this.WeddingPhotos[nb_photo].vertical);
   this.ctx.beginPath(); // critical
