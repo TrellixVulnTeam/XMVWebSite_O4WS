@@ -24,8 +24,8 @@
 <br><br>
 
     <div *ngFor="let slowDisplay of slow_table let i=index" style="margin-left:20px;">
-      
-        <span *ngIf="slowDisplay!==''">
+      <span *ngIf="slowDisplay!==''">
+        <span *ngIf="PhotoNumber[i]===1 || first_canvas_displayed===true">
               <span style="width:80%; display:block; font-size:14px; color:blue">  {{WeddingPhotos[PhotoNumber[i]-1].name}}
                 <br>Photo nb:  <label style="color:red; font-size:18px;"> {{PhotoNumber[i]}} </label></span>
               
@@ -40,14 +40,14 @@
                       </span>
               </button> 
               <br><br>  
-            </span>
-          
+          </span>
+      </span>
     </div>
 
  <br><br>
 
 
-
+ <span *ngIf="first_canvas_displayed===true">
     <button class='butt' id="but3" (click)="next_prev_page('prev')" >Prev page</button>
     <span style="margin-left:20px; font-size:6px;">&nbsp;</span>
     <span *ngFor="let tab_pages of pages_to_display; let i=index">
@@ -61,7 +61,7 @@
         
     </span>
     <button class='butt' id="but4" (click)="next_prev_page('next')" >Next page</button>
-
+  </span>
 
 <div *ngIf="myLogConsole===true">
   <h2 style="margin-left:20px;">Log console is activated</h2>

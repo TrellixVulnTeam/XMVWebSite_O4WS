@@ -845,7 +845,7 @@ displayWedPhotos(){
     console.log(msg);
     this.myTime=new Date();
     this.myDate= this.myTime.toString().substring(8,24);
-    this.thetime=this.myTime.getTime().toString();
+    this.thetime=this.myDate+this.myTime.getTime().toString();
     let i = 0;
     if (this.myLogConsole===true){
             this.myConsole.push('');
@@ -864,7 +864,7 @@ displayWedPhotos(){
   
     this.myTime=new Date();
     this.myDate= this.myTime.toString().substring(8,24);
-    this.thetime=this.myTime.getTime().toString();
+    this.thetime=this.myDate+this.myTime.getTime().toString();
     const consoleLength=LogConsole.length;
     this.SaveConsoleFinished=false;
     // this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name   + '&uploadType=media';
