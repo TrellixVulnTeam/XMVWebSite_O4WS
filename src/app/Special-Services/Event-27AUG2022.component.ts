@@ -216,7 +216,7 @@ onWindowResize() {
 
 
   ngOnInit(){
-      this.LogMsgConsole('Device '+navigator.userAgent + ' ngOnInit() Event27AUG')
+      this.LogMsgConsole('Device ' + navigator.userAgent + ' ngOnInit() Event27AUG')
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
 
@@ -845,45 +845,47 @@ displayWedPhotos(){
     console.log(msg);
     this.myTime=new Date();
     this.myDate= this.myTime.toString().substring(8,24);
-    this.thetime=this.myDate+this.myTime.getTime();
+    this.thetime=this.myTime.getTime().toString();
     let i = 0;
     if (this.myLogConsole===true){
-        this.myConsole.push('');
-        i = this.myConsole.length;
-        this.myConsole[i-1]='<==> '+ this.thetime + ' ' +msg;
+            this.myConsole.push('');
+            i = this.myConsole.length;
+            this.myConsole[i-1]='<==> '+this.thetime.substr(0,16) + ' ' +msg;
+  
     }
-    if (i>30 && this.SaveConsoleFinished===true){
-        this.saveLogConsole();
+    if (i>80 && this.SaveConsoleFinished===true){
+      this.saveLogConsole(this.myConsole, 'Event27AUG');
     }
        
   
   }
   
-  saveLogConsole(){
+  saveLogConsole(LogConsole:any, type:string){
+  
     this.myTime=new Date();
     this.myDate= this.myTime.toString().substring(8,24);
-    this.thetime=this.myDate+this.myTime.getTime();
-    const consoleLength=this.myConsole.length;
+    this.thetime=this.myTime.getTime().toString();
+    const consoleLength=LogConsole.length;
     this.SaveConsoleFinished=false;
     // this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name   + '&uploadType=media';
-    this.HTTP_Address=this.Google_Bucket_Access_RootPOST +  "logconsole/o?name=WeddingPhotos" + this.thetime  + '.json&uploadType=media';
+    this.HTTP_Address=this.Google_Bucket_Access_RootPOST +  "logconsole/o?name="  + this.thetime.substr(0,16)+ type + '.json&uploadType=media';
   
-    this.http.post(this.HTTP_Address, this.myConsole)
+    this.http.post(this.HTTP_Address, LogConsole)
       .subscribe(res => {
               this.SaveConsoleFinished=true;
-              if (this.myConsole.length===consoleLength){
-                    this.myConsole.splice(0,this.myConsole.length);
+              if (LogConsole.length===consoleLength){
+                LogConsole.splice(0,LogConsole.length);
                 }
               else {
                 for (let i=consoleLength; i>0; i--){
-                  this.myConsole.splice(i-1,1);
+                  LogConsole.splice(i-1,1);
                 }
               }
-              this.myConsole.push('');
-              this.myConsole[this.myConsole.length-1]='this.myConsole has been deleted at '+this.myDate+'  ' +this.thetime;
+              LogConsole.push('');
+              this.myConsole[LogConsole.length-1]='Log Console ' + type + ' has been deleted at '+this.myDate+'  ' +this.thetime;
             },
             error_handler => {
-              this.LogMsgConsole('Log record failed ' + this.Google_Object_Name + '  error handller is ' + error_handler);
+              console.log('Log record failed for ' + type + this.Google_Object_Name + '  error handller is ' + error_handler);
               // this.Error_Access_Server= "  object ===>   " + JSON.stringify( this.Table_User_Data)  + '   error message: ' + error_handler.message + ' error status: '+ error_handler.statusText+' name: '+ error_handler.name + ' url: '+ error_handler.url;
               // alert( 'Log record failed -- http post = ' + this.Google_Object_Name);
              } )

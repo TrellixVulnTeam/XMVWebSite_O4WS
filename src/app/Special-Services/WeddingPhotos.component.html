@@ -52,10 +52,10 @@
     <span style="margin-left:20px; font-size:6px;">&nbsp;</span>
     <span *ngFor="let tab_pages of pages_to_display; let i=index">
 
-        <span *ngIf="tab_pages===nb_current_page" class="highlight_page"  >
+        <span *ngIf="tab_pages===nb_current_page && tab_pages!==-1" class="highlight_page"  >
             {{tab_pages}} <span style="font-size:6px;">&nbsp;</span>
         </span> 
-        <span *ngIf="tab_pages!==nb_current_page" class="lowlight_page" (click)="display_page(tab_pages)">
+        <span *ngIf="tab_pages!==nb_current_page && tab_pages!==-1" class="lowlight_page" (click)="display_page(tab_pages)">
             {{tab_pages}} <span style="font-size:6px;">&nbsp;</span>
         </span>
         
@@ -80,9 +80,7 @@
 
 <h2 style="margin-left:20px;">Display a specific picture</h2>
 <br>
-<div *ngIf="first_canvas_displayed===true">
-      <span style="color:black; font-size:16px; margin-left:20px;">{{message_canvas}}</span>
-</div>
+
 <div [formGroup]="PhotoNbForm" class="position-parameters">
         <span ><label class="posParamPhoto">Number </label><input formControlName="SelectNb" type="number" class="position-field" >
   <button class="butt" id="but6" (click)="drawPhotoCanvas()">Submit</button>
@@ -90,9 +88,10 @@
 </div>
 <br>
 
-
-
-
+<div *ngIf="first_canvas_displayed===true">
+  <span style="color:blue; font-size:18px; margin-left:40px;">{{message_canvas}}</span>
+</div>
+<br>br>
 <canvas 
 #ImageCanvas 
 id='canvasElem' 
