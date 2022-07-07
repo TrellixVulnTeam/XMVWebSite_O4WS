@@ -33,6 +33,7 @@ export class WeddingPhotosComponent {
       SelectNb: new FormControl(),
       Width: new FormControl(),
       Height: new FormControl(),
+      ForceSaveLog: new FormControl(),
     });
     prevCanvasPhoto:number=0;
     initialdrawCanvas:boolean=false;
@@ -60,7 +61,9 @@ export class WeddingPhotosComponent {
     pages_to_display:Array<number>=[1,2,3,4,5,6,7,8,9,10];
 
     myConsole:Array<string>=[];
-    msgConsole:string='';
+    @Input() myLogConsole:boolean=false;
+    @Input() EventLogConsole:Array<string>=[];
+    SaveConsoleFinished:boolean=true;
 
     i:number=0;
     j:number=0;
@@ -81,7 +84,9 @@ export class WeddingPhotosComponent {
 
     myDate:string='';
     myTime=new Date();
-    thetime:number=0;
+
+
+    thetime:string='';;
     theWidthH:number=0;
     theWidthV:number=0;
     theHeightH:number=0;
@@ -130,10 +135,15 @@ SizeImage(){
 }
 
   ngOnInit(){
+    this.LogMsgConsole('Device '+navigator.userAgent);
+    console.log('ngOnInit() WeddingPhotos; buckets_all_processed is ', this.buckets_all_processed+ ' size file '+ this.WeddingPhotos.length);
     this.getScreenWidth = window.innerWidth;
     this.getScreenHeight = window.innerHeight;
-    this.myDate= this.myTime.toString().substring(8,24);
-    this.thetime=this.myTime.getTime();
+    this.device_type = navigator.userAgent;
+
+    if (this.EventLogConsole.length!==0){
+        this.saveLogConsole(this.EventLogConsole,'Event27AUG');
+    }
       
     this.SizeImage();
     this.PhotoNbForm.controls['SelectNb'].setValue(null);
@@ -162,6 +172,7 @@ goDown(event:string){
 
 
 displayPhotos(){
+  this.LogMsgConsole('DisplayPhotos buckets processed '+ this.buckets_all_processed+ ' size file '+ this.WeddingPhotos.length);
   this.j=(this.nb_current_page-1)*this.nb_photo_per_page;
   if (this.buckets_all_processed===true && this.WeddingPhotos.length!==0){
         for (this.i=0; this.i<this.nb_photo_per_page; this.i++){
@@ -184,6 +195,7 @@ displayPhotos(){
 }
 
 next_prev_page(event:any){
+  this.LogMsgConsole('DisplayPhotos; event ='+event+' current page ='+this.nb_current_page+' first_canvas_displayed='+this.first_canvas_displayed);
   if (this.nb_current_page===2 && this.first_canvas_displayed===false){
     this.waiting_function(0, this.max_i_loop, event);
   } else {this.manage_page(event);}
@@ -194,18 +206,19 @@ next_prev_page(event:any){
 waiting_function(loop:number, max_loop:number, event:any){
   const pas=2000;
   if (loop%pas === 0){
-    console.log('waiting_function ==> loop=', loop, ' max_loop=', max_loop, ' this.first_canvas_displayed=', this.first_canvas_displayed);
+    this.LogMsgConsole('waiting_function ==> loop='+loop+' max_loop='+ max_loop+ ' this.first_canvas_displayed='+ this.first_canvas_displayed);
   }
   loop++
   this.id_Animation=window.requestAnimationFrame(() => this.waiting_function(loop, max_loop, event));
   if (loop>max_loop || this.first_canvas_displayed===true){
-        console.log('waiting_function end process ==> loop=', loop, ' max_loop=', max_loop, ' this.first_canvas_displayed=', this.first_canvas_displayed);
+    this.LogMsgConsole('waiting_function end process ==> loop='+ loop+ ' max_loop='+ max_loop+ ' this.first_canvas_displayed='+ this.first_canvas_displayed);
         window.cancelAnimationFrame(this.id_Animation);
         this.manage_page(event);
       }     
 }
 
  manage_page(event:any){ 
+  this.LogMsgConsole('manage_page(event)='+ event+' nb_current_page='+ this.nb_current_page+'  length table='+this.WeddingPhotos.length );
   this.selected_photo=-1;
   this.display_download=false;
   if(event === 'prev' && this.nb_current_page > 1){
@@ -225,13 +238,18 @@ waiting_function(loop:number, max_loop:number, event:any){
       }
   }
   this.j=(this.nb_current_page-1)*this.nb_photo_per_page;
-  for (this.i=0; this.i<this.nb_photo_per_page; this.i++){
-      this.DisplayPhotos[this.i]=this.WeddingPhotos[this.j];
+  this.slow_table.splice(0,this.slow_table.length);
+  this.PhotoNumber.splice(0,this.PhotoNumber.length);
+  for (this.i=0; this.i<this.nb_photo_per_page && this.j<this.WeddingPhotos.length; this.i++){
+      //this.DisplayPhotos[this.i]=this.WeddingPhotos[this.j];
+      this.slow_table.push('');
       this.slow_table[this.i]=this.WeddingPhotos[this.j].mediaLink;
       this.j++;
+      this.PhotoNumber.push(0);
       this.PhotoNumber[this.i]=this.j;
-      
+      this.LogMsgConsole('end manage_page(event); slow_table[this.i]='+ this.slow_table[this.i]+' PhotoNumber[this.i]='+ this.PhotoNumber[this.i]+'  this.j='+this.j+'  length table='+ this.WeddingPhotos.length);
     };
+
 
 }
 
@@ -259,19 +277,17 @@ onSaveFile(event:any): void { // ===================== to be changed
   }
 
 drawPhotoCanvas(){
-  const myLoop=10000;
+  this.LogMsgConsole('drawPhotoCanvas()');
   this.initialdrawCanvas=true;
-  console.log('drawPhotoCanvas()', this.WeddingPhotos.length);
+  console.log('drawPhotoCanvas() - WeddingPhotos.length=' + this.WeddingPhotos.length+' initialdrawCanvas ='+this.initialdrawCanvas);
   this.i_loop=0;
   this.j_loop=0;
   this.wait_WeddingPhotos();
 }
 
 ManageCanvas(){
-  this.msgConsole='ManageCanvas & message is '+ this.message_canvas + ' length of table is ' + this.WeddingPhotos.length;
-  console.log(this.msgConsole);
-  this.myConsole.push('');
-  this.myConsole[this.myConsole.length-1]=this.msgConsole;
+  this.LogMsgConsole('ManageCanvas & message is '+ this.message_canvas + ' length of table is ' + this.WeddingPhotos.length);
+
  
   this.message_canvas='';
   this.prevCanvasPhoto=this.PhotoNbForm.controls['SelectNb'].value;
@@ -289,21 +305,21 @@ ManageCanvas(){
 
           this.myImage=new Image();         
 
-        setTimeout(() => {
+        //setTimeout(() => {
           this.myImage.onload = () => {
               this.change_canvas_size(this.PhotoNbForm.controls['SelectNb'].value-1);
           };
           this.myImage.src=this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink;
                   console.log(' img.src = ', this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink);
-        }, 10);
+        //}, 10);
        
           
     } else {
 
       //To be deleted when comments below are removed
-      this.stop_waiting_photo=true;
-      this.first_canvas_displayed=true;
-/**                 
+      //this.stop_waiting_photo=true;
+      //this.first_canvas_displayed=true;
+               
           console.log('draw first canvas image');
           this.myImage=new Image();
           this.stop_waiting_photo=false;
@@ -312,9 +328,9 @@ ManageCanvas(){
           this.max_j_loop=20000;
           const time = new Date();
           this.first_canvas_displayed=false;
-          setTimeout(() => {
-             this.myImage.onload = () => {
-                  console.log('==== first_canvas_displayed after', this.j_loop, ' loops');
+          //setTimeout(() => {
+          this.myImage.onload = () => {
+              this.LogMsgConsole('==== first_canvas_displayed after '+ this.j_loop+ ' loops');
                   this.stop_waiting_photo=true;
                   this.first_canvas_displayed=true;
                   this.ClearCanvas();
@@ -324,16 +340,29 @@ ManageCanvas(){
               this.i_loop++;
               this.ii=0;
               this.waiting_photo();
-              console.log('draw first canvas image -- start onLoad ===> j_loop=', this.j_loop, ' i_loop=', this.i_loop);
-              this.PhotoNbForm.controls['SelectNb'].setValue(this.initialCanvasPhoto);
-              this.myImage.src=this.WeddingPhotos[this.initialCanvasPhoto].mediaLink;
+              this.LogMsgConsole('draw first canvas image -- start onLoad ===> j_loop='+ this.j_loop+ ' i_loop='+ this.i_loop);
+              if (this.initialCanvasPhoto>=this.WeddingPhotos.length){
+                this.LogMsgConsole('initialCanvasPhoto='+this.initialCanvasPhoto+'  WeddingPhotos.length = '+this.WeddingPhotos.length);
+                if (this.WeddingPhotos.length>0) {
+                    this.PhotoNbForm.controls['SelectNb'].setValue(this.WeddingPhotos.length-1);
+                    this.myImage.src=this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value].mediaLink;
+                } else {
+                  this.LogMsgConsole('Big issue as WeddingPhotos.length = '+this.WeddingPhotos.length + '  ; access to ./assets library');
+                  this.myImage.src='./assets/Photo3.PNG';
+                  this.PhotoNbForm.controls['SelectNb'].setValue(0);
+                }
+              
+              } else {
+                  this.PhotoNbForm.controls['SelectNb'].setValue(this.initialCanvasPhoto);
+                  this.myImage.src=this.WeddingPhotos[this.initialCanvasPhoto].mediaLink;
+              }
               this.j_loop=0;
-           },1);
- */
+           //},1);
+
            this.nb_current_page=1;
 
 
-           console.log('end of the drawing');
+           this.LogMsgConsole('end of the drawing');
 
      }
          
@@ -386,6 +415,7 @@ waiting_photo(){
       if (i===0){
         this.ii++
         if (this.ii>nbPhoto){this.ii=1};
+        this.LogMsgConsole('waiting_photo() - this.j_loop='+this.j_loop+'  stop_waiting_photo='+this.stop_waiting_photo);
        
       }
       
@@ -534,28 +564,10 @@ ClearCanvas(){
 }
 
 
-saveLogConsole(){
-  this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name   + '&uploadType=media';
-  this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name + this.thetime  + '.json&uploadType=media';
-
-  this.http.post(this.HTTP_Address, this.myConsole)
-    .subscribe(res => {
-          // alert('Log record is saved ')
-          },
-          error_handler => {
-            console.log('Log record failed ' + this.Google_Object_Name + '  error handller is ' + error_handler);
-            // this.Error_Access_Server= "  object ===>   " + JSON.stringify( this.Table_User_Data)  + '   error message: ' + error_handler.message + ' error status: '+ error_handler.statusText+' name: '+ error_handler.name + ' url: '+ error_handler.url;
-            // alert( 'Log record failed -- http post = ' + this.Google_Object_Name);
-           } )
-}
-
-
-
 
 wait_WeddingPhotos(){
-  console.log('start wait_WeddingPhotos', this.WeddingPhotos.length,  '  j_loop ', this.j_loop);
-
-  const max_i_loop=90000;
+  this.LogMsgConsole('start wait_WeddingPhotos'+this.WeddingPhotos.length+ '  j_loop '+ this.j_loop+ '  i_loop '+ this.i_loop);
+  const max_i_loop=40000;
   this.i_loop++
   this.j_loop++
   if (this.WeddingPhotos.length===0){
@@ -567,6 +579,7 @@ wait_WeddingPhotos(){
     if (this.WeddingPhotos.length % this.nb_photo_per_page){
       this.nb_total_page++
     }
+    this.LogMsgConsole('end wait_WeddingPhotos; call ManageCanvas() and then  window.cancelAnimationFrame(this.id_Animation)');
     this.ManageCanvas();
     window.cancelAnimationFrame(this.id_Animation);
      
@@ -576,12 +589,72 @@ wait_WeddingPhotos(){
 
 
 ngOnChanges(changes: SimpleChanges) {   
-  // console.log('onChanges ', changes, 'buckets_all_processed=', this.buckets_all_processed, '  length weddingPhotos=', this.WeddingPhotos.length);
+  this.LogMsgConsole('onChanges '+changes+ 'buckets_all_processed='+ this.buckets_all_processed+'  length weddingPhotos='+ this.WeddingPhotos.length);
   if (this.WeddingPhotos.length!==0 ){
     setTimeout(() => {
+      this.LogMsgConsole('onChanges call this.displayPhotos() after a timeout of 1 second');
         this.displayPhotos();
     }, 1000); // 1 second 
   }
+}
+
+ForceSaveLog(){
+
+  if (this.PhotoNbForm.controls['ForceSaveLog'].value==='y'){
+    this.PhotoNbForm.controls['ForceSaveLog'].setValue('n');
+    this.LogMsgConsole('ForceSaveLog()');
+    this.saveLogConsole(this.myConsole,'WeddingPhotos');
+  }
+}
+
+LogMsgConsole(msg:string){
+  console.log(msg);
+  this.myTime=new Date();
+  this.myDate= this.myTime.toString().substring(8,24);
+  this.thetime=this.myTime.getTime().toString();
+  let i = 0;
+  if (this.myLogConsole===true){
+          this.myConsole.push('');
+          i = this.myConsole.length;
+          this.myConsole[i-1]='<==> '+this.thetime.substr(0,16) + ' ' +msg;
+
+  }
+  if (i>80 && this.SaveConsoleFinished===true){
+    this.saveLogConsole(this.myConsole, 'WeddingPhotos');
+  }
+     
+
+}
+
+saveLogConsole(LogConsole:any, type:string){
+
+  this.myTime=new Date();
+  this.myDate= this.myTime.toString().substring(8,24);
+  this.thetime=this.myTime.getTime().toString();
+  const consoleLength=LogConsole.length;
+  this.SaveConsoleFinished=false;
+  // this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name   + '&uploadType=media';
+  this.HTTP_Address=this.Google_Bucket_Access_RootPOST +  "logconsole/o?name="  + this.thetime.substr(0,18)+ type + '.json&uploadType=media';
+
+  this.http.post(this.HTTP_Address, LogConsole)
+    .subscribe(res => {
+            this.SaveConsoleFinished=true;
+            if (LogConsole.length===consoleLength){
+              LogConsole.splice(0,LogConsole.length);
+              }
+            else {
+              for (let i=consoleLength; i>0; i--){
+                LogConsole.splice(i-1,1);
+              }
+            }
+            LogConsole.push('');
+            this.myConsole[LogConsole.length-1]='Log Console ' + type + ' has been deleted at '+this.myDate+'  ' +this.thetime;
+          },
+          error_handler => {
+            console.log('Log record failed for ' + type + this.Google_Object_Name + '  error handller is ' + error_handler);
+            // this.Error_Access_Server= "  object ===>   " + JSON.stringify( this.Table_User_Data)  + '   error message: ' + error_handler.message + ' error status: '+ error_handler.statusText+' name: '+ error_handler.name + ' url: '+ error_handler.url;
+            // alert( 'Log record failed -- http post = ' + this.Google_Object_Name);
+           } )
 }
 
 

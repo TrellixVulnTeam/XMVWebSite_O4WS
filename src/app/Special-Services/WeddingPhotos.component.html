@@ -63,7 +63,20 @@
     <button class='butt' id="but4" (click)="next_prev_page('next')" >Next page</button>
 
 
+<div *ngIf="myLogConsole===true">
+  <h2 style="margin-left:20px;">Log console is activated</h2>
+  <h3 style="margin-left:20px;">number of non archived msgs = {{myConsole.length+1}}</h3>
+  <div [formGroup]="PhotoNbForm" class="position-parameters">
+    <span ><label class="posParamPhoto">Force save console log </label>
+      <select id="log"  class="position-field"  formControlName="ForceSaveLog">
+        <option  value="y">yes</option>
+        <option selected value="n">no</option>
+      </select>  
+      <button class="butt" id="but7" (click)="ForceSaveLog()">Submit</button>
+    </span>
+</div>
 
+</div>
 
 <h2 style="margin-left:20px;">Display a specific picture</h2>
 <br>

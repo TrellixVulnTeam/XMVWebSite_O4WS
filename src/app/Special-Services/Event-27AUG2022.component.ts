@@ -73,6 +73,10 @@ export class Event27AugComponent {
 
     @Output() returnDATA= new EventEmitter<any>();
 
+    myLogConsole:boolean=false;
+    myConsole:Array<string>=[];
+    SaveConsoleFinished:boolean=true;
+
     pagePhotos:boolean=false;
 
     WeddingPhotos:Array<StructurePhotos>=[];
@@ -149,8 +153,8 @@ export class Event27AugComponent {
 
     i_loop:number=0;
     j_loop:number=0;
-    max_i_loop:number=30000;
-    max_j_loop:number=30000;
+    max_i_loop:number=20000;
+    max_j_loop:number=20000;
     id_Animation:number=0;
     i:number=0;
     j:number=0;
@@ -212,7 +216,7 @@ onWindowResize() {
 
 
   ngOnInit(){
-    console.log('ngOnInit()');
+      this.LogMsgConsole('Device '+navigator.userAgent + ' ngOnInit() Event27AUG')
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
 
@@ -268,25 +272,41 @@ onWindowResize() {
               this.scroller.scrollToAnchor('targetTOP');
           }
         // this.patchMetaData();
-        this.max_i_loop=30000;
-        for (this.i_Bucket=1; this.i_Bucket<=this.Max_Nb_Bucket_Wedding; this.i_Bucket++){
-          this.ref_Bucket_List_Info=new Bucket_List_Info;
-          this.Bucket_Info_Array.push(this.ref_Bucket_List_Info);
-          const bucket_str_nb=this.i_Bucket-1;
-          if (this.i_Bucket<10){
-              this.bucket_wedding_name='xavier-monica-mariage-0'+bucket_str_nb.toString();
-          } else { 
-              this.bucket_wedding_name='xavier-monica-mariage-'+bucket_str_nb.toString()
-            };
-          this.bucket_list_returned.push('0');
-          this.bucket_list_returned[this.i_Bucket-1]='0';
-          this.array_i_loop.push(0);
-          this.array_i_loop[this.i_Bucket-1]=0;
-          this.getListPhotos(this.bucket_wedding_name, this.i_Bucket);    
-        }
+        if (this.identification.UserId!=='XMVanstaen'){
+
+            if (this.identification.UserId==='AFGazikian'){this.myLogConsole=true;}
+
+            for (this.i_Bucket=1; this.i_Bucket<=this.Max_Nb_Bucket_Wedding; this.i_Bucket++){
+              this.ref_Bucket_List_Info=new Bucket_List_Info;
+              this.Bucket_Info_Array.push(this.ref_Bucket_List_Info);
+              const bucket_str_nb=this.i_Bucket-1;
+              if (this.i_Bucket<10){
+                  this.bucket_wedding_name='xavier-monica-mariage-0'+bucket_str_nb.toString();
+              } else { 
+                  this.bucket_wedding_name='xavier-monica-mariage-'+bucket_str_nb.toString()
+                };
+              this.bucket_list_returned.push('0');
+              this.bucket_list_returned[this.i_Bucket-1]='0';
+              this.array_i_loop.push(0);
+              this.array_i_loop[this.i_Bucket-1]=0;
+              this.getListPhotos(this.bucket_wedding_name, this.i_Bucket); 
+            }
+          } else {
+              this.myLogConsole=true;
+              this.i_Bucket=1;
+              this.ref_Bucket_List_Info=new Bucket_List_Info;
+              this.Bucket_Info_Array.push(this.ref_Bucket_List_Info);
+              this.bucket_wedding_name='xavier-monica-mariage-04';
+              this.bucket_list_returned.push('0');
+              this.bucket_list_returned[this.i_Bucket-1]='0';
+              this.array_i_loop.push(0);
+              this.array_i_loop[this.i_Bucket-1]=0;
+              this.getListPhotos(this.bucket_wedding_name, this.i_Bucket);
+              this.Max_Nb_Bucket_Wedding=1;
+          }
         // want to be sure that all buckets have been accessed
         this.i_Bucket=1;
-        console.log('before calling access_all_buckets() ',this.buckets_all_processed);
+        this.LogMsgConsole('before calling access_all_buckets() '+this.buckets_all_processed);
         this.access_all_buckets();
   }    
 
@@ -294,20 +314,20 @@ onWindowResize() {
   access_all_buckets(){
 
     if (this.array_i_loop[this.i_Bucket-1]%20===0){
-      console.log('access bucket '+this.bucket_wedding_name + ' i_Bucket='+ this.i_Bucket+ ' + i_loop=' + this.array_i_loop[this.i_Bucket-1]+ '  bucket_list_returned'+ this.bucket_list_returned[this.i_Bucket-1]);
+      this.LogMsgConsole('access bucket '+this.bucket_wedding_name + ' i_Bucket='+ this.i_Bucket+ ' + i_loop=' + this.array_i_loop[this.i_Bucket-1]+ '  bucket_list_returned'+ this.bucket_list_returned[this.i_Bucket-1]);
     }
     this.id_Animation=window.requestAnimationFrame(() => this. access_all_buckets());
     this.array_i_loop[this.i_Bucket-1]++;
     // check how to manage error_server
     if (this.array_i_loop[this.i_Bucket-1]>this.max_i_loop || this.bucket_list_returned[this.i_Bucket-1]==='1'){
        
-        console.log('===== bucket# ', this.i_Bucket, 'processed; this.i_loop=', this.array_i_loop[this.i_Bucket-1], 'length global table=', 
-                  this.WeddingPhotos.length, 'length specific table=', this.Bucket_Info_Array[this.i_Bucket-1].items.length);
+      this.LogMsgConsole('===== bucket# '+ this.i_Bucket+ 'processed; this.i_loop='+ this.array_i_loop[this.i_Bucket-1]+ 'length global table='+ 
+                  this.WeddingPhotos.length+ 'length specific table='+ this.Bucket_Info_Array[this.i_Bucket-1].items.length);
         this.i_Bucket++
-        console.log('===== bucket - process next bucket which is ', this.i_Bucket);
+        this.LogMsgConsole('===== bucket - process next bucket which is '+ this.i_Bucket);
         if (this.i_Bucket===this.Max_Nb_Bucket_Wedding+1){
             
-            console.log('===== bucket - all buckets processed; fill-in now WeddimgPhotos ');
+          this.LogMsgConsole('===== bucket - all buckets processed; fill-in now WeddimgPhotos ');
             this.j=-1;
             for (this.i_Bucket=1; this.i_Bucket<=this.Max_Nb_Bucket_Wedding; this.i_Bucket++){
         
@@ -337,7 +357,7 @@ onWindowResize() {
                 
             }
             this.buckets_all_processed=true;
-            console.log('this.buckets_all_processed', this.buckets_all_processed);
+            this.LogMsgConsole('this.buckets_all_processed'+ this.buckets_all_processed);
             window.cancelAnimationFrame(this.id_Animation);
           }
     }
@@ -468,7 +488,7 @@ ResetAccess(){
   }  
 
 ReadRecord(){
-  console.log('ReadRecord()');
+  this.LogMsgConsole('ReadRecord()');
   if (this.myForm.controls['readRecord'].value<=this.Table_User_Data.length){
     // read the item
         this.i=this.myForm.controls['readRecord'].value;
@@ -648,14 +668,14 @@ ConvertComment(){
     if (this.invite===true && this.init===false){
       this.HTTP_AddressMetaData=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Table_User_Data[this.identification.id].UserId  +  "?cacheControl=max-age=0, no-store, private";
       this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Table_User_Data[this.identification.id].UserId ;
-      console.log('SaveRecord(), update individual object ', this.Table_User_Data[this.identification.id].UserId);
+      this.LogMsgConsole('SaveRecord(), update individual object '+ this.Table_User_Data[this.identification.id].UserId);
       this.http.post(this.HTTP_Address,  this.Table_User_Data[this.identification.id] , {'headers':this.myHeader} )
       .subscribe(res => {
-           console.log('Individual Record is updated: ', this.Table_User_Data[this.identification.id].UserId );
+        this.LogMsgConsole('Individual Record is updated: '+ this.Table_User_Data[this.identification.id].UserId );
 
             },
             error_handler => {
-              console.log('Individual Record is not updated: ', this.Table_User_Data[this.identification.id].UserId );
+              this.LogMsgConsole('Individual Record is not updated: '+ this.Table_User_Data[this.identification.id].UserId );
 
             } 
           )
@@ -664,13 +684,13 @@ ConvertComment(){
       // ****** get content of object *******
     
       this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name   + "?alt=media";     
-      console.log('SaveRecord(), read object ', this.Google_Object_Name );
+      this.LogMsgConsole('SaveRecord(), read object '+ this.Google_Object_Name );
       this.http.get(this.HTTP_Address, {'headers':this.myHeader} )
                   .subscribe(data => {
                   this.bucket_data=JSON.stringify(data);
                   var obj = JSON.parse(this.bucket_data);
                   this.Error_Access_Server='';
-                  console.log('SaveRecord(),  data received for object ', this.Google_Object_Name );
+                  this.LogMsgConsole('SaveRecord(),  data received for object '+ this.Google_Object_Name );
 
                   if (this.invite===false){
                       // To be tested
@@ -722,17 +742,17 @@ ConvertComment(){
                         this.message='record to be saved';
                         this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name   + '&uploadType=media';
                         this.HTTP_AddressMetaData=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name  + '&uploadType=media' +  "?cache-control=max-age=0, no-store, private";    
-                        console.log('SaveRecord() - object Event-27AUG2022 to be saved');
+                        this.LogMsgConsole('SaveRecord() - object Event-27AUG2022 to be saved');
                         this.http.post(this.HTTP_Address,  this.Table_User_Data , {'headers':this.myHeader} )
                         .subscribe(res => {
                               this.returnDATA.emit(this.Table_User_Data);
                               this.message='Record is updated / Mise à jour réussie';
-                              console.log('SaveRecord() ; data received ');
+                              this.LogMsgConsole('SaveRecord() ; data received ');
 
                               },
                               error_handler => {
                                 this.message='error to save save record';
-                                console.log('SaveRecord() ; data not received - error');
+                                this.LogMsgConsole('SaveRecord() ; data not received - error');
                                 this.Error_Access_Server= "  object ===>   " + JSON.stringify( this.Table_User_Data)  + '   error message: ' + error_handler.message + ' error status: '+ error_handler.statusText+' name: '+ error_handler.name + ' url: '+ error_handler.url;
                                 // alert(this.Error_Access_Server_Post + ' --- ' +  this.Sent_Message + ' -- http post = ' + this.HTTP_AddressPOST);
                               } 
@@ -756,7 +776,7 @@ ConvertComment(){
   }
 
   AccessRecord(id:number){
-    console.log('AccessRecord(id:number)');
+    this.LogMsgConsole('AccessRecord(id:number)');
     this.message='';
     this.myForm.controls['readRecord'].setValue(id);
     this.ReadRecord();
@@ -780,7 +800,7 @@ ConvertComment(){
   }
 
 displayWedPhotos(){
-  console.log('displayWedPhotos() in Event-27Aug');
+  this.LogMsgConsole('displayWedPhotos() in Event-27Aug');
   const pas=20;
   this.pagePhotos=true;
   /***
@@ -799,16 +819,16 @@ displayWedPhotos(){
 
   getListPhotos(BucketPhotos:string, bucket_nb:number){
     // get list of objects in bucket
-    console.log('getListPhotos()');
+    this.LogMsgConsole('getListPhotos() from '+BucketPhotos+'  nb='+bucket_nb);
     this.bucket_list_returned[bucket_nb-1]='0';
     const HTTP_Address='https://storage.googleapis.com/storage/v1/b/' + BucketPhotos + "/o";
     this.http.get<any>(HTTP_Address )
           .subscribe(data => {
                 this.bucket_list_returned[bucket_nb-1]='1';
-                console.log('getListPhotos() - received data from BucketPhotos ',BucketPhotos);
-                console.log(data);
+                this.LogMsgConsole('getListPhotos() - received data from BucketPhotos '+BucketPhotos);
+                this.LogMsgConsole(data);
                 this.Bucket_Info_Array[bucket_nb-1]=data;
-                console.log('getListPhotos() - Bucket_Info_Array.items.length =  ',this.Bucket_Info_Array[bucket_nb-1].items.length);
+                this.LogMsgConsole('getListPhotos() - Bucket_Info_Array.items.length =  '+this.Bucket_Info_Array[bucket_nb-1].items.length);
               },   
               error_handler => {
                 this.Error_Access_Server='getListPhoto : error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
@@ -821,6 +841,56 @@ displayWedPhotos(){
   }
 
 
+  LogMsgConsole(msg:string){
+    console.log(msg);
+    this.myTime=new Date();
+    this.myDate= this.myTime.toString().substring(8,24);
+    this.thetime=this.myDate+this.myTime.getTime();
+    let i = 0;
+    if (this.myLogConsole===true){
+        this.myConsole.push('');
+        i = this.myConsole.length;
+        this.myConsole[i-1]='<==> '+ this.thetime + ' ' +msg;
+    }
+    if (i>30 && this.SaveConsoleFinished===true){
+        this.saveLogConsole();
+    }
+       
+  
+  }
+  
+  saveLogConsole(){
+    this.myTime=new Date();
+    this.myDate= this.myTime.toString().substring(8,24);
+    this.thetime=this.myDate+this.myTime.getTime();
+    const consoleLength=this.myConsole.length;
+    this.SaveConsoleFinished=false;
+    // this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name   + '&uploadType=media';
+    this.HTTP_Address=this.Google_Bucket_Access_RootPOST +  "logconsole/o?name=WeddingPhotos" + this.thetime  + '.json&uploadType=media';
+  
+    this.http.post(this.HTTP_Address, this.myConsole)
+      .subscribe(res => {
+              this.SaveConsoleFinished=true;
+              if (this.myConsole.length===consoleLength){
+                    this.myConsole.splice(0,this.myConsole.length);
+                }
+              else {
+                for (let i=consoleLength; i>0; i--){
+                  this.myConsole.splice(i-1,1);
+                }
+              }
+              this.myConsole.push('');
+              this.myConsole[this.myConsole.length-1]='this.myConsole has been deleted at '+this.myDate+'  ' +this.thetime;
+            },
+            error_handler => {
+              this.LogMsgConsole('Log record failed ' + this.Google_Object_Name + '  error handller is ' + error_handler);
+              // this.Error_Access_Server= "  object ===>   " + JSON.stringify( this.Table_User_Data)  + '   error message: ' + error_handler.message + ' error status: '+ error_handler.statusText+' name: '+ error_handler.name + ' url: '+ error_handler.url;
+              // alert( 'Log record failed -- http post = ' + this.Google_Object_Name);
+             } )
+  }
+
+
+  //===================================
   patchMetaData(){
    
     // NOT USED
@@ -834,7 +904,7 @@ displayWedPhotos(){
     this.http.post(this.HTTP_Address, this.Table_User_Data, {params: {'cacheControl':'max-age=0, no-store, private'}} )
           .subscribe((data ) => {
                
-               console.log('patch metadata: ',data);
+            this.LogMsgConsole('patch metadata: '+data);
 
                 },
                 error_handler => {
