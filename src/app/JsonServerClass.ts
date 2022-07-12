@@ -68,4 +68,23 @@ export class StructurePhotos{
   selfLink:string='';
   photo=new Image();
   vertical:boolean=false;
+  isdiplayed:boolean=false;
  }
+
+ export class  BucketExchange{
+  bucket_wedding_name:Array<string>=[];
+  bucket_list_returned:Array<string>=[];
+  Max_Nb_Bucket_Wedding:number=6;
+  i_Bucket:number=0;
+  array_i_loop:Array<number>=[];
+  bucket_is_processed:boolean=false;
+  GetOneBucketOnly:boolean=true;
+  Nb_Buckets_processed:number=0;
+}
+
+export class MyConfig{
+  Max_Nb_Bucket_Wedding:number=1;
+  Bucket:string="xavier-monica-mariage";
+  userId:string= "XMVanstaen";
+  log:boolean=false;
+}

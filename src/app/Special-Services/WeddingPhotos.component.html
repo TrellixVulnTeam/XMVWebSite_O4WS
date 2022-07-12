@@ -24,35 +24,43 @@
 <br><br>
 
     <div *ngFor="let slowDisplay of slow_table let i=index" style="margin-left:20px;">
-      <span *ngIf="slowDisplay!==''">
-        <span *ngIf="PhotoNumber[i]===1 || first_canvas_displayed===true">
+      <span *ngIf="slowDisplay!=='' && PhotoToDisplay[i].wait===true">
+
               <span style="width:80%; display:block; font-size:14px; color:blue">  {{WeddingPhotos[PhotoNumber[i]-1].name}}
                 <br>Photo nb:  <label style="color:red; font-size:18px;"> {{PhotoNumber[i]}} </label></span>
               
               <span *ngIf="WeddingPhotos[PhotoNumber[i]-1].vertical===false && slowDisplay!=='' ">
-                    <img  (mouseover)="onZoomPhoto(i)" class="photo" [ngStyle]="{'width.px':theWidthH, 'height.px':theHeightH}" 
-                        src={{slowDisplay}} onload="Redisplay('loaded')" onerror="Redisplay('failed')">
+                    <img  (mouseover)="onZoomPhoto(i)" (load)='NextImage(i)' class="photo" [ngStyle]="{'width.px':theWidthH, 'height.px':theHeightH}" 
+                        src={{slowDisplay}} >
+                        <!-- onload="Redisplay('loaded')" onerror="Redisplay('failed')"-->
               </span>
               <span *ngIf="WeddingPhotos[PhotoNumber[i]-1].vertical===true && slowDisplay!==''">
-                <img  (mouseover)="onZoomPhoto(i)" class="photoVertical"  [ngStyle]="{'width.px':theWidthV, 'height.px':theHeightV}" src={{slowDisplay}}>
+                <img  (mouseover)="onZoomPhoto(i)" class="photoVertical" (load)='NextImage(i)' [ngStyle]="{'width.px':theWidthV, 'height.px':theHeightV}" src={{slowDisplay}}>
               </span>
-              <button  class="GOdownload"><span  class="material-symbols-outlined myIcon" (click)="onSaveFile(slowDisplay)">
+              <button  class="GOdownload"><span  class="material-symbols-outlined myIcon" (click)="onDownloadFile(slowDisplay)">
                             download
                       </span>
               </button> 
               <br><br>
-     
+
 
               <br><br>  
           </span>
-      </span>
+
     </div>
 
  <br><br>
- 
 
- <span *ngIf="first_canvas_displayed===true">
-    <button class='butt' id="but3" (click)="next_prev_page('prev')" >Prev page</button>
+
+  <span *ngIf="imagesToDisplay>0" style="margin-left:20px; color:blue; font-size:18px; font-family: ROBOTO;">
+   <h2> Still {{imagesToDisplay}} photo(s) to display</h2>
+  </span>
+
+
+ <span *ngIf="DisplayPageRange===true">
+    <span *ngIf="nb_current_page>1">
+        <button class='butt' id="but3" (click)="next_prev_page('prev')" >Prev page</button>
+    </span>
     <span style="margin-left:20px; font-size:6px;">&nbsp;</span>
     <span *ngFor="let tab_pages of pages_to_display; let i=index">
 
@@ -64,7 +72,9 @@
         </span>
         
     </span>
-    <button class='butt' id="but4" (click)="next_prev_page('next')" >Next page</button>
+    <span *ngIf="nb_current_page!==nb_total_page || this.bucketMgt.Max_Nb_Bucket_Wedding>=this.bucketMgt.Nb_Buckets_processed">
+        <button class='butt' id="but4" (click)="next_prev_page('next')" >Next page</button>
+    </span>
   </span>
 
 <div *ngIf="myLogConsole===true">
@@ -82,28 +92,30 @@
 
 </div>
 
-<h2 style="margin-left:20px;">Display a specific picture</h2>
-<br>
+<div *ngIf="process_display_canvas===true">
+      <h2 style="margin-left:20px;">Display a specific picture</h2>
+      <br>
 
-<div [formGroup]="PhotoNbForm" class="position-parameters">
-        <span ><label class="posParamPhoto">Number </label><input formControlName="SelectNb" type="number" class="position-field" >
-  <button class="butt" id="but6" (click)="drawPhotoCanvas()">Submit</button>
-</span>
-</div>
-<br>
+      <div [formGroup]="PhotoNbForm" class="position-parameters">
+              <span ><label class="posParamPhoto">Number </label><input formControlName="SelectNb" type="number" class="position-field" >
+        <button class="butt" id="but6" (click)="drawPhotoCanvas()">Submit</button>
+      </span>
+      </div>
+      <br>
 
-<div *ngIf="first_canvas_displayed===true">
-  <span style="color:blue; font-size:18px; margin-left:40px;">{{message_canvas}}</span>
+      <div *ngIf="first_canvas_displayed===true">
+        <span style="color:blue; font-size:18px; margin-left:40px;">{{message_canvas}}</span>
+      </div>
+      <br>br>
+      <canvas 
+      #ImageCanvas 
+      id='canvasElem' 
+      class="position" 
+      width="550" 
+      height="600" 
+      >
+      </canvas>
 </div>
-<br>br>
-<canvas 
-#ImageCanvas 
-id='canvasElem' 
-class="position" 
-width="550" 
-height="600" 
->
-</canvas>
 <br><br>
 
 </body>

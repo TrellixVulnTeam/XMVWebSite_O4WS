@@ -9,7 +9,8 @@ import { EventAug } from '../JsonServerClass';
 import { encrypt, decrypt} from '../EncryptDecryptServices';
 import {Bucket_List_Info} from '../JsonServerClass';
 import { StructurePhotos } from '../JsonServerClass';
-
+import { BucketExchange } from '../JsonServerClass';
+import { MyConfig } from '../JsonServerClass';
 @Component({
   selector: 'app-Event-27AUG2022',
   templateUrl: './Event-27AUG2022.component.html',
@@ -29,6 +30,8 @@ export class Event27AugComponent {
       Width: new FormControl(),
       Height: new FormControl(),
     });
+
+    @Input() ConfigXMV:Array<MyConfig>=[];
 
     myHeader=new HttpHeaders();
     isDeleted:boolean=false;
@@ -139,17 +142,16 @@ export class Event27AugComponent {
     Crypto_Key:number=2;
 
     // ACCESS TO GOOGLE STORAGE
-    Server_Name:string='Google'; // "Google" or "MyJson"
+  
     Google_Bucket_Access_Root:string='https://storage.googleapis.com/storage/v1/b/';
     Google_Bucket_Access_RootPOST:string='https://storage.googleapis.com/upload/storage/v1/b/';
-    //Google_Bucket_Name:string='my-db-json'; // if "MyJson"
+  
     Google_Bucket_Name:string='manage-login'; 
     Google_Object_Name:string='';
    
-    bucket_wedding_name:string='';
-    bucket_list_returned:Array<string>=[];
-    array_i_loop:Array<number>=[];
-    buckets_all_processed:boolean=false;
+    bucketMgt=new BucketExchange;
+    nextBucketOnChange:number=0;
+
 
     i_loop:number=0;
     j_loop:number=0;
@@ -158,8 +160,8 @@ export class Event27AugComponent {
     id_Animation:number=0;
     i:number=0;
     j:number=0;
-    i_Bucket:number=0;
-    Max_Nb_Bucket_Wedding:number=6;
+   
+    
 
     Bucket_Info_Array:Array<Bucket_List_Info>=[];
     ref_Bucket_List_Info=new Bucket_List_Info;
@@ -216,7 +218,10 @@ onWindowResize() {
 
 
   ngOnInit(){
-      this.LogMsgConsole('Device ' + navigator.userAgent + ' ngOnInit() Event27AUG')
+      this.LogMsgConsole('ngOnInit Event27AUG2022 ===== Device ' + navigator.userAgent + '======');
+
+  
+
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
 
@@ -231,6 +236,7 @@ onWindowResize() {
       // by default language is French
       this.LanguageLabels=this.EnglishLabels;
       this.yourLanguage='UK';
+      this.bucketMgt.Nb_Buckets_processed=0;
 
       this.myHeader=new HttpHeaders({
         'content-type': 'application/json',
@@ -271,97 +277,162 @@ onWindowResize() {
         if (this.invite===false){
               this.scroller.scrollToAnchor('targetTOP');
           }
-        // this.patchMetaData();
-        if (this.identification.UserId!=='XMVanstaen'){
 
-            if (this.identification.UserId==='AFGazikian'){this.myLogConsole=true;}
+        // INITIALISATION
+        this.bucketMgt.bucket_is_processed=false;
+        this.bucketMgt.GetOneBucketOnly=true;
+        let SpecialBucket='';
+        
+        for (this.i=0; this.i<this.ConfigXMV.length && this.identification.UserId!==this.ConfigXMV[this.i].userId; this.i++){}
 
-            for (this.i_Bucket=1; this.i_Bucket<=this.Max_Nb_Bucket_Wedding; this.i_Bucket++){
-              this.ref_Bucket_List_Info=new Bucket_List_Info;
-              this.Bucket_Info_Array.push(this.ref_Bucket_List_Info);
-              const bucket_str_nb=this.i_Bucket-1;
-              if (this.i_Bucket<10){
-                  this.bucket_wedding_name='xavier-monica-mariage-0'+bucket_str_nb.toString();
-              } else { 
-                  this.bucket_wedding_name='xavier-monica-mariage-'+bucket_str_nb.toString()
-                };
-              this.bucket_list_returned.push('0');
-              this.bucket_list_returned[this.i_Bucket-1]='0';
-              this.array_i_loop.push(0);
-              this.array_i_loop[this.i_Bucket-1]=0;
-              this.getListPhotos(this.bucket_wedding_name, this.i_Bucket); 
-            }
+        if (this.i<this.ConfigXMV.length && this.identification.UserId===this.ConfigXMV[this.i].userId){
+              this.bucketMgt.Max_Nb_Bucket_Wedding=this.ConfigXMV[this.i].Max_Nb_Bucket_Wedding;
+              this.myLogConsole=this.ConfigXMV[this.i].log;
+              SpecialBucket=this.ConfigXMV[this.i].Bucket;
+          } else{
+            this.bucketMgt.Max_Nb_Bucket_Wedding=6;
+            this.myLogConsole=false;
+        }
+        // Initialise the buckets
+        for (this.bucketMgt.i_Bucket=1; this.bucketMgt.i_Bucket<=this.bucketMgt.Max_Nb_Bucket_Wedding; this.bucketMgt.i_Bucket++){
+          this.ref_Bucket_List_Info=new Bucket_List_Info;
+          this.Bucket_Info_Array.push(this.ref_Bucket_List_Info);
+          const bucket_str_nb=this.bucketMgt.i_Bucket-1;
+          this.bucketMgt.bucket_wedding_name.push('');
+          if (this.bucketMgt.i_Bucket<10){
+              this.bucketMgt.bucket_wedding_name[this.bucketMgt.i_Bucket-1]='xavier-monica-mariage-0'+bucket_str_nb.toString();
+          } else { 
+              this.bucketMgt.bucket_wedding_name[this.bucketMgt.i_Bucket-1]='xavier-monica-mariage-'+bucket_str_nb.toString()
+            };
+          if (SpecialBucket!=='' && this.bucketMgt.Max_Nb_Bucket_Wedding===1){
+                  this.bucketMgt.bucket_wedding_name[0]=SpecialBucket;
+            };
+          this.bucketMgt.bucket_list_returned.push('0');
+          this.bucketMgt.bucket_list_returned[this.bucketMgt.i_Bucket-1]='0';
+          this.bucketMgt.array_i_loop.push(0);
+          this.bucketMgt.array_i_loop[this.bucketMgt.i_Bucket-1]=0;
+          // TO BE USED WHEN WANT TO RETRIEVE ALL BUCKETS AT ONCE
+          if (this.bucketMgt.GetOneBucketOnly===true){
+            if (this.bucketMgt.i_Bucket===1){
+                  this.getListPhotos(this.bucketMgt.bucket_wedding_name[this.bucketMgt.i_Bucket-1], this.bucketMgt.i_Bucket);
+               }
           } else {
-              this.myLogConsole=true;
-              this.i_Bucket=1;
-              this.ref_Bucket_List_Info=new Bucket_List_Info;
-              this.Bucket_Info_Array.push(this.ref_Bucket_List_Info);
-              this.bucket_wedding_name='xavier-monica-mariage-04';
-              this.bucket_list_returned.push('0');
-              this.bucket_list_returned[this.i_Bucket-1]='0';
-              this.array_i_loop.push(0);
-              this.array_i_loop[this.i_Bucket-1]=0;
-              this.getListPhotos(this.bucket_wedding_name, this.i_Bucket);
-              this.Max_Nb_Bucket_Wedding=1;
-          }
+          //if (this.bucketMgt.GetOneBucketOnly===true){
+                  this.getListPhotos(this.bucketMgt.bucket_wedding_name[this.bucketMgt.i_Bucket-1], this.bucketMgt.i_Bucket); 
+            }
+          
+        }
+      
         // want to be sure that all buckets have been accessed
-        this.i_Bucket=1;
-        this.LogMsgConsole('before calling access_all_buckets() '+this.buckets_all_processed);
+        this.bucketMgt.i_Bucket=1;
+        this.LogMsgConsole('before calling access_one_bucket - this.bucketMgt.GetOneBucketOnly is set to '+this.bucketMgt.GetOneBucketOnly);
+
+        // TO BE USED WHEN WANT TO RETRIEVE ALL BUCKETS AT ONCE
+        // this.LogMsgConsole('before calling access_all_buckets() '+this.bucketMgt.bucket_is_processed);
+        // *** this.bucketMgt.GetOneBucketOnly=false;
         this.access_all_buckets();
   }    
 
 
   access_all_buckets(){
-
-    if (this.array_i_loop[this.i_Bucket-1]%20===0){
-      this.LogMsgConsole('access bucket '+this.bucket_wedding_name + ' i_Bucket='+ this.i_Bucket+ ' + i_loop=' + this.array_i_loop[this.i_Bucket-1]+ '  bucket_list_returned'+ this.bucket_list_returned[this.i_Bucket-1]);
+// HOW TO FORCE TO THE STORAGE OF THE RIGHT BUCKET AT THE END OF THE TABLE
+    if (this.bucketMgt.array_i_loop[this.bucketMgt.i_Bucket-1]%20===0){
+      this.LogMsgConsole('access bucket '+this.bucketMgt.bucket_wedding_name[this.bucketMgt.i_Bucket-1] + ' bucketMgt.i_Bucket='+ this.bucketMgt.i_Bucket+ ' + i_loop=' + this.bucketMgt.array_i_loop[this.bucketMgt.i_Bucket-1]+ '  bucketMgt.bucket_list_returned'+ this.bucketMgt.bucket_list_returned[this.bucketMgt.i_Bucket-1]);
     }
     this.id_Animation=window.requestAnimationFrame(() => this. access_all_buckets());
-    this.array_i_loop[this.i_Bucket-1]++;
+    this.bucketMgt.array_i_loop[this.bucketMgt.i_Bucket-1]++;
     // check how to manage error_server
-    if (this.array_i_loop[this.i_Bucket-1]>this.max_i_loop || this.bucket_list_returned[this.i_Bucket-1]==='1'){
+    if (this.bucketMgt.array_i_loop[this.bucketMgt.i_Bucket-1]>this.max_i_loop || this.bucketMgt.bucket_list_returned[this.bucketMgt.i_Bucket-1]==='1'){
        
-      this.LogMsgConsole('===== bucket# '+ this.i_Bucket+ 'processed; this.i_loop='+ this.array_i_loop[this.i_Bucket-1]+ 'length global table='+ 
-                  this.WeddingPhotos.length+ 'length specific table='+ this.Bucket_Info_Array[this.i_Bucket-1].items.length);
-        this.i_Bucket++
-        this.LogMsgConsole('===== bucket - process next bucket which is '+ this.i_Bucket);
-        if (this.i_Bucket===this.Max_Nb_Bucket_Wedding+1){
+      // this.LogMsgConsole('===== bucket# '+ this.bucketMgt.i_Bucket+ 'processed; this.i_loop='+ this.bucketMgt.array_i_loop[this.bucketMgt.i_Bucket-1]+ 'length global table='+ this.WeddingPhotos.length+ 'length specific table='+ this.Bucket_Info_Array[this.bucketMgt.i_Bucket-1].items.length);
+      
+                  // check for next bucket only if process all buckets at once
+      if (this.bucketMgt.GetOneBucketOnly===false){
+        this.bucketMgt.i_Bucket++
+      }
+
+      //this.LogMsgConsole('===== bucket - process next bucket which is '+ this.bucketMgt.i_Bucket + ' bucketMgt.GetOneBucketOnly is '+this.bucketMgt.GetOneBucketOnly);
+      if (this.bucketMgt.i_Bucket===this.bucketMgt.Max_Nb_Bucket_Wedding+1 || this.bucketMgt.GetOneBucketOnly===true){
             
-          this.LogMsgConsole('===== bucket - all buckets processed; fill-in now WeddimgPhotos ');
+          this.LogMsgConsole('===== bucket - all buckets processed; fill-in now WeddingPhotos ');
             this.j=-1;
-            for (this.i_Bucket=1; this.i_Bucket<=this.Max_Nb_Bucket_Wedding; this.i_Bucket++){
-        
-                for (this.i=0; this.i<this.Bucket_Info_Array[this.i_Bucket-1].items.length; this.i++ ){
-                        this.j++
-                        const pushPhotos=new StructurePhotos;
-                        this.WeddingPhotos.push(pushPhotos);
-                        this.WeddingPhotos[this.j].name=this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].name;
-                        /*
-                        if (this.i_Bucket===1){
-                          this.WeddingPhotos[this.j].photo.src=this.WeddingPhotos[this.j].mediaLink;
-                          this.WeddingPhotos[this.j].mediaLink='./assets/Marriage/'+this.WeddingPhotos[this.j].name;
-                          this.WeddingPhotos[this.j].selfLink=this.WeddingPhotos[this.j].mediaLink;
-                        } else {
-                        */
-                            this.WeddingPhotos[this.j].mediaLink=this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].mediaLink;
-                            this.WeddingPhotos[this.j].selfLink=this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].selfLink;
-                            this.WeddingPhotos[this.j].photo.src=this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].mediaLink;
-                         /* } */
-                        if (this.Bucket_Info_Array[this.i_Bucket-1].items[this.i].name.indexOf('Vertical')!==-1){
-                          this.WeddingPhotos[this.j].vertical=true;
-                        }
-                        else{
-                          this.WeddingPhotos[this.j].vertical=false;
-                        }
-                }
+            let i=1;
+            if (this.bucketMgt.GetOneBucketOnly===true && this.bucketMgt.Nb_Buckets_processed>0){ 
+               i=this.bucketMgt.Nb_Buckets_processed;
+            } 
+            for (this.bucketMgt.i_Bucket=i; this.bucketMgt.i_Bucket<=this.bucketMgt.Max_Nb_Bucket_Wedding;  this.bucketMgt.i_Bucket++){
+              this.bucketMgt.Nb_Buckets_processed++;
+                for (this.i=0; this.i<this.Bucket_Info_Array[this.bucketMgt.i_Bucket-1].items.length; this.i++ ){
+                      this.fillFromBucket();
+                } // end second loop For(){} which is too fill-in WeddingPhotos
                 
-            }
-            this.buckets_all_processed=true;
-            this.LogMsgConsole('this.buckets_all_processed'+ this.buckets_all_processed);
+                if (this.bucketMgt.GetOneBucketOnly===true){ // this means only one bucket is to be stored in WeddingPhotos
+                    // must stop the loop on all buckets
+                    this.bucketMgt.i_Bucket=this.bucketMgt.Max_Nb_Bucket_Wedding+1;
+                }
+
+
+            } // end first loop For(){} which purpose was to fill-in theWeddingPhotos table
+ 
+            this.bucketMgt.bucket_is_processed=true; // process to retrieve data from a bucket is over
+            //this.LogMsgConsole('this.bucketMgt.bucket_is_processed'+ this.bucketMgt.bucket_is_processed +'  and table length is ='+this.WeddingPhotos.length+'  bucketMgt.Nb_Buckets_processed='+this.bucketMgt.Nb_Buckets_processed);
             window.cancelAnimationFrame(this.id_Animation);
+            if (this.bucketMgt.GetOneBucketOnly===true){ // this means only one bucket had to be processed
+              // must trigger ngOnChange in WeddingPhotods component
+              this.nextBucketOnChange++
+               
+              }
+       
           }
-    }
+    } // condition on loop exceeding or bucket data was received
   }
+fillFromBucket(){
+  // this.LogMsgConsole('***** fillFromBucket ='+this.bucketMgt.i_Bucket+'  and table length is ='+this.WeddingPhotos.length+
+  // '  bucketMgt.Nb_Buckets_processed'+this.bucketMgt.Nb_Buckets_processed);
+  const pushPhotos=new StructurePhotos;
+  this.WeddingPhotos.push(pushPhotos);
+  this.j=this.WeddingPhotos.length-1;
+  this.WeddingPhotos[this.j].name=this.Bucket_Info_Array[this.bucketMgt.i_Bucket-1].items[this.i].name;
+  /*
+  if (this.bucketMgt.i_Bucket===1){
+    this.WeddingPhotos[this.j].photo.src=this.WeddingPhotos[this.j].mediaLink;
+    this.WeddingPhotos[this.j].mediaLink='./assets/Marriage/'+this.WeddingPhotos[this.j].name;
+    this.WeddingPhotos[this.j].selfLink=this.WeddingPhotos[this.j].mediaLink;
+  } else {
+  */
+      this.WeddingPhotos[this.j].mediaLink=this.Bucket_Info_Array[this.bucketMgt.i_Bucket-1].items[this.i].mediaLink;
+      this.WeddingPhotos[this.j].selfLink=this.Bucket_Info_Array[this.bucketMgt.i_Bucket-1].items[this.i].selfLink;
+      this.WeddingPhotos[this.j].photo.src=this.Bucket_Info_Array[this.bucketMgt.i_Bucket-1].items[this.i].mediaLink;
+      //if (this.i===0){
+      //      this.WeddingPhotos[this.j].isdiplayed=true;
+      //  } else {
+            this.WeddingPhotos[this.j].isdiplayed=false;
+       // }
+
+   /* } */
+  if (this.Bucket_Info_Array[this.bucketMgt.i_Bucket-1].items[this.i].name.indexOf('Vertical')!==-1){
+    this.WeddingPhotos[this.j].vertical=true;
+  }
+  else{
+    this.WeddingPhotos[this.j].vertical=false;
+  }
+}
+
+process_next_bucket(bucket_nb:number){
+    // this is called by WeddinPhotosComponents through @Output
+    this.LogMsgConsole('***** process_next_bucket ='+bucket_nb+'  and table length is ='+this.WeddingPhotos.length+
+          '  bucketMgt.Nb_Buckets_processed'+this.bucketMgt.Nb_Buckets_processed);
+    this.bucketMgt.Nb_Buckets_processed=bucket_nb+1;
+    this.bucketMgt.i_Bucket=bucket_nb+1;
+    if (this.bucketMgt.i_Bucket<=this.bucketMgt.Max_Nb_Bucket_Wedding){
+          this.getListPhotos(this.bucketMgt.bucket_wedding_name[this.bucketMgt.i_Bucket-1], this.bucketMgt.i_Bucket); 
+    }
+    this.access_all_buckets();
+    
+    // this.LogMsgConsole('end process_next_bucket ='+this.bucketMgt.i_Bucket+'  and new table length is ='+this.WeddingPhotos.length);
+    // this.saveLogConsole(this.myConsole, 'Event27Aug')
+  }
+
 
   goDown(event:string){
     this.pagePhotos=false;
@@ -804,12 +875,12 @@ displayWedPhotos(){
   const pas=20;
   this.pagePhotos=true;
   /***
-  for (this.i=0; this.i<this.Max_Nb_Bucket_Wedding; this.i++){
-    console.log('displayWedPhotos() in Event-27Aug ', 'this.bucket_list_returned of ', this.i, ' is ' + this.bucket_list_returned[this.i]);
-    for (this.j=0; this.j<this.max_j_loop && this.bucket_list_returned[this.i]==='0'; this.j++){
+  for (this.i=0; this.i<this.bucketMgt.Max_Nb_Bucket_Wedding; this.i++){
+    console.log('displayWedPhotos() in Event-27Aug ', 'this.bucketMgt.bucket_list_returned of ', this.i, ' is ' + this.bucketMgt.bucket_list_returned[this.i]);
+    for (this.j=0; this.j<this.max_j_loop && this.bucketMgt.bucket_list_returned[this.i]==='0'; this.j++){
         // waiting for all buckets content to be received
         if (this.j%pas === 0){
-          console.log('displayWedPhotos() in Event-27Aug ==> loop=', this.j, 'this.bucket_list_returned of ', this.i, ' is ' + this.bucket_list_returned[this.i]);
+          console.log('displayWedPhotos() in Event-27Aug ==> loop=', this.j, 'this.bucketMgt.bucket_list_returned of ', this.i, ' is ' + this.bucketMgt.bucket_list_returned[this.i]);
         }
     }
   }
@@ -820,20 +891,20 @@ displayWedPhotos(){
   getListPhotos(BucketPhotos:string, bucket_nb:number){
     // get list of objects in bucket
     this.LogMsgConsole('getListPhotos() from '+BucketPhotos+'  nb='+bucket_nb);
-    this.bucket_list_returned[bucket_nb-1]='0';
+    this.bucketMgt.bucket_list_returned[bucket_nb-1]='0';
     const HTTP_Address='https://storage.googleapis.com/storage/v1/b/' + BucketPhotos + "/o";
     this.http.get<any>(HTTP_Address )
           .subscribe(data => {
-                this.bucket_list_returned[bucket_nb-1]='1';
+                this.bucketMgt.bucket_list_returned[bucket_nb-1]='1';
                 this.LogMsgConsole('getListPhotos() - received data from BucketPhotos '+BucketPhotos);
-                this.LogMsgConsole(data);
+                console.log(data);
                 this.Bucket_Info_Array[bucket_nb-1]=data;
                 this.LogMsgConsole('getListPhotos() - Bucket_Info_Array.items.length =  '+this.Bucket_Info_Array[bucket_nb-1].items.length);
               },   
               error_handler => {
-                this.Error_Access_Server='getListPhoto : error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
+                this.Error_Access_Server='getListPhoto : error message==> ' + error_handler.message + ' error code status==> '+ error_handler.status + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
                   alert(this.message  + ' -- http get = ' + this.HTTP_Address);
-                  this.bucket_list_returned[bucket_nb-1]='402';
+                  this.bucketMgt.bucket_list_returned[bucket_nb-1]=error_handler.status;
                 } 
           )
   

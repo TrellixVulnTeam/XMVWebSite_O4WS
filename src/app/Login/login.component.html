@@ -80,7 +80,7 @@
 
 <ng-template #secondevent> 
     <div  *ngIf="routing_code===3">
-      <app-Event-27AUG2022 [identification]="Encrypt_Data" [LoginTable_User_Data]="Table_User_Data" 
+      <app-Event-27AUG2022 [identification]="Encrypt_Data" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="Table_User_Data" 
             [LoginTable_DecryptPSW]="Table_DecryptPSW" (returnDATA)="GetUpdatedTable($event)">
       </app-Event-27AUG2022>
     </div> 
