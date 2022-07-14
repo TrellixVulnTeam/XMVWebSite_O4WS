@@ -71,7 +71,7 @@ export class StructurePhotos{
   isdiplayed:boolean=false;
  }
 
- export class  BucketExchange{
+export class  BucketExchange{
   bucket_wedding_name:Array<string>=[];
   bucket_list_returned:Array<string>=[];
   Max_Nb_Bucket_Wedding:number=6;
@@ -82,9 +82,19 @@ export class StructurePhotos{
   Nb_Buckets_processed:number=0;
 }
 
-export class MyConfig{
-  Max_Nb_Bucket_Wedding:number=1;
-  Bucket:string="xavier-monica-mariage";
-  userId:string= "XMVanstaen";
-  log:boolean=false;
+export class XMVConfig{
+  BucketLogin:string="";
+  BucketConsole:string="";
+  BucketContact:string="";
+  Max_Nb_Bucket_Wedding:number=6;
+  GetOneBucketOnly:boolean=false;
+  BucketWeddingRoot:string="";
+  nb_photo_per_page:number=10;
+  UserSpecific:Array<UserParam>=[];
 }
+
+export class UserParam{
+    id:string="XMVanstaen";
+    type:string="";
+    log:boolean=false;
+  }

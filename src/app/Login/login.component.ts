@@ -5,7 +5,9 @@ import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { encrypt, decrypt} from '../EncryptDecryptServices';
 import { EventAug } from '../JsonServerClass';
 import {Bucket_List_Info} from '../JsonServerClass';
-import { MyConfig } from '../JsonServerClass';
+import { XMVConfig } from '../JsonServerClass';
+import { UserParam } from '../JsonServerClass';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -27,7 +29,9 @@ export class LoginComponent {
       psw:'',
       phone:''
     };
-    ConfigXMV:Array<MyConfig>=[];
+
+    ConfigXMV=new XMVConfig;
+
     id_Animation:number=0;
     id_Animation_Two:number=0;
     j_loop:number=0;
@@ -100,6 +104,7 @@ export class LoginComponent {
         'cache-control': 'private, max-age=0'
       });
       this.getConfig();
+      this.waitHTTP(0, 30000);
       //this.httpHeader.append('content-type', 'application/json');
       //this.httpHeader.append('Cache-Control', 'no-store, must-revalidate, private, max-age=0, no-transform');
       this.routing_code=0;
@@ -119,12 +124,12 @@ export class LoginComponent {
           this.myForm.controls['action'].setValue("");
         }
 
-            //========= TO BE DELETED
-            //this.identification.UserId='AFGazikian';
-            //this.identification.psw='AF#Gazikian@41';
-            this.myForm.controls['userId'].setValue(this.identification.UserId);
-            this.myForm.controls['password'].setValue(this.identification.psw);
-    }
+      //========= TO BE DELETED
+      //this.identification.UserId='AFGazikian';
+      //this.identification.psw='AF#Gazikian@41';
+      this.myForm.controls['userId'].setValue(this.identification.UserId);
+      this.myForm.controls['password'].setValue(this.identification.psw);
+  }
 
 waitHTTP(loop:number, max_loop:number){
     const pas=500;
@@ -141,7 +146,7 @@ waitHTTP(loop:number, max_loop:number){
 
     }
 
-  GetObject(){
+GetObject(){
 // ****** get content of object *******
       this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name   + "?alt=media"; 
       // this.HTTP_AddressMetaData=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name ; 
@@ -163,8 +168,11 @@ waitHTTP(loop:number, max_loop:number){
               // identification is correct
 
                 this.my_output1.emit(this.Encrypt_Data);
+                let i=0;
+                for (this.i=0; this.i<this.ConfigXMV.UserSpecific.length && this.Encrypt_Data.UserId!==this.ConfigXMV.UserSpecific[this.i].id; this.i++){}
+
                 
-                if (this.Encrypt_Data.UserId==='XMVIT-Admin' || this.Encrypt_Data.UserId==='xvanstaen@XMV' ) {
+                if (this.i<this.ConfigXMV.UserSpecific.length && this.Encrypt_Data.UserId===this.ConfigXMV.UserSpecific[this.i].id && this.ConfigXMV.UserSpecific[this.i].type==='ADMIN') {
                   
                       if (this.myForm.controls['action'].value==='' || this.myForm.controls['action'].value===null){ 
                         this.routing_code=4;
@@ -323,35 +331,29 @@ getEventAug(){
 
         )
   }
-MyConfig={
-  Max_Nb_Bucket_Wedding:1,
-  Object:"xavier-monica-mariage",
-  userId: "XMVanstaen",
-  log: "Y"
-}
+
 
 getConfig(){
   console.log('getConfig()');
   this.Google_Object_Name="ConfigPhotoWedding.json";
-   
-  this.HTTP_Address=this.Google_Bucket_Access_Root +  "config-xmvit/o/ConfigPhotoWedding.json?alt=media" ;
-
-          
-          this.http.get<any>(this.HTTP_Address )
+  this.HTTP_Address=this.Google_Bucket_Access_Root +  "config-xmvit/o/ConfigPhotoWedding.json?alt=media" ;    
+          this.http.get<XMVConfig>(this.HTTP_Address )
             .subscribe((data ) => {
               console.log('getConfig() - data received');
-              for (let i=0; i<data.length; i++){
-                const j=new MyConfig;
-                this.ConfigXMV.push(j);
-                this.ConfigXMV[this.ConfigXMV.length-1]=data[i];
+              this.ConfigXMV=data;
+              /***
+              for (let i=0; i<data.UserSpecific.length; i++){
+                const j=new UserParam;
+                this.ConfigXMV.UserSpecific.push(j);
+                this.ConfigXMV.UserSpecific[this.ConfigXMV.UserSpecific.length-1]=data.UserSpecific[i];
               }
-              
+              this.ConfigXMV=data;
+               */
             },
               error_handler => {
                 console.log('getConfig() - error handler');
                 this.text_error='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
               } 
-
         )
   }
 
@@ -375,9 +377,9 @@ onCrypt(type_crypto:string){
           } 
   }
 
-ngOnChanges(changes: SimpleChanges) {   
+//ngOnChanges(changes: SimpleChanges) {   
       //console.log('onChanges login.ts');
-  }
+//  }
 
 
 }

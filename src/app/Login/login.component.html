@@ -74,7 +74,8 @@
 
 <ng-template #firstevent>  
 <div  *ngIf="routing_code===2; else secondevent">
-    <app-Event-02JUL2022 ></app-Event-02JUL2022>
+    <app-Event-02JUL2022 [identification]="Encrypt_Data" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="Table_User_Data" 
+    [LoginTable_DecryptPSW]="Table_DecryptPSW"></app-Event-02JUL2022>
 </div> 
 </ng-template>
 

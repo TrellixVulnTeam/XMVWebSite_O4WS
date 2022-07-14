@@ -9,7 +9,10 @@ import { EventAug } from '../JsonServerClass';
 import { StructurePhotos } from '../JsonServerClass';
 import { encrypt, decrypt} from '../EncryptDecryptServices';
 import { BucketExchange } from '../JsonServerClass';
-import { MyConfig } from '../JsonServerClass';
+import { XMVConfig } from '../JsonServerClass';
+import { UserParam } from '../JsonServerClass';
+import { msginLogConsole } from '../consoleLog';
+import { saveLogConsole } from '../consoleLog';
 
 export class push_new_bucket{
   wait:boolean=false; // 'true' html will display the image
@@ -40,7 +43,7 @@ export class WeddingPhotosComponent {
       Height: new FormControl(),
       ForceSaveLog: new FormControl(),
     });
-    @Input() ConfigXMV:Array<MyConfig>=[];
+    @Input()   ConfigXMV=new XMVConfig;
     @Output() AddBucket= new EventEmitter<number>();
 
     prevCanvasPhoto:number=0;
@@ -65,16 +68,15 @@ export class WeddingPhotosComponent {
     stop_waiting_photo:boolean=false;
 
     nb_total_page:number=0;
-    nb_photo_per_page:number=10;
     nb_current_page:number=0;
     nb_current_photo:number=0;
-    pages_to_display:Array<number>=[1,2,3,4,5,6,7,8,9,10];
+    pages_to_display:Array<number>=[];
     DisplayPageRange:boolean=false;
     imagesToDisplay:number=0;
 
     myConsole:Array<string>=[]; // store log before it is saved in appropriate bucket/object in Google cloud
     @Input() myLogConsole:boolean=false; // log messages from this module
-    @Input() EventLogConsole:Array<string>=[]; // log coming from Event-27AUG2020.component.ts
+    @Input() EventLogConsole:Array<string>=[]; // log coming from GetImages.component.ts
     SaveConsoleFinished:boolean=true;
 
 
@@ -98,6 +100,8 @@ export class WeddingPhotosComponent {
     Google_Bucket_Name:string='logconsole'; 
     Google_Object_Name:string='WeddingPhotos';
     HTTP_Address:string='';
+    HTTP_AddressLog:string='';
+    type:string='WeddingPhotos';
 
     myDate:string='';
     myTime=new Date();
@@ -147,10 +151,11 @@ SizeImage(){
 }
 
   ngOnInit(){
+
      this.getScreenWidth = window.innerWidth;
     this.getScreenHeight = window.innerHeight;
     this.device_type = navigator.userAgent;
-
+    this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.ConfigXMV.BucketConsole+ "/o?name="  ;
     if (this.EventLogConsole.length!==0){
       for (this.i=0; this.i<this.EventLogConsole.length-1; this.i++){
         this.myConsole.push('');
@@ -169,12 +174,15 @@ SizeImage(){
     this.nb_current_page = 1;
     this.scroller.scrollToAnchor('targetTop');
     this.WentonNgInit=true;
+    for (let i=0; i<this.ConfigXMV.nb_photo_per_page; i++){
+      this.pages_to_display.push(0);
+      this.pages_to_display[i]=i+1;
+    }
 
   }    
 
   ngAfterViewInit() { 
-    this.LogMsgConsole('ngAfterViewInit() - WeddingPhotos.length'+this.WeddingPhotos.length+' isWeddingPhotoEmpty'+this.isWeddingPhotoEmpty+
-    '  process_display_canvas is '+this.process_display_canvas);
+    this.LogMsgConsole('ngAfterViewInit() - WeddingPhotos.length'+this.WeddingPhotos.length+' isWeddingPhotoEmpty'+this.isWeddingPhotoEmpty+'  process_display_canvas is '+this.process_display_canvas);
       
     if (this.process_display_canvas===true){
       this.theCanvas=document.getElementById('canvasElem');
@@ -198,7 +206,7 @@ SizeImage(){
 
 displayPhotos(){
   this.LogMsgConsole('DisplayPhotos buckets processed '+ this.bucketMgt.bucket_is_processed+ ' size file '+ this.WeddingPhotos.length);
-  this.j=(this.nb_current_page-1)*this.nb_photo_per_page;
+  this.j=(this.nb_current_page-1)*this.ConfigXMV.nb_photo_per_page;
   if (this.bucketMgt.bucket_is_processed===true && this.WeddingPhotos.length!==0 && this.slow_table.length===0){
         this.isWeddingPhotoEmpty=false;
         // initialise the tables to display the images and the number of pages 
@@ -209,7 +217,7 @@ displayPhotos(){
   }
 }
 initialiseTables(i:number){
-  for (this.i=i; this.i<this.nb_photo_per_page && this.j<this.WeddingPhotos.length; this.i++){
+  for (this.i=i; this.i<this.ConfigXMV.nb_photo_per_page && this.j<this.WeddingPhotos.length; this.i++){
 
     this.slow_table.push('');
     this.slow_table[this.i]=this.WeddingPhotos[this.j].mediaLink;
@@ -236,7 +244,7 @@ display_page(page_nb:number){
 }
 
 DefinePageRange(){
-  this.nb_current_photo=(this.nb_current_page-1)*this.nb_photo_per_page; // first photo for the next page -1
+  this.nb_current_photo=(this.nb_current_page-1)*this.ConfigXMV.nb_photo_per_page; // first photo for the next page -1
   
   // looking for the middle of the page
    // if number of pages to display is < 10 then nothing to change 
@@ -282,7 +290,7 @@ if(processOtherPage===true){
     this.PhotoNumber.splice(0,this.PhotoNumber.length);
     this.PhotoToDisplay.splice(0,this.PhotoToDisplay.length);
     
-    this.j=(this.nb_current_page-1)*this.nb_photo_per_page;
+    this.j=(this.nb_current_page-1)*this.ConfigXMV.nb_photo_per_page;
     this.initialiseTables(0);
     
     this.DisplayPageRange=false;
@@ -299,7 +307,7 @@ if(processOtherPage===true){
                   
             }
           if (this.bucketMgt.Nb_Buckets_processed<this.bucketMgt.Max_Nb_Bucket_Wedding){
-              if (this.nb_current_photo>this.WeddingPhotos.length-2*this.nb_photo_per_page){
+              if (this.nb_current_photo>this.WeddingPhotos.length-2*this.ConfigXMV.nb_photo_per_page){
                   this.emitBucketProcessed=true;
                   this.AddBucket.emit(this.bucketMgt.Nb_Buckets_processed); 
               }
@@ -379,8 +387,8 @@ LoadImage(){
 
 
 calculate_pages(){
-  this.nb_total_page = Math.floor(this.WeddingPhotos.length / this.nb_photo_per_page);
-  if (this.WeddingPhotos.length%this.nb_photo_per_page!==0){
+  this.nb_total_page = Math.floor(this.WeddingPhotos.length / this.ConfigXMV.nb_photo_per_page);
+  if (this.WeddingPhotos.length%this.ConfigXMV.nb_photo_per_page!==0){
     this.nb_total_page++
   }
   this.j=1;
@@ -400,10 +408,17 @@ Redisplay(event:string){
 }
 
 ngOnChanges(changes: SimpleChanges) {   
-  this.LogMsgConsole('$$$$$ onChanges ==> bucketMgt.bucket_is_processed='+ this.bucketMgt.bucket_is_processed+
-      '  length weddingPhotos='+ this.WeddingPhotos.length+' isWeddingPhotoEmpty='+this.isWeddingPhotoEmpty+
-      ' nextBucketOnChange='+this.nextBucketOnChange);
-
+  this.LogMsgConsole('$$$$$ onChanges ==> bucketMgt.bucket_is_processed='+ this.bucketMgt.bucket_is_processed+'  length weddingPhotos='+ this.WeddingPhotos.length+' isWeddingPhotoEmpty='+this.isWeddingPhotoEmpty+' nextBucketOnChange='+this.nextBucketOnChange);
+  if (this.EventLogConsole.length!==0){
+    for (this.i=0; this.i<this.EventLogConsole.length-1; this.i++){
+      this.myConsole.push('');
+      this.myConsole[this.myConsole.length-1]=this.EventLogConsole[this.i];
+    }
+    // delete EventLogConsole as it has been stored in myConsole
+    this.EventLogConsole.splice(0,this.EventLogConsole.length);
+    // other option wwas to save this log before starting process on WeddingPhotos
+    //this.saveLogConsole(this.EventLogConsole,'Event27AUG');
+  }
   console.log(changes);
   for (const propName in changes){
     const j=changes[propName];
@@ -424,15 +439,15 @@ ngOnChanges(changes: SimpleChanges) {
   if (this.nextBucketOnChange>1){
     this.calculate_pages(); 
     this.DefinePageRange();
-    if (this.PhotoToDisplay.length<this.nb_photo_per_page
-      // && this.nb_current_page*this.nb_photo_per_page+this.PhotoToDisplay.length-1<this.nb_total_page*this.nb_photo_per_page
+    if (this.PhotoToDisplay.length<this.ConfigXMV.nb_photo_per_page
+      // && this.nb_current_page*this.ConfigXMV.nb_photo_per_page+this.PhotoToDisplay.length-1<this.nb_total_page*this.ConfigXMV.nb_photo_per_page
       ){    
         this.i=this.PhotoToDisplay.length;
         this.j=this.PhotoNumber[this.i-1];
         this.initialiseTables(this.i);
     }
     this.LoadImage();
-    const i=(this.nb_current_page+2)*this.nb_photo_per_page+1;
+    const i=(this.nb_current_page+2)*this.ConfigXMV.nb_photo_per_page+1;
     if (this.emitBucketProcessed===true && i>this.nb_total_page){
       this.emitBucketProcessed=false;
     
@@ -444,24 +459,27 @@ ngOnChanges(changes: SimpleChanges) {
 }
 
 ForceSaveLog(){
-
   if (this.PhotoNbForm.controls['ForceSaveLog'].value==='y'){
     this.PhotoNbForm.controls['ForceSaveLog'].setValue('n');
     this.LogMsgConsole('ForceSaveLog()');
-    this.saveLogConsole(this.myConsole,'WeddingPhotos');
+   saveLogConsole(this.myConsole, this.type, this.HTTP_AddressLog);
   }
   this.LoadImage();
 }
 
 LogMsgConsole(msg:string){
-  console.log(msg);
+  msginLogConsole(msg, this.myConsole,this.myLogConsole, this.SaveConsoleFinished,this. HTTP_AddressLog, this.type);
+  }
 
+/****
+LogMsgConsole(msg:string){
+  console.log(msg);
   this.myTime=new Date();
   this.myDate= this.myTime.toString().substring(8,24);
   this.thetime=this.myDate+this.myTime.getTime().toString();
   if (this.myLogConsole===true){
           this.myConsole.push('');
-          this.myConsole[this.myConsole.length-1]='<==> '+this.thetime.substr(0,16) + ' ' +msg;
+          this.myConsole[this.myConsole.length-1]='<==> '+this.thetime.substr(0,20) + ' ' +msg;
   }
   if (this.myConsole.length>1000 && this.SaveConsoleFinished===true){
     this.saveLogConsole(this.myConsole, 'WeddingPhotos');
@@ -469,19 +487,17 @@ LogMsgConsole(msg:string){
             this.saveLogConsole(this.EventLogConsole,'Event27AUG');
           }
   }
-
-
 }
 
 saveLogConsole(LogConsole:any, type:string){
 
   this.myTime=new Date();
-  this.myDate= this.myTime.toString().substring(6,26);
+  this.myDate= this.myTime.toString().substring(8,24);
   this.thetime=this.myDate+this.myTime.getTime().toString();
   const consoleLength=LogConsole.length;
   this.SaveConsoleFinished=false;
   // this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name   + '&uploadType=media';
-  this.HTTP_Address=this.Google_Bucket_Access_RootPOST +  "logconsole/o?name="  + this.thetime.substr(0,20)+ type + '.json&uploadType=media';
+  this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.ConfigXMV.BucketConsole+ "/o?name="  + this.thetime.substr(0,20)+ type + '.json&uploadType=media';
 
   this.http.post(this.HTTP_Address, LogConsole)
     .subscribe(res => {
@@ -495,7 +511,7 @@ saveLogConsole(LogConsole:any, type:string){
               }
             }
             LogConsole.push('');
-            this.myConsole[LogConsole.length-1]='Log Console ' + type + ' has been deleted at '+this.myDate+'  ' +this.thetime;
+            LogConsole[LogConsole.length-1]='Log Console ' + type + ' has been deleted at '+this.myDate+'  ' +this.thetime;
           },
           error_handler => {
             console.log('Log record failed for ' + type + this.Google_Object_Name + '  error handller is ' + error_handler);
@@ -503,6 +519,8 @@ saveLogConsole(LogConsole:any, type:string){
             // alert( 'Log record failed -- http post = ' + this.Google_Object_Name);
            } )
 }
+****/
+
 
 // ==================== BELOW ARE MODULES RELATED TO MANAGEMENT OF THE CANVAS
 drawPhotoCanvas(){
@@ -514,9 +532,7 @@ drawPhotoCanvas(){
 }
 
 ManageCanvas(){
-  this.LogMsgConsole('ManageCanvas & message is '+ this.message_canvas + ' length of table is ' + this.WeddingPhotos.length+
-    '  this.PhotoNbForm.controls["SelectNb"].value='+this.PhotoNbForm.controls['SelectNb'].value+ ' first_canvas_displayed'+
-    this.first_canvas_displayed);
+  this.LogMsgConsole('ManageCanvas & message is '+ this.message_canvas + ' length of table is ' + this.WeddingPhotos.length+'  this.PhotoNbForm.controls["SelectNb"].value='+this.PhotoNbForm.controls['SelectNb'].value+ ' first_canvas_displayed'+this.first_canvas_displayed);
 
  
   this.message_canvas='';

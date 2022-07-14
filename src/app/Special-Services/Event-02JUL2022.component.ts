@@ -4,6 +4,11 @@ import { HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { ViewportScroller } from "@angular/common";
+import {Bucket_List_Info} from '../JsonServerClass';
+import { StructurePhotos } from '../JsonServerClass';
+import { BucketExchange } from '../JsonServerClass';
+import { XMVConfig } from '../JsonServerClass';
+import { UserParam } from '../JsonServerClass';
 
 @Component({
   selector: 'app-Event-02JUL2022',
@@ -18,7 +23,7 @@ export class Event02JULComponent {
     private http: HttpClient,
     private scroller: ViewportScroller,
     ) {}
-  
+    @Input() ConfigXMV=new XMVConfig;
 
     getScreenWidth: any;
     getScreenHeight: any;
@@ -26,12 +31,21 @@ export class Event02JULComponent {
 
     text_error:string=''
  
-
+    pagePhotos:boolean=true;
+    nextBucketOnChange:number=0;
+    bucketMgt=new BucketExchange;
+    Bucket_Info_Array:Array<Bucket_List_Info>=[];
+    ref_Bucket_List_Info=new Bucket_List_Info;
+    WeddingPhotos:Array<StructurePhotos>=[];
+    myLogConsole:boolean=false;
+    myConsole:Array<string>=[];
+    SaveConsoleFinished:boolean=true;
 
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
+      console.log('ConfigXMV',this.ConfigXMV);
     }
 
 
@@ -41,7 +55,13 @@ onWindowResize() {
   }
 
   goDown(event:string){
+    this.pagePhotos=false;
     this.scroller.scrollToAnchor(event);
   }
-
+  displayWedPhotos(){
+    //**this.LogMsgConsole('displayWedPhotos() in Event-27Aug');
+    const pas=20;
+    this.pagePhotos=true;
+ 
+  }
 }

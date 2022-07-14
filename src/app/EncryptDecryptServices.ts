@@ -51,7 +51,7 @@ export function encrypt(Decrypt:string, key:number, method:string) {
           Decrypt=CryptoJS.AES.decrypt(Encrypt, myKey).toString(CryptoJS.enc.Utf8);
           } 
           //console.log('Decrypt function: decrypt ', Decrypt, 'Method  ', method, 'encrypt', Encrypt);
-    return(Decrypt);
+    return(Decrypt); 
   }
 
  

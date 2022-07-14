@@ -9,7 +9,12 @@ body{
   font-family: 'Tangerine', cursive;
  
 }
-
+.posOptions{
+  position:relative; 
+  margin-top:10px; 
+  margin-left:30%; 
+  float:left;
+}
 .dropdown-options{
   margin-top:5px;
   background-color: #dedcdc;
