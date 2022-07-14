@@ -6,7 +6,7 @@ import { encrypt, decrypt} from '../EncryptDecryptServices';
 import { EventAug } from '../JsonServerClass';
 import {Bucket_List_Info} from '../JsonServerClass';
 import { XMVConfig } from '../JsonServerClass';
-import { UserParam } from '../JsonServerClass';
+import { XMVTestProd } from '../JsonServerClass';
 
 @Component({
   selector: 'app-login',
@@ -31,6 +31,7 @@ export class LoginComponent {
     };
 
     ConfigXMV=new XMVConfig;
+    ConfigTestProd=new XMVTestProd;
 
     id_Animation:number=0;
     id_Animation_Two:number=0;
@@ -39,7 +40,7 @@ export class LoginComponent {
 
     @Output() my_output1= new EventEmitter<any>();
     @Output() my_output2= new EventEmitter<string>();
-
+    
     
     myHeader= new  HttpHeaders();
     getScreenWidth: any;
@@ -103,7 +104,7 @@ export class LoginComponent {
         'content-type': 'application/json',
         'cache-control': 'private, max-age=0'
       });
-      this.getConfig();
+      this. getConfigAsset();
       this.waitHTTP(0, 30000);
       //this.httpHeader.append('content-type', 'application/json');
       //this.httpHeader.append('Cache-Control', 'no-store, must-revalidate, private, max-age=0, no-transform');
@@ -319,10 +320,10 @@ getEventAug(){
   }
 
 
-getConfig(){
-  console.log('getConfig()');
-  this.Google_Object_Name="ConfigPhotoWedding.json";
-  this.HTTP_Address=this.Google_Bucket_Access_Root +  "config-xmvit/o/ConfigPhotoWedding.json?alt=media" ;    
+getConfig(ObjectName:string){
+  console.log('getConfig() of '+ObjectName);
+
+  this.HTTP_Address=this.Google_Bucket_Access_Root +  "config-xmvit/o/" + ObjectName + "?alt=media" ;    
           this.http.get<XMVConfig>(this.HTTP_Address )
             .subscribe((data ) => {
               console.log('getConfig() - data received');
@@ -334,6 +335,44 @@ getConfig(){
               } 
         )
   }
+FileType={TestProd:''};
+
+  getConfigAsset(){
+    console.log('getConfigAsset()');
+  
+            this.http.get<any>('./assets/XMVConfigTestOrProd.json' )
+              .subscribe((data ) => {
+                console.log('getConfigAsset() - data received');
+                this.FileType=data;
+                this.getConfigXMV();
+              },
+                error_handler => {
+                  console.log('getConfigAsset() - error handler');
+                  this.text_error='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
+                } 
+          )
+    }
+
+  getConfigXMV(){
+    console.log('getConfigXMV()');
+    //this.Google_Object_Name="ConfigXMVTestProd.json";
+   const HTTP_Address=this.Google_Bucket_Access_Root +  "config-xmvit/o/ConfigXMVTestProd.json?alt=media" ;    
+            this.http.get<XMVTestProd>(HTTP_Address )
+              .subscribe((data ) => {
+                console.log('getConfigXMV() - data received');
+                this.ConfigTestProd=data;
+                if (this.FileType.TestProd==='Test'){
+                    this.getConfig(this.ConfigTestProd.TestFile);
+                } else {
+                  this.getConfig(this.ConfigTestProd.ProdFile);
+                }
+              },
+                error_handler => {
+                  console.log('getConfigXMV() - error handler');
+                  this.text_error='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
+                } 
+          )
+    }
 
 
 GetUpdatedTable(event:any){

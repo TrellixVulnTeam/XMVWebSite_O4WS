@@ -33,17 +33,18 @@ export class Event27AugComponent {
       Height: new FormControl(),
     });
 
-    @Input() ConfigXMV=new XMVConfig;
+    
 
     myHeader=new HttpHeaders();
     isDeleted:boolean=false;
     getScreenWidth: any;
     getScreenHeight: any;
     device_type:string='';
-    yourLanguage:string='FR';
+    yourLanguage:string='FR'; 
 
     @Input() LoginTable_User_Data:Array<EventAug>=[];
     @Input() LoginTable_DecryptPSW:Array<string>=[];
+    @Input() ConfigXMV=new XMVConfig;
     @Input() identification={
       id: 0,
       key:0,

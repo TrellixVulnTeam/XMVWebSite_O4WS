@@ -33,15 +33,29 @@ export class WeddingPhotosComponent {
     @ViewChild('ImageCanvas', { static: true })
 
     myImage = new Image();
+
     theCanvas:any;
+    theCanvasTwo:any;
     ctx:any;
+    ctxTwo:any;
+
     PhotoNbForm: FormGroup = new FormGroup({ 
       SelectNb: new FormControl(),
       Width: new FormControl(),
       Height: new FormControl(),
       ForceSaveLog: new FormControl(),
+      
     });
-    @Input()   ConfigXMV=new XMVConfig;
+
+    DiapoForm: FormGroup = new FormGroup({ 
+      StartDiapoNb: new FormControl(),
+      EndDiapoNb: new FormControl(),
+    });
+
+    @Input()  ConfigXMV=new XMVConfig;
+    @Input() bucketMgt=new BucketExchange;
+    //@Input() bucket_is_processed:boolean=false;
+    @Input() WeddingPhotos:Array<StructurePhotos>=[];
     @Output() AddBucket= new EventEmitter<number>();
 
     prevCanvasPhoto:number=0;
@@ -49,15 +63,14 @@ export class WeddingPhotosComponent {
     message_canvas:string='';
     error_canvas:string='';
     initialCanvasPhoto:number=1;
-
+    error_Diapo:string='';
+    message_Diapo:string='';
     first_onload:boolean=true;
     getScreenWidth: any;
     getScreenHeight: any;
     device_type:string='';
     yourLanguage:string='FR';
-    @Input() bucketMgt=new BucketExchange;
-    //@Input() bucket_is_processed:boolean=false;
-    @Input() WeddingPhotos:Array<StructurePhotos>=[];
+  
 
 
     slow_table:Array<string>=[]; // contain the src of the images to display
@@ -123,8 +136,11 @@ onWindowResize() {
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
       this.SizeImage();
-      if (this.ConfigXMV.process_display_canvas===true){
-        this.change_canvas_size(this.initialCanvasPhoto);
+      if (this.first_canvas_displayed=true){
+        if (this.ConfigXMV.process_display_canvas===true){
+          this.change_canvas_size(this.initialCanvasPhoto);
+        }
+        this.drawDiapoCanvas();
       }
       
     }
@@ -170,6 +186,12 @@ SizeImage(){
    
     this.SizeImage();
     this.PhotoNbForm.controls['SelectNb'].setValue(null);
+    this.DiapoForm.controls['StartDiapoNb'].setValue(1);
+    if (this.WeddingPhotos.length!==0){
+      this.DiapoForm.controls['EndDiapoNb'].setValue(this.WeddingPhotos.length);
+    } else {
+        this.DiapoForm.controls['EndDiapoNb'].setValue(2);
+      }
     this.nb_current_page = 1;
     this.scroller.scrollToAnchor('targetTop');
     this.WentonNgInit=true;
@@ -190,6 +212,14 @@ SizeImage(){
           this.ctx.canvas.width=this.PhotoNbForm.controls['Width'].value;
           this.ctx.canvas.height=this.PhotoNbForm.controls['Height'].value;
         }
+
+      this.theCanvasTwo=document.getElementById('canvasElemTwo');
+      if (!this.ctxTwo) { //true
+          this.ctxTwo=this.theCanvasTwo.getContext('2d');
+
+        }
+       
+
       }
 
     if (this.WeddingPhotos.length!==0){
@@ -367,6 +397,7 @@ NextImage(noPhoto:number){
   if (this.PhotoToDisplay[this.PhotoToDisplay.length-1].photo_loaded===1){
     this.DisplayPageRange=true;
     this.first_canvas_displayed=true;
+    this.drawDiapoCanvas();
   }
   
   this.LogMsgConsole(msg);
@@ -379,7 +410,9 @@ LoadImage(){
   for (i=0; i<this.PhotoToDisplay.length && this.PhotoToDisplay[i].wait===true && this.PhotoToDisplay[i].photo_loaded===1; i++){};
   if (i<this.PhotoToDisplay.length-1 && this.PhotoToDisplay[i].wait!==true){
     this.PhotoToDisplay[i].wait=true
-  } else {this.first_canvas_displayed=true;}
+  } else {
+      this.first_canvas_displayed=true;
+    }
   this.imagesToDisplay=this.PhotoToDisplay.length-(i+1);
  
 }
@@ -474,6 +507,75 @@ LogMsgConsole(msg:string){
 
 
 // ==================== BELOW ARE MODULES RELATED TO MANAGEMENT OF THE CANVAS
+
+drawDiapoCanvas(){
+  this.error_Diapo='';
+  this.message_Diapo='';
+  const padding=10;
+  this.ctxTwo.canvas.width=Math.floor(this.getScreenWidth*0.90);
+  // this.ctxTwo.canvas.height=Math.floor(this.getScreenWidth*0.50)*21;
+  
+  if (this.DiapoForm.controls['StartDiapoNb'].value> this.WeddingPhotos.length || 
+  this.DiapoForm.controls['EndDiapoNb'].value> this.WeddingPhotos.length){
+    this.error_Diapo='Maximum number of photos is '+this.WeddingPhotos.length;
+  } else if (this.DiapoForm.controls['StartDiapoNb'].value > this.DiapoForm.controls['EndDiapoNb'].value){
+    this.error_Diapo='Range of values is invalid; your first number is greater than the second ';
+  } else if (this.DiapoForm.controls['StartDiapoNb'].value<=0 || 
+  this.DiapoForm.controls['EndDiapoNb'].value<=0){
+    this.error_Diapo='Range of values is invalid; cannot have nil/negaiive value(s)';
+  }
+  const nbPhotos=this.DiapoForm.controls['EndDiapoNb'].value-this.DiapoForm.controls['StartDiapoNb'].value+1;
+  let i=0;
+  let maxWPhotoH=0;
+  let maxWPhotoV=0;
+  let maxHPhoto=0;
+  let nbPhotoPerRow=0;
+  // calculate size of the canvas considering 3 photos is width < 500; 6 photos if width<901 & 9 photos if >900
+  if (this.getScreenWidth<this.ConfigXMV.width500){
+      nbPhotoPerRow=this.ConfigXMV.maxPhotosWidth500;
+
+  } else if (this.getScreenWidth<this.ConfigXMV.width900){
+    nbPhotoPerRow=this.ConfigXMV.maxPhotosWidth900;
+  } else {
+        if(this.ConfigXMV.maxWidth<this.getScreenWidth){
+          this.ctxTwo.canvas.width=Math.floor(this.ConfigXMV.maxWidth*0.90);
+            }
+        nbPhotoPerRow=this.ConfigXMV.maxPhotosmaxWidth;
+  }
+  maxHPhoto= Math.floor(this.ctxTwo.canvas.width*0.6/nbPhotoPerRow)-padding;
+ 
+  maxWPhotoH=Math.floor(this.ctxTwo.canvas.width/nbPhotoPerRow)-padding;
+  maxWPhotoV=Math.floor(Math.floor(this.getScreenWidth*0.50)/nbPhotoPerRow)-padding;
+  
+ 
+
+  this.ctxTwo.canvas.height=(maxHPhoto+padding)*(nbPhotos/nbPhotoPerRow+1);
+  
+  let nbRow=0;
+
+  let j=0;
+  for (i=this.DiapoForm.controls['StartDiapoNb'].value; i<=this.DiapoForm.controls['EndDiapoNb'].value; i=i+nbPhotoPerRow){
+      for (j=0; j<nbPhotoPerRow && i-1+j<this.WeddingPhotos.length && i-1+j<this.DiapoForm.controls['EndDiapoNb'].value; j++){
+        this.myImage=new Image();
+        this.myImage.src=this.WeddingPhotos[i-1+j].mediaLink;
+        const y = nbRow*(maxHPhoto+padding)+padding;
+        //this.ctx.setTransform(1, 0, 0, 1, 0, 0); 
+        //this.ctxTwo.beginPath();
+        if (this.WeddingPhotos[i-1+j].vertical===true){
+          this.ctxTwo.drawImage(this.myImage, j*maxWPhotoH+j*padding, y, maxWPhotoV,maxHPhoto);
+        } else {
+              this.ctxTwo.drawImage(this.myImage,j*maxWPhotoH+j*padding,y,maxWPhotoH,maxHPhoto);
+          }
+        // console.log('i= '+i+' nbRow='+nbRow+'  position of the photo is: x= '+j*maxWPhotoH+' y= '+y+ ' and size photo is w= '+maxWPhotoH+'  height= '+maxHPhoto)
+    
+      }
+      //this.ctxTwo.closePath();
+      //this.ctxTwo.stroke();
+      nbRow++;
+  }
+ 
+}
+
 drawPhotoCanvas(){
   this.initialdrawCanvas=true;
   this.LogMsgConsole('drawPhotoCanvas() - WeddingPhotos.length=' + this.WeddingPhotos.length+' initialdrawCanvas ='+this.initialdrawCanvas);
@@ -490,6 +592,9 @@ ManageCanvas(){
   this.prevCanvasPhoto=this.PhotoNbForm.controls['SelectNb'].value;
   this.ctx.canvas.width=this.PhotoNbForm.controls['Width'].value;
   this.ctx.canvas.height=this.PhotoNbForm.controls['Height'].value;
+  if (this.first_canvas_displayed===true){
+            this.drawDiapoCanvas()
+  }
   if (this.PhotoNbForm.controls['SelectNb'].value!==null){ // a canvas has already been displayed
     if (this.first_canvas_displayed===true){ // the first canvas is loaded otherwise should wait for the first canvas to be loaded [part of the onload process under condition 'else']
         if (this.PhotoNbForm.controls['SelectNb'].value<1 || this.PhotoNbForm.controls['SelectNb'].value>this.WeddingPhotos.length){
@@ -511,8 +616,8 @@ ManageCanvas(){
                 this.LoadImage();
               };
           }
-      }
-          
+      // display diaporama
+      }  
     } else {
           this.myImage=new Image(); 
           if (this.initialCanvasPhoto>=this.WeddingPhotos.length){
@@ -566,7 +671,7 @@ wait_WeddingPhotos(){
 
 
 change_canvas_size(nb_photo:number){
-  this.LogMsgConsole('change_canvas_size & nb_photo is ' + nb_photo + '  WeddingPhotos[nb_photo].vertical' + this.WeddingPhotos[nb_photo-1].vertical+ ' image='+this.myImage.src);
+  //this.LogMsgConsole('change_canvas_size & nb_photo is ' + nb_photo + '  WeddingPhotos[nb_photo].vertical' + this.WeddingPhotos[nb_photo-1].vertical+ ' image='+this.myImage.src);
   this.ctx.beginPath(); // critical
                   
   this.ctx.globalCompositeOperation = 'source-over';

@@ -76,7 +76,7 @@
     </span>
     <span *ngIf="nb_current_page!==nb_total_page || this.bucketMgt.Max_Nb_Bucket_Wedding>=this.bucketMgt.Nb_Buckets_processed">
         <button class='butt' id="but4" (click)="next_prev_page('next')" >Next page</button>
-       
+       <br>
         <span *ngIf="this.bucketMgt.Nb_Buckets_processed < this.bucketMgt.Max_Nb_Bucket_Wedding"  style="color:blue; font-size:32px; margin-left:40px;">&ensp; ... more pictures to be loaded</span>
     </span>
   </span>
@@ -120,14 +120,40 @@ in CSS
     </div>
     <br><br>
     <canvas 
-      #ImageCanvas 
+      #ImageCanvas
       id='canvasElem' 
       class="position" 
-      width="550" 
-      height="600" 
+      width="50" 
+      height="10" 
     >
     </canvas>
   </div>
   <br><br>
+
+  <div *ngIf="first_canvas_displayed===true">
+     <!--
+    <app-DiapoCanvas [ConfigXMV]="ConfigXMV" [WeddingPhotos]="WeddingPhotos"></app-DiapoCanvas>
+    -->
+      <h2 style="margin-left:20px;">The Twins</h2>
+      <br>
+      <div [formGroup]="DiapoForm" class="position-parameters">
+        <label class="posParamPhoto">Start photo nb </label><input formControlName="StartDiapoNb" type="number" class="position-field" >
+         <label class="posParamPhoto">End photo nb </label><input formControlName="EndDiapoNb" type="number" class="position-field" >
+            <button class="butt" id="but7" (click)="drawDiapoCanvas()">Submit</button>
+        
+      </div>
+     
+  </div>
+ 
+  <canvas  
+      #DiapoCanvas 
+      id='canvasElemTwo' 
+      class="position" 
+      width="50" 
+      height="10" 
+    >
+  </canvas>
+
+
 
 </body>

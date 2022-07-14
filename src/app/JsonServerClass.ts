@@ -91,7 +91,19 @@ export class XMVConfig{
   BucketWeddingRoot:string="";
   nb_photo_per_page:number=10;
   process_display_canvas:boolean=false;
+  width500:number=501;
+  maxPhotosWidth500:number=3;
+  width900:number=901;
+  maxPhotosWidth900:number=6;
+  maxWidth:number=1200;
+  maxPhotosmaxWidth:number=9;
   UserSpecific:Array<UserParam>=[];
+}
+
+
+export class XMVTestProd{
+  TestFile:string="";
+  ProdFile:string="";
 }
 
 export class UserParam{
