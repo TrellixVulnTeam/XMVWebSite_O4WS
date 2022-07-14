@@ -32,8 +32,7 @@ import { GetImagesComponent}  from './Special-Services/GetImages.component';
     Event27AugComponent,
     Event02JULComponent,
     WeddingPhotosComponent,
-    GetImagesComponent,
-
+    GetImagesComponent
   ],
   imports: [
     AppRoutingModule,
@@ -42,8 +41,7 @@ import { GetImagesComponent}  from './Special-Services/GetImages.component';
     FormsModule,
     MatIconModule,
     ReactiveFormsModule,
-    HttpClientModule,
-
+    HttpClientModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   bootstrap: [AppComponent]
