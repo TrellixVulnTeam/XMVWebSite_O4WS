@@ -18,6 +18,8 @@
   <h1 style="margin-top:2px;"><br></h1>
  <h1 style="margin-top:140px;">Pictures of our wedding</h1>
  <h3 >Total number of photos: {{WeddingPhotos.length}}</h3>
+ <h3 *ngIf="this.bucketMgt.Nb_Buckets_processed < this.bucketMgt.Max_Nb_Bucket_Wedding" > ... and more will be loaded</h3>
+
  <br><br>
 
 
@@ -37,7 +39,7 @@
               <span *ngIf="WeddingPhotos[PhotoNumber[i]-1].vertical===true && slowDisplay!==''">
                 <img  (mouseover)="onZoomPhoto(i)" class="photoVertical" (load)='NextImage(i)' [ngStyle]="{'width.px':theWidthV, 'height.px':theHeightV}" src={{slowDisplay}}>
               </span>
-              <button  class="GOdownload"><span  class="material-symbols-outlined myIcon" (click)="onDownloadFile(slowDisplay)">
+              <button  class="GOdownload"><span  class="material-symbols-outlined myIcon" (click)="onDownloadFile(i)">
                             download
                       </span>
               </button> 
@@ -74,9 +76,20 @@
     </span>
     <span *ngIf="nb_current_page!==nb_total_page || this.bucketMgt.Max_Nb_Bucket_Wedding>=this.bucketMgt.Nb_Buckets_processed">
         <button class='butt' id="but4" (click)="next_prev_page('next')" >Next page</button>
+       
+        <span *ngIf="this.bucketMgt.Nb_Buckets_processed < this.bucketMgt.Max_Nb_Bucket_Wedding"  style="color:blue; font-size:32px; margin-left:40px;">&ensp; ... more pictures to be loaded</span>
     </span>
   </span>
+<!--
+Regular space: &nbsp;
+Two spaces gap: &ensp;
+Four spaces gap: &emsp;
 
+in CSS
+.tab {
+      tab-size: 2;
+    }
+-->
 <div *ngIf="myLogConsole===true">
   <h2 style="margin-left:20px;">Log console is activated</h2>
   <h3 style="margin-left:20px;">number of non archived msgs = {{myConsole.length+1}}</h3>
@@ -92,30 +105,29 @@
 
 </div>
 
-<div *ngIf="process_display_canvas===true">
-      <h2 style="margin-left:20px;">Display a specific picture</h2>
-      <br>
-
-      <div [formGroup]="PhotoNbForm" class="position-parameters">
-              <span ><label class="posParamPhoto">Number </label><input formControlName="SelectNb" type="number" class="position-field" >
-        <button class="butt" id="but6" (click)="drawPhotoCanvas()">Submit</button>
-      </span>
-      </div>
-      <br>
-
-      <div *ngIf="first_canvas_displayed===true">
-        <span style="color:blue; font-size:18px; margin-left:40px;">{{message_canvas}}</span>
-      </div>
-      <br>br>
-      <canvas 
+<div *ngIf="ConfigXMV.process_display_canvas===true ">
+    <div *ngIf="first_canvas_displayed===true">
+        <h2 style="margin-left:20px;">Display a specific picture</h2>
+        <br>
+        <div [formGroup]="PhotoNbForm" class="position-parameters">
+                <span ><label class="posParamPhoto">Number </label><input formControlName="SelectNb" type="number" class="position-field" >
+                    <button class="butt" id="but6" (click)="drawPhotoCanvas()">Submit</button>
+                </span>
+        </div>
+        <br>
+        <span *ngIf="error_canvas!==''" style="color:red; font-size:18px; margin-left:40px;">{{error_canvas}}</span>
+        <span *ngIf="message_canvas!==''" style="color:blue; font-size:18px; margin-left:40px;">{{message_canvas}}</span>
+    </div>
+    <br><br>
+    <canvas 
       #ImageCanvas 
       id='canvasElem' 
       class="position" 
       width="550" 
       height="600" 
-      >
-      </canvas>
-</div>
-<br><br>
+    >
+    </canvas>
+  </div>
+  <br><br>
 
 </body>

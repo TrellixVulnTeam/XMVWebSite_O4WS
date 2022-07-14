@@ -49,7 +49,9 @@ export class WeddingPhotosComponent {
     prevCanvasPhoto:number=0;
     initialdrawCanvas:boolean=false;
     message_canvas:string='';
+    error_canvas:string='';
     initialCanvasPhoto:number=1;
+
     first_onload:boolean=true;
     getScreenWidth: any;
     getScreenHeight: any;
@@ -116,7 +118,6 @@ export class WeddingPhotosComponent {
     first_canvas_displayed:boolean=false;
     WentonNgInit:boolean=false;
 
-    process_display_canvas:boolean=false;
 
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
@@ -124,7 +125,7 @@ onWindowResize() {
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
       this.SizeImage();
-      if (this.process_display_canvas===true){
+      if (this.ConfigXMV.process_display_canvas===true){
         this.change_canvas_size(this.initialCanvasPhoto);
       }
       
@@ -152,7 +153,7 @@ SizeImage(){
 
   ngOnInit(){
 
-     this.getScreenWidth = window.innerWidth;
+    this.getScreenWidth = window.innerWidth;
     this.getScreenHeight = window.innerHeight;
     this.device_type = navigator.userAgent;
     this.HTTP_AddressLog=this.Google_Bucket_Access_RootPOST + this.ConfigXMV.BucketConsole+ "/o?name="  ;
@@ -182,9 +183,9 @@ SizeImage(){
   }    
 
   ngAfterViewInit() { 
-    this.LogMsgConsole('ngAfterViewInit() - WeddingPhotos.length'+this.WeddingPhotos.length+' isWeddingPhotoEmpty'+this.isWeddingPhotoEmpty+'  process_display_canvas is '+this.process_display_canvas);
+    this.LogMsgConsole('ngAfterViewInit() - WeddingPhotos.length'+this.WeddingPhotos.length+' isWeddingPhotoEmpty'+this.isWeddingPhotoEmpty+'  ConfigXMV.process_display_canvas is '+this.ConfigXMV.process_display_canvas);
       
-    if (this.process_display_canvas===true){
+    if (this.ConfigXMV.process_display_canvas===true){
       this.theCanvas=document.getElementById('canvasElem');
       if (!this.ctx) { //true
           this.ctx=this.theCanvas.getContext('2d');
@@ -211,7 +212,7 @@ displayPhotos(){
         this.isWeddingPhotoEmpty=false;
         // initialise the tables to display the images and the number of pages 
         this.initialiseTables(0);
-        if (this.process_display_canvas===true){
+        if (this.ConfigXMV.process_display_canvas===true){
               this.drawPhotoCanvas();
         }
   }
@@ -319,7 +320,7 @@ if(processOtherPage===true){
       this.WeddingPhotos[this.nb_current_photo].isdiplayed=true;
       this.imagesToDisplay=this.PhotoToDisplay.length;
 
-      if (this.process_display_canvas===true){
+      if (this.ConfigXMV.process_display_canvas===true){
         this.ManageCanvas();
       }
   }
@@ -335,8 +336,8 @@ onDownloadFile(event:any): void {
     // triggerred by html component
     const link = document.createElement("a");
     //link.href = URL.createObjectURL(file);
-    link.href=event.mediaLink;
-    link.download = event.name; // filename
+    link.href=this.WeddingPhotos[event].mediaLink;
+    link.download = this.WeddingPhotos[event].name; // filename
     link.click();
     link.remove(); 
   }
@@ -367,6 +368,7 @@ NextImage(noPhoto:number){
   }
   if (this.PhotoToDisplay[this.PhotoToDisplay.length-1].photo_loaded===1){
     this.DisplayPageRange=true;
+    this.first_canvas_displayed=true;
   }
   
   this.LogMsgConsole(msg);
@@ -379,7 +381,7 @@ LoadImage(){
   for (i=0; i<this.PhotoToDisplay.length && this.PhotoToDisplay[i].wait===true && this.PhotoToDisplay[i].photo_loaded===1; i++){};
   if (i<this.PhotoToDisplay.length-1 && this.PhotoToDisplay[i].wait!==true){
     this.PhotoToDisplay[i].wait=true
-  }
+  } else {this.first_canvas_displayed=true;}
   this.imagesToDisplay=this.PhotoToDisplay.length-(i+1);
  
 }
@@ -425,7 +427,7 @@ ngOnChanges(changes: SimpleChanges) {
     const to=JSON.stringify(j.currentValue);
     
     const from=JSON.stringify(j.previousValue);
-    this.message_canvas=' onChanges ====> '+ from +' ' +to + ' ';
+    
     this.LogMsgConsole('                        $$$$$ onChanges '+' to '+to+' from '+from + ' ---- JSON.stringify(j) '+ JSON.stringify(j));
   }
 
@@ -471,55 +473,6 @@ LogMsgConsole(msg:string){
   msginLogConsole(msg, this.myConsole,this.myLogConsole, this.SaveConsoleFinished,this. HTTP_AddressLog, this.type);
   }
 
-/****
-LogMsgConsole(msg:string){
-  console.log(msg);
-  this.myTime=new Date();
-  this.myDate= this.myTime.toString().substring(8,24);
-  this.thetime=this.myDate+this.myTime.getTime().toString();
-  if (this.myLogConsole===true){
-          this.myConsole.push('');
-          this.myConsole[this.myConsole.length-1]='<==> '+this.thetime.substr(0,20) + ' ' +msg;
-  }
-  if (this.myConsole.length>1000 && this.SaveConsoleFinished===true){
-    this.saveLogConsole(this.myConsole, 'WeddingPhotos');
-          if (this.EventLogConsole.length!==0){
-            this.saveLogConsole(this.EventLogConsole,'Event27AUG');
-          }
-  }
-}
-
-saveLogConsole(LogConsole:any, type:string){
-
-  this.myTime=new Date();
-  this.myDate= this.myTime.toString().substring(8,24);
-  this.thetime=this.myDate+this.myTime.getTime().toString();
-  const consoleLength=LogConsole.length;
-  this.SaveConsoleFinished=false;
-  // this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name   + '&uploadType=media';
-  this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.ConfigXMV.BucketConsole+ "/o?name="  + this.thetime.substr(0,20)+ type + '.json&uploadType=media';
-
-  this.http.post(this.HTTP_Address, LogConsole)
-    .subscribe(res => {
-            this.SaveConsoleFinished=true;
-            if (LogConsole.length===consoleLength){
-              LogConsole.splice(0,LogConsole.length);
-              }
-            else {
-              for (let i=consoleLength; i>0; i--){
-                LogConsole.splice(i-1,1);
-              }
-            }
-            LogConsole.push('');
-            LogConsole[LogConsole.length-1]='Log Console ' + type + ' has been deleted at '+this.myDate+'  ' +this.thetime;
-          },
-          error_handler => {
-            console.log('Log record failed for ' + type + this.Google_Object_Name + '  error handller is ' + error_handler);
-            // this.Error_Access_Server= "  object ===>   " + JSON.stringify( this.Table_User_Data)  + '   error message: ' + error_handler.message + ' error status: '+ error_handler.statusText+' name: '+ error_handler.name + ' url: '+ error_handler.url;
-            // alert( 'Log record failed -- http post = ' + this.Google_Object_Name);
-           } )
-}
-****/
 
 
 // ==================== BELOW ARE MODULES RELATED TO MANAGEMENT OF THE CANVAS
@@ -542,29 +495,28 @@ ManageCanvas(){
   if (this.PhotoNbForm.controls['SelectNb'].value!==null){ // a canvas has already been displayed
     if (this.first_canvas_displayed===true){ // the first canvas is loaded otherwise should wait for the first canvas to be loaded [part of the onload process under condition 'else']
         if (this.PhotoNbForm.controls['SelectNb'].value<1 || this.PhotoNbForm.controls['SelectNb'].value>this.WeddingPhotos.length){
-            this.message_canvas='value must be between 1 and '+ this.WeddingPhotos.length + ' Nb captured:'+this.PhotoNbForm.controls['SelectNb'].value+
-                    'length of the table ' + this.WeddingPhotos.length ;
+            this.error_canvas='value must be between 1 and '+ this.WeddingPhotos.length;
+            this.message_canvas='';
           }
         else {
             this.message_canvas= this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].name;
+            this.error_canvas='';
+
+            this.myImage=new Image();         
+            this.myImage.src=this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink;
+            this.LogMsgConsole(' img.src = '+this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink);
+
+            this.myImage.onload = () => {
+                this.initialCanvasPhoto=this.PhotoNbForm.controls['SelectNb'].value;
+                this.LogMsgConsole(' image ' + this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink + ' is loaded');
+                this.change_canvas_size(this.initialCanvasPhoto);
+                this.LoadImage();
+              };
           }
-
-        this.myImage=new Image();         
-        this.myImage.src=this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink;
-        this.LogMsgConsole(' img.src = '+this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink);
-
-        this.myImage.onload = () => {
-            this.initialCanvasPhoto=this.PhotoNbForm.controls['SelectNb'].value;
-            this.LogMsgConsole(' image ' + this.WeddingPhotos[this.PhotoNbForm.controls['SelectNb'].value-1].mediaLink + ' is loaded');
-            this.change_canvas_size(this.initialCanvasPhoto);
-            this.LoadImage();
-          };
-          
       }
           
     } else {
-          this.myImage=new Image();
-          this.LogMsgConsole('draw first canvas image -- start onLoad ===> j_loop='+ this.j_loop+ ' i_loop='+ this.i_loop);
+          this.myImage=new Image(); 
           if (this.initialCanvasPhoto>=this.WeddingPhotos.length){
               this.LogMsgConsole('initialCanvasPhoto='+this.initialCanvasPhoto+'  WeddingPhotos.length = '+this.WeddingPhotos.length);
               if (this.WeddingPhotos.length>0) {
@@ -581,16 +533,9 @@ ManageCanvas(){
                   this.PhotoNbForm.controls['SelectNb'].setValue(this.initialCanvasPhoto);
                   this.myImage.src=this.WeddingPhotos[this.initialCanvasPhoto-1].mediaLink;
               }
+          console.log("draw first canvas image process but no display; this.PhotoNbForm.controls['SelectNb'].value="+this.PhotoNbForm.controls['SelectNb'].value)
           this.PhotoToDisplay[0].wait=true;
-
           this.nb_current_page=1;
-          this.myImage.onload = () => {
-              this.LogMsgConsole('this.myImage.onload ==== first_canvas_displayed after '+ this.j_loop+ ' loops'+ ' initialCanvasPhoto='+this.initialCanvasPhoto);
-              this.first_canvas_displayed=true;
-              this.change_canvas_size(this.initialCanvasPhoto);
-              this.LoadImage();
-              this.LogMsgConsole('end of the drawing');
-            };
      }
          
   }
@@ -613,7 +558,7 @@ wait_WeddingPhotos(){
     this.calculate_pages();    
     this.LogMsgConsole('end wait_WeddingPhotos; call ManageCanvas() and then  window.cancelAnimationFrame(this.id_Animation)');
 
-    if (this.process_display_canvas===true){
+    if (this.ConfigXMV.process_display_canvas===true){
         this.ManageCanvas();
       }
     window.cancelAnimationFrame(this.id_Animation);
@@ -623,7 +568,7 @@ wait_WeddingPhotos(){
 
 
 change_canvas_size(nb_photo:number){
-  this.LogMsgConsole('change_canvas_size & nb_photo is ' + nb_photo + '  WeddingPhotos[nb_photo].vertical' + this.WeddingPhotos[nb_photo].vertical+ ' image='+this.myImage.src);
+  this.LogMsgConsole('change_canvas_size & nb_photo is ' + nb_photo + '  WeddingPhotos[nb_photo].vertical' + this.WeddingPhotos[nb_photo-1].vertical+ ' image='+this.myImage.src);
   this.ctx.beginPath(); // critical
                   
   this.ctx.globalCompositeOperation = 'source-over';

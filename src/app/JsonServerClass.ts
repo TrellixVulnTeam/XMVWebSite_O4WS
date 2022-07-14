@@ -90,6 +90,7 @@ export class XMVConfig{
   GetOneBucketOnly:boolean=false;
   BucketWeddingRoot:string="";
   nb_photo_per_page:number=10;
+  process_display_canvas:boolean=false;
   UserSpecific:Array<UserParam>=[];
 }
 
