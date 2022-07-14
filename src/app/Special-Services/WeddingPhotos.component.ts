@@ -572,7 +572,7 @@ change_canvas_size(nb_photo:number){
   this.ctx.beginPath(); // critical
                   
   this.ctx.globalCompositeOperation = 'source-over';
-  if (nb_photo<this.WeddingPhotos.length && this.WeddingPhotos[nb_photo-1].vertical===true){
+  if (nb_photo<=this.WeddingPhotos.length && this.WeddingPhotos[nb_photo-1].vertical===true){
     this.ctx.canvas.width=this.theWidthV;
     this.ctx.canvas.height=this.theHeightV;
     this.ctx.canvas.width=this.theWidthV;
