@@ -110,7 +110,6 @@ export class LoginComponent {
       this.routing_code=0;
       this.EventHTTPReceived=false;
       this.getEventAug();
-      // this.waitHTTP(0, 30000);
 
       if (this.identification.UserId!=='' && this.identification.psw!=='') {
        // go through login panel again to allow the change of user id if needed SIN!02#JUL
@@ -124,9 +123,7 @@ export class LoginComponent {
           this.myForm.controls['action'].setValue("");
         }
 
-      //========= TO BE DELETED
-      //this.identification.UserId='AFGazikian';
-      //this.identification.psw='AF#Gazikian@41';
+
       this.myForm.controls['userId'].setValue(this.identification.UserId);
       this.myForm.controls['password'].setValue(this.identification.psw);
   }
@@ -263,18 +260,7 @@ ValidateDataBis(){
         // user id not found in EventAug so go through through next validation step which is to check if other objects in the bucket (e.g. EventJuly)
         this.Google_Object_Name=this.Google_Object_Name+this.Google_Object_Name_Extension;
         this.text_error='';
-        /********* 
-        if (this.Table_User_Data.length===0){
-          const j= () => {
-            this.id_Animation=window.requestAnimationFrame(j) ;
-            if (this.j_loop>30000 || this.Table_User_Data.length!==0){
-                    console.log('j_loop=',this.j_loop);
-                    window.cancelAnimationFrame(this.id_Animation);
-              } 
-            }
-          j();
-        }
-        ******************/
+
         this.EventHTTPReceived=false;
         // once data is received all validation checks are performed in GetObject() and routing_code is assigned
         this.GetObject(); 
@@ -341,14 +327,6 @@ getConfig(){
             .subscribe((data ) => {
               console.log('getConfig() - data received');
               this.ConfigXMV=data;
-              /***
-              for (let i=0; i<data.UserSpecific.length; i++){
-                const j=new UserParam;
-                this.ConfigXMV.UserSpecific.push(j);
-                this.ConfigXMV.UserSpecific[this.ConfigXMV.UserSpecific.length-1]=data.UserSpecific[i];
-              }
-              this.ConfigXMV=data;
-               */
             },
               error_handler => {
                 console.log('getConfig() - error handler');

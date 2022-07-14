@@ -59,7 +59,7 @@ onWindowResize() {
     this.scroller.scrollToAnchor(event);
   }
   displayWedPhotos(){
-    //**this.LogMsgConsole('displayWedPhotos() in Event-27Aug');
+    //**console.log('displayWedPhotos() in Event-02JUL');
     const pas=20;
     this.pagePhotos=true;
  

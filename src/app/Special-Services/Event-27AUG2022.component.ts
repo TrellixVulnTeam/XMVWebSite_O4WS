@@ -724,17 +724,7 @@ displayWedPhotos(){
   //**this.LogMsgConsole('displayWedPhotos() in Event-27Aug');
   const pas=20;
   this.pagePhotos=true;
-  /***
-  for (this.i=0; this.i<this.bucketMgt.Max_Nb_Bucket_Wedding; this.i++){
-    console.log('displayWedPhotos() in Event-27Aug ', 'this.bucketMgt.bucket_list_returned of ', this.i, ' is ' + this.bucketMgt.bucket_list_returned[this.i]);
-    for (this.j=0; this.j<this.max_j_loop && this.bucketMgt.bucket_list_returned[this.i]==='0'; this.j++){
-        // waiting for all buckets content to be received
-        if (this.j%pas === 0){
-          console.log('displayWedPhotos() in Event-27Aug ==> loop=', this.j, 'this.bucketMgt.bucket_list_returned of ', this.i, ' is ' + this.bucketMgt.bucket_list_returned[this.i]);
-        }
-    }
-  }
-   */
+
 }
 
 
