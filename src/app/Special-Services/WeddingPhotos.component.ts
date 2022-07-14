@@ -1,16 +1,14 @@
 import { Component, OnInit , Input, Output, EventEmitter, ViewChild, SimpleChanges, OnChanges, 
-  AfterContentInit, HostListener, AfterViewInit} from '@angular/core';
+   HostListener, AfterViewInit} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { ViewportScroller } from "@angular/common";
-import { EventAug } from '../JsonServerClass';
 import { StructurePhotos } from '../JsonServerClass';
-import { encrypt, decrypt} from '../EncryptDecryptServices';
+
 import { BucketExchange } from '../JsonServerClass';
 import { XMVConfig } from '../JsonServerClass';
-import { UserParam } from '../JsonServerClass';
+
 import { msginLogConsole } from '../consoleLog';
 import { saveLogConsole } from '../consoleLog';
 
