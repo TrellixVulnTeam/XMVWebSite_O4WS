@@ -123,8 +123,8 @@ in CSS
       #ImageCanvas
       id='canvasElem' 
       class="position" 
-      width="50" 
-      height="10" 
+      width="0" 
+      height="0" 
     >
     </canvas>
   </div>
@@ -134,26 +134,54 @@ in CSS
      <!--
     <app-DiapoCanvas [ConfigXMV]="ConfigXMV" [WeddingPhotos]="WeddingPhotos"></app-DiapoCanvas>
     -->
-      <h2 style="margin-left:20px;">The Twins</h2>
+    <div id='TopSelectedPhoto' ></div>
+    <div *ngIf="SelectedPhoto!==0">
+      <h2 style="color:blue;"> Selected photo :  {{SelectedPhoto}} </h2>
+      <span style="width:80%; display:block; font-size:14px; color:blue; margin-left:20px;">  {{WeddingPhotos[SelectedPhoto-1].name}}
+       </span>
+        <img  class="photo" style="margin-left:20px;"[ngStyle]="{'width.px':SelectedPhotoW, 'height.px':SelectedPhotoH}" 
+                                                            src={{WeddingPhotos[SelectedPhoto-1].mediaLink}} >      
+       <br>
+       <button class='butt' id="but9" style='margin-top:30px; margin-left:80px;'(click)="PrevDiapo()"  > <span style='font-size:20px;'>Prev</span> </button>
+       <button class='butt' id="but10" style='margin-left:20px;'(click)="NextDiapo()"  > <span style='font-size:20px;'>Next</span> </button>
+      </div>
+
+
+      <h1 style="margin-left:20px;">Diaporama</h1>
       <br>
+      <h3>Click on a picture to display it</h3>
+      <br><br>
       <div [formGroup]="DiapoForm" class="position-parameters">
         <label class="posParamPhoto">Start photo nb </label><input formControlName="StartDiapoNb" type="number" class="position-field" >
          <label class="posParamPhoto">End photo nb </label><input formControlName="EndDiapoNb" type="number" class="position-field" >
-            <button class="butt" id="but7" (click)="drawDiapoCanvas()">Submit</button>
-        
+            <button class="butt" id="but5" (click)="drawDiapoCanvas()">Submit</button>
+          <br>
+            
+            <span *ngIf="error_Diapo!==''" style="color:red; font-size:18px; margin-left:40px;">{{error_Diapo}}</span>
+            <span *ngIf="message_Diapo!==''" style="color:blue; font-size:18px; margin-left:40px;">{{message_Diapo}}</span>
       </div>
-     
+     <br><br>
   </div>
  
   <canvas  
       #DiapoCanvas 
       id='canvasElemTwo' 
       class="position" 
-      width="50" 
-      height="10" 
+      width="0" 
+      height="0" 
+      (click)="OnClickCanvas($event)" 
+
     >
   </canvas>
+  <h3 >Total number of photos loaded: {{WeddingPhotos.length}}</h3>
+  <h3 style="color:blue; font-size:18px; font-family: ROBOTO;" *ngIf="this.bucketMgt.Nb_Buckets_processed < this.bucketMgt.Max_Nb_Bucket_Wedding" >
 
+    Click <button class='butt' id="but8" (click)="MorePagesFromCanvas()" style='margin-left:-6px;' > <span style='font-size:20px;'>here</span> </button> to load more pages
+  </h3>
+<!--
+      (mousedown)="OnClickCanvas($event)" 
+      (mousemove)="OnClickCanvas($event)"
+-->
 
 
 </body>

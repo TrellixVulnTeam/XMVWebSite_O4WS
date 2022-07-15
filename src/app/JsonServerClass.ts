@@ -96,10 +96,15 @@ export class XMVConfig{
   BucketConsole:string="";
   BucketContact:string="";
   Max_Nb_Bucket_Wedding:number=6;
+
+  BucketSource:string="";
+  TabBucketPhoto:Array<string>=[];
+
   GetOneBucketOnly:boolean=false;
-  BucketWeddingRoot:string="";
+  // BucketWeddingRoot:string="";
   nb_photo_per_page:number=10;
   process_display_canvas:boolean=false;
+  padding:number=10;
   width500:number=501;
   maxPhotosWidth500:number=3;
   width900:number=901;
