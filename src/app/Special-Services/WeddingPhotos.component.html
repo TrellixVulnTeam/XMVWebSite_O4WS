@@ -15,15 +15,12 @@
 
   --> 
   <div id='targetTop' ></div>
-  <h1 style="margin-top:2px;"><br></h1>
- <h1 style="margin-top:140px;">Pictures of our wedding</h1>
+  <h2 style="margin-top:2px;"><br></h2>
+ <h2 style="margin-top:140px;">Pictures of our wedding</h2>
  <h3 >Total number of photos: {{WeddingPhotos.length}}</h3>
  <h3 *ngIf="this.bucketMgt.Nb_Buckets_processed < this.bucketMgt.Max_Nb_Bucket_Wedding" > ... and more will be loaded</h3>
 
  <br><br>
-
-
-<br><br>
 
     <div *ngFor="let slowDisplay of slow_table let i=index" style="margin-left:20px;">
       <span *ngIf="slowDisplay!=='' && PhotoToDisplay[i].wait===true">
@@ -128,7 +125,7 @@ in CSS
     >
     </canvas>
   </div>
-  <br><br>
+
 
   <div *ngIf="first_canvas_displayed===true">
      <!--
@@ -142,19 +139,18 @@ in CSS
         <img  class="photo" style="margin-left:20px;"[ngStyle]="{'width.px':SelectedPhotoW, 'height.px':SelectedPhotoH}" 
                                                             src={{WeddingPhotos[SelectedPhoto-1].mediaLink}} >      
        <br>
-       <button class='butt' id="but9" style='margin-top:30px; margin-left:80px;'(click)="PrevDiapo()"  > <span style='font-size:20px;'>Prev</span> </button>
-       <button class='butt' id="but10" style='margin-left:20px;'(click)="NextDiapo()"  > <span style='font-size:20px;'>Next</span> </button>
+       <button class='butt' id="but9" style='margin-top:30px; margin-left:80px;'(click)="PrevDiapo()"  > <span style='font-size:16px;'>Prev</span> </button>
+       <button class='butt' id="but10" style='margin-left:20px;'(click)="NextDiapo()"  > <span style='font-size:16px;'>Next</span> </button>
       </div>
 
 
-      <h1 style="margin-left:20px;">Diaporama</h1>
-      <br>
+      <h2 style="margin-left:20px;">Diaporama</h2>
       <h3>Click on a picture to display it</h3>
       <br><br>
       <div [formGroup]="DiapoForm" class="position-parameters">
         <label class="posParamPhoto">Start photo nb </label><input formControlName="StartDiapoNb" type="number" class="position-field" >
-         <label class="posParamPhoto">End photo nb </label><input formControlName="EndDiapoNb" type="number" class="position-field" >
-            <button class="butt" id="but5" (click)="drawDiapoCanvas()">Submit</button>
+        <br> <label class="posParamPhoto">End photo nb </label><input formControlName="EndDiapoNb" type="number" class="position-field" >
+        <br> <br>   <button class="butt" style="margin-left:40px;"id="but5" (click)="drawDiapoCanvas()"><span style='font-size:16px;'>Submit</span> </button>
           <br>
             
             <span *ngIf="error_Diapo!==''" style="color:red; font-size:18px; margin-left:40px;">{{error_Diapo}}</span>
@@ -176,7 +172,7 @@ in CSS
   <h3 >Total number of photos loaded: {{WeddingPhotos.length}}</h3>
   <h3 style="color:blue; font-size:18px; font-family: ROBOTO;" *ngIf="this.bucketMgt.Nb_Buckets_processed < this.bucketMgt.Max_Nb_Bucket_Wedding" >
 
-    Click <button class='butt' id="but8" (click)="MorePagesFromCanvas()" style='margin-left:-6px;' > <span style='font-size:20px;'>here</span> </button> to load more pages
+    Click <button class='butt' id="but8" (click)="MorePagesFromCanvas()" style='margin-left:0px;' > <span style='font-size:20px;'>here</span> </button> to load more pages
   </h3>
 <!--
       (mousedown)="OnClickCanvas($event)" 

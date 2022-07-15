@@ -12,7 +12,7 @@ h2{
     font-weight: bold;
     font-family: 'Tangerine';
     letter-spacing: 2px;
-    margin-top:50px;
+    margin-top:20px;
     text-align:center;
   
     }
@@ -23,7 +23,7 @@ h3{
     font-weight: bold;
     font-family: 'Tangerine';
     letter-spacing: 2px;
-    margin-top:50px;
+    margin-top:20px;
     text-align:center;
 }
 
@@ -234,7 +234,7 @@ h2{
 .butt{
     margin-left:20px;
     font-size:10px;
-    width:50px;
+
 
 }
 .butt:hover{
