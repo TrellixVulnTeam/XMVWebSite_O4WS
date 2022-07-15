@@ -19,6 +19,15 @@ export class BioData{
     url:string='';
     };
 
+    export class LoginIdentif{
+      id:number=0;
+      key:number=0;
+      method:string='';
+      UserId:string='';
+      psw:string='';
+      phone:string='';
+    };
+
   export class EventAug {
       id: number=0;
       key:number=0;

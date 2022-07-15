@@ -7,6 +7,8 @@ import { EventAug } from '../JsonServerClass';
 import {Bucket_List_Info} from '../JsonServerClass';
 import { XMVConfig } from '../JsonServerClass';
 import { XMVTestProd } from '../JsonServerClass';
+import { LoginIdentif } from '../JsonServerClass';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -21,14 +23,10 @@ export class LoginComponent {
     private http: HttpClient,    
     ) {}
 
-    @Input() identification={
-      id: 0,
-      key:0,
-      method:'',
-      UserId:'',
-      psw:'',
-      phone:''
-    };
+    @Input() identification=new LoginIdentif; 
+    // from xmv-company.cmoponent.ts which got it through an @output action
+    // putpose is to keep the identification if user goes to other part of the website so that he/she does not need to reenter the information
+
 
     ConfigXMV=new XMVConfig;
     ConfigTestProd=new XMVTestProd;
@@ -61,14 +59,7 @@ export class LoginComponent {
     Crypto_Method:string='';
     Crypto_Error:string='';
     Crypto_Key:number=0;
-    Encrypt_Data:any={
-      id: 0,
-      key:0,
-      method:'',
-      UserId:'',
-      psw:'',
-      phone:'',
-    }
+    Encrypt_Data=new LoginIdentif;
 
     Table_User_Data:Array<EventAug>=[];
     Table_DecryptPSW:Array<string>=[];
@@ -150,7 +141,7 @@ GetObject(){
       // this.HTTP_AddressMetaData=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name ; 
       console.log('GetObject() - object:', this.Google_Object_Name);
       this.EventHTTPReceived=false;
-            this.http.get(this.HTTP_Address, {'headers':this.myHeader} )
+            this.http.get<LoginIdentif>(this.HTTP_Address, {'headers':this.myHeader} )
             .subscribe(data => {
             //console.log(data);
             this.Encrypt_Data = data;
@@ -272,9 +263,6 @@ ValidateDataBis(){
         this.routing_code=3;
         this.Encrypt_Data.UserId=this.Table_User_Data[this.i].UserId;
         this.Encrypt_Data.id=this.Table_User_Data[this.i].id;
-        this.Encrypt_Data.invitees=this.Table_User_Data[this.i].nbinvitees;
-        this.Encrypt_Data.night=this.Table_User_Data[this.i].night;
-        this.Encrypt_Data.brunch=this.Table_User_Data[this.i].brunch;
     }
   }
 }
@@ -337,9 +325,9 @@ getConfig(ObjectName:string){
   }
 FileType={TestProd:''};
 
-  getConfigAsset(){
+getConfigAsset(){
     console.log('getConfigAsset()');
-  
+  /****
             this.http.get<any>('./assets/XMVConfigTestOrProd.json' )
               .subscribe((data ) => {
                 console.log('getConfigAsset() - data received');
@@ -351,7 +339,16 @@ FileType={TestProd:''};
                   this.text_error='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
                 } 
           )
+    
+     */
+    if (environment.production === false){
+      this.FileType.TestProd = 'Test';
     }
+    else {
+      this.FileType.TestProd='Prod';
+    }
+    this.getConfigXMV();
+  }
 
   getConfigXMV(){
     console.log('getConfigXMV()');

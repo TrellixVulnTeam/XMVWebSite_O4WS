@@ -3,7 +3,7 @@ import { Component, HostListener, OnInit, OnChanges, ChangeDetectorRef, AfterVie
 import { Router, RouterModule } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
+import { LoginIdentif } from '../JsonServerClass';
 
 
 @Component({
@@ -30,15 +30,12 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
 
   selected_offer:string='';
 
-  /***  to keep identification and psw of the user */
-  identif={
-    id: 0,
-    key:0,
-    method:'',
-    UserId:'',
-    psw:'',
-    phone:''
-  };
+  /***  
+   to keep identification and psw of the user ; information 
+   is passed by login.component.ts through [identification]="identif" 
+  */
+ 
+  identif=new LoginIdentif;
 
   Events_nb:string='';
 

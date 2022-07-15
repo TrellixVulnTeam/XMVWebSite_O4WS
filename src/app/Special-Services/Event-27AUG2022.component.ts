@@ -5,13 +5,15 @@ import { HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { ViewportScroller } from "@angular/common";
-import { EventAug } from '../JsonServerClass';
+
 import { encrypt, decrypt} from '../EncryptDecryptServices';
 import {Bucket_List_Info} from '../JsonServerClass';
 import { StructurePhotos } from '../JsonServerClass';
 import { BucketExchange } from '../JsonServerClass';
 import { XMVConfig } from '../JsonServerClass';
 import { UserParam } from '../JsonServerClass';
+import { EventAug } from '../JsonServerClass';
+import { LoginIdentif } from '../JsonServerClass';
 
 @Component({
   selector: 'app-Event-27AUG2022',
@@ -45,14 +47,7 @@ export class Event27AugComponent {
     @Input() LoginTable_User_Data:Array<EventAug>=[];
     @Input() LoginTable_DecryptPSW:Array<string>=[];
     @Input() ConfigXMV=new XMVConfig;
-    @Input() identification={
-      id: 0,
-      key:0,
-      method:'',
-      UserId:'',
-      psw:'',
-      phone:'',
-    };
+    @Input() identification= new LoginIdentif;
 
     Total={
       brunch:0,

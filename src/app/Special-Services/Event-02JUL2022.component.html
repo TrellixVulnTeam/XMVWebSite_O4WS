@@ -165,6 +165,9 @@
 
       <app-GetImages [EventLogConsole]="myConsole" [myLogConsole]="myLogConsole" [ConfigXMV]="ConfigXMV" [nextBucketOnChange]="nextBucketOnChange" >
       </app-GetImages>
+      <div *ngIf="bucketMgt.bucket_is_processed===true">
+      
+      </div>
     <br><br><br>
     </ng-template>
   </body>

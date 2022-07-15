@@ -4,11 +4,14 @@ import { HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { ViewportScroller } from "@angular/common";
+
 import {Bucket_List_Info} from '../JsonServerClass';
 import { StructurePhotos } from '../JsonServerClass';
 import { BucketExchange } from '../JsonServerClass';
 import { XMVConfig } from '../JsonServerClass';
 import { UserParam } from '../JsonServerClass';
+import { EventAug } from '../JsonServerClass';
+import { LoginIdentif } from '../JsonServerClass';
 
 @Component({
   selector: 'app-Event-02JUL2022',
@@ -23,7 +26,11 @@ export class Event02JULComponent {
     private http: HttpClient,
     private scroller: ViewportScroller,
     ) {}
+    
+    @Input() LoginTable_User_Data:Array<EventAug>=[];
+    @Input() LoginTable_DecryptPSW:Array<string>=[];
     @Input() ConfigXMV=new XMVConfig;
+    @Input() identification= new LoginIdentif;
 
     getScreenWidth: any;
     getScreenHeight: any;

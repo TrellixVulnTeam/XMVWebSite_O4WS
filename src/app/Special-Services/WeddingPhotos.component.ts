@@ -52,10 +52,19 @@ export class WeddingPhotosComponent {
       EndDiapoNb: new FormControl(),
     });
 
-    @Input()  ConfigXMV=new XMVConfig;
+    @Input() ConfigXMV=new XMVConfig;
     @Input() bucketMgt=new BucketExchange;
-    //@Input() bucket_is_processed:boolean=false;
     @Input() WeddingPhotos:Array<StructurePhotos>=[];
+
+    myConsole:Array<string>=[]; // store log before it is saved in appropriate bucket/object in Google cloud
+    @Input() myLogConsole:boolean=false; // log messages from this module
+    @Input() EventLogConsole:Array<string>=[]; // log coming from GetImages.component.ts
+    SaveConsoleFinished:boolean=true;
+
+    @Input()nextBucketOnChange:number=0; // each time a new bucket is 'http get' from Event-27AUG2020.component.ts
+    PhotoToDisplay:Array<push_new_bucket>=[]; // if 'wait=true' then html will display this image
+    emitBucketProcessed:boolean=false; // to ensure that the retrieved bucket has been fully processed before another bucket is required through 'http get'
+
     @Output() AddBucket= new EventEmitter<number>();
 
     prevCanvasPhoto:number=0;
@@ -86,16 +95,6 @@ export class WeddingPhotosComponent {
     pages_to_display:Array<number>=[];
     DisplayPageRange:boolean=false;
     imagesToDisplay:number=0;
-
-    myConsole:Array<string>=[]; // store log before it is saved in appropriate bucket/object in Google cloud
-    @Input() myLogConsole:boolean=false; // log messages from this module
-    @Input() EventLogConsole:Array<string>=[]; // log coming from GetImages.component.ts
-    SaveConsoleFinished:boolean=true;
-
-
-    @Input()nextBucketOnChange:number=0; // each time a new bucket is 'http get' from Event-27AUG2020.component.ts
-    PhotoToDisplay:Array<push_new_bucket>=[]; // if 'wait=true' then html will display this image
-    emitBucketProcessed:boolean=false; // to ensure that the retrieved bucket has been fully processed before another bucket is required through 'http get'
 
     i:number=0;
     j:number=0;

@@ -71,7 +71,7 @@
   <app-Respond-Contact ></app-Respond-Contact>
 </div> 
 </ng-template>
-
+<!--
 <ng-template #firstevent>  
 <div  *ngIf="routing_code===2; else secondevent">
     <app-Event-02JUL2022 [identification]="Encrypt_Data" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="Table_User_Data" 
@@ -79,6 +79,18 @@
 </div> 
 </ng-template>
 
+  <app-GetImages  [ConfigXMV]="ConfigXMV" [identification]="identification" [WeddingPhotos]="WeddingPhotos">
+  </app-GetImages>
+-->
+
+<!-- [destination]="source" -->
+<ng-template #firstevent>  
+  <div  *ngIf="routing_code===2; else secondevent">
+      <app-GetImages [identification]="Encrypt_Data" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="Table_User_Data" 
+      [LoginTable_DecryptPSW]="Table_DecryptPSW"></app-GetImages>
+  </div> 
+  </ng-template>
+  
 <ng-template #secondevent> 
     <div  *ngIf="routing_code===3">
       <app-Event-27AUG2022 [identification]="Encrypt_Data" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="Table_User_Data" 
