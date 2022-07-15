@@ -104,6 +104,8 @@ export class WeddingPhotosComponent {
     pages_to_display:Array<number>=[];
     DisplayPageRange:boolean=false;
     imagesToDisplay:number=0;
+    TenPageRange:Array<number>=[1,2,3,4,5,6,7,8,9,10];
+    MaxPageRange=10;  
 
     i:number=0;
     j:number=0;
@@ -286,33 +288,36 @@ display_page(page_nb:number){
   }
 }
 
+
+
 DefinePageRange(){
+
   this.nb_current_photo=(this.nb_current_page-1)*this.ConfigXMV.nb_photo_per_page; // first photo for the next page -1
   
   // looking for the middle of the page
    // if number of pages to display is < 10 then nothing to change 
-  if ( this.pages_to_display.length>this.nb_total_page){
+  if ( this.MaxPageRange>this.nb_total_page){
    this.j=1;
   } else {
-      this.j = this.nb_current_page-Math.floor(this.pages_to_display.length/2);
-      if (this.pages_to_display.length%2!==0){
+      this.j = this.nb_current_page-Math.floor(this.MaxPageRange/2);
+      if (this.MaxPageRange%2!==0){
             this.j ++;
         }
    }
-  if ( this.j + this.pages_to_display.length > this.nb_total_page){
-      this.j=this.nb_total_page-this.pages_to_display.length+1;
+  if ( this.j + this.MaxPageRange > this.nb_total_page){
+      this.j=this.nb_total_page-this.MaxPageRange+1;
     }
   if ( this.j<1 ){this.j=1; } 
 
-
-  for (this.i=0; this.i<this.pages_to_display.length; this.i++){
-      if (this.i+this.j<=this.nb_total_page){
-          this.pages_to_display[this.i]=this.i+this.j;
-        } 
-      else {
-          this.pages_to_display[this.i]=-1; // no more pages to display; '-1' is checked by html component
-        }
-   }
+  for (this.i=0; this.i<this.MaxPageRange; this.i++){
+    if (this.i+this.j<=this.nb_total_page){
+        this.TenPageRange[this.i]=this.i+this.j;
+      } 
+    else {
+        this.TenPageRange[this.i]=-1; // no more pages to display; '-1' is checked by html component
+      }
+ }
+  
 }
 
 manage_page(event:any){ 
@@ -444,14 +449,15 @@ calculate_pages(){
     this.nb_total_page++
   }
   this.j=1;
-  for (this.i=0; this.i<this.pages_to_display.length; this.i++){
+  for (this.i=0; this.i<this.MaxPageRange; this.i++){
     if (this.i+this.j<=this.nb_total_page){
-      this.pages_to_display[this.i]=this.i+this.j;
+      this.TenPageRange[this.i]=this.i+this.j;
     } else {
-         this.pages_to_display[this.i]=-1;
+         this.TenPageRange[this.i]=-1;
     }
   }
 }
+
 
 // not used == must check how to reload an image and which action can trigger it
 Redisplay(event:string){

@@ -61,7 +61,8 @@
         <button class='butt' id="but3" (click)="next_prev_page('prev')" >Prev page</button>
     </span>
     <span style="margin-left:20px; font-size:6px;">&nbsp;</span>
-    <span *ngFor="let tab_pages of pages_to_display; let i=index">
+    <!-- TenPageRange replaced pages_to_display -->
+    <span *ngFor="let tab_pages of TenPageRange; let i=index">
 
         <span *ngIf="tab_pages===nb_current_page && tab_pages!==-1" class="highlight_page"  >
             {{tab_pages}} <span style="font-size:6px;">&nbsp;</span>
@@ -141,10 +142,12 @@ in CSS
        <br>
        <button class='butt' id="but9" style='margin-top:30px; margin-left:80px;'(click)="PrevDiapo()"  > <span style='font-size:16px;'>Prev</span> </button>
        <button class='butt' id="but10" style='margin-left:20px;'(click)="NextDiapo()"  > <span style='font-size:16px;'>Next</span> </button>
-      </div>
+       <button class='butt' id="but11" style='margin-left:80px; color:blue;' (click)="onDownloadFile(SelectedPhoto-1)"  > <span style='font-size:15px;'>Download</span> </button>
+    </div>
 
 
-      <h2 style="margin-left:20px;">Diaporama</h2>
+    <br><br>
+      <h2 style="margin-left:20px;">Range of pictures</h2>
       <h3>Click on a picture to display it</h3>
       <br><br>
       <div [formGroup]="DiapoForm" class="position-parameters">
