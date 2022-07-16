@@ -3,7 +3,8 @@
 </head> 
 
 <body>
-<div  *ngIf="routing_code===0 || routing_code===4; else RespondContact">
+
+<div  *ngIf="routing_code===0 || routing_code===4; else AdminJson">
     <!--
     <br> Device type is {{device_type}}
     <br> Screen width = {{getScreenWidth}}
@@ -15,8 +16,7 @@
 
   <img  class="sizeMap" src="./assets/Lavender.JPG" >
   
-    <div class="main_box">
-    
+  <div class="main_box">
     
       <h2 class="title "> Welcome!  </h2>
  
@@ -39,38 +39,43 @@
             <label class="field-name " >password</label>
             <input  class=" input_field"  formControlName="password" id="psw" type="password" > 
             <div class="filler"><br> </div>
-      </div>
-      <div *ngIf="routing_code===4" class="second-label">
-        <label class="field-name " >Event to manage</label>
-        <input  class=" input_field"  formControlName="action" id="action" type="text" > 
-      <div class="filler"><br> </div>
-    </div>
+        </div>
+          <div *ngIf="routing_code===4" class="second-label">
+            <label class="field-name " >Event to manage</label>
+            <input  class=" input_field"  formControlName="action" id="action" type="text" > 
+          <div class="filler"><br> </div>
+        </div>
       
-    <div >
+        <div >
             <button id='but_1' class="sizeButtons first-button"  (click)="ValidateData()">Send</button>
             <button id='but_2' class="sizeButtons" (click)="onClear()">Clear</button>
-    </div>
+        </div>
 
-  
     </form>
   </div>
 </div>
 
-        <!-- ======== FOOTER ======== -->
-        <div class='myfooter' >
-          <div class='copyright' ><br>Copyright © 2022 XMV IT Consulting PTE LTD  - All Rights Reserved.
-              <br> Disclaimer : All copy rights of non-XMV brands or companies belong to respective brands or companies any mention on this website is for reference purposes only. 
-              <br> 
-              <div class='copyright' >No rights intended or owned in them 
-              </div>
-              <br>
-          </div>
-  </div>
-<ng-template #RespondContact>
-<div  *ngIf="routing_code===1; else firstevent">
-  <app-Respond-Contact ></app-Respond-Contact>
-</div> 
+  <!-- ======== FOOTER ======== -->
+<div class='myfooter' >
+  <div class='copyright' ><br>Copyright © 2022 XMV IT Consulting PTE LTD  - All Rights Reserved.
+      <br> Disclaimer : All copy rights of non-XMV brands or companies belong to respective brands or companies any mention on this website is for reference purposes only. 
+      <br> 
+      <div class='copyright' >No rights intended or owned in them 
+      </div>
+      <br>
+    </div>
+</div>
+
+
+<!-- THIS IS TO MANAGE THE DIFFERENT JSON OBJECTS STORED IN GOOGLE CLOUD OR ./assets -->
+<ng-template #AdminJson> 
+  <div  *ngIf="routing_code===1; else firstevent">
+    <app-AdminJson [identification]="Encrypt_Data" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="Table_User_Data" 
+          [LoginTable_DecryptPSW]="Table_DecryptPSW" >
+    </app-AdminJson>
+  </div> 
 </ng-template>
+
 <!--
 <ng-template #firstevent>  
 <div  *ngIf="routing_code===2; else secondevent">
@@ -83,7 +88,10 @@
   </app-GetImages>
 -->
 
+
+
 <!-- [destination]="source" -->
+<!-- THIS IS TO MANAGE WEDDING PICTURES -->
 <ng-template #firstevent>  
   <div  *ngIf="routing_code===2; else secondevent">
       <app-GetImages [identification]="Encrypt_Data" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="Table_User_Data" 
@@ -91,14 +99,18 @@
   </div> 
   </ng-template>
   
+
+
 <ng-template #secondevent> 
-    <div  *ngIf="routing_code===3">
-      <app-Event-27AUG2022 [identification]="Encrypt_Data" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="Table_User_Data" 
-            [LoginTable_DecryptPSW]="Table_DecryptPSW" (returnDATA)="GetUpdatedTable($event)">
-      </app-Event-27AUG2022>
-    </div> 
+  <div  *ngIf="routing_code===3; else wrongevent">
+    <app-Event-27AUG2022 [identification]="Encrypt_Data" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="Table_User_Data" 
+          [LoginTable_DecryptPSW]="Table_DecryptPSW" (returnDATA)="GetUpdatedTable($event)">
+    </app-Event-27AUG2022>
+  </div> 
 </ng-template>
 
-
+<ng-template #wrongevent> 
+  <div> Wrong routing_code : {{routing_code}}</div>
+</ng-template>
 
 </body>

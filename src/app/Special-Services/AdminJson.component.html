@@ -1,0 +1,79 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+</head>
+<body>
+
+<div id='targetTop' ></div>
+
+<h2 style="margin-top:2px;"><br></h2>
+<h1 style="margin-top:140px;">Administration of JSON objects</h1>
+<br><br>
+<div *ngIf="Error_Access_Server!==''">
+  <span style='margin-top:20px; color:red; font-size:16px;'> Error access to the server : {{Error_Access_Server}}
+  </span>
+</div>
+
+<span  (click)="Process('BucketList')" class="dropdown-options dropdown-text">Bucket List</span>
+<span  (click)="Process('Contact')" class="dropdown-options dropdown-text">Contact</span>
+<span  (click)="Process('27Aug')" class="dropdown-options dropdown-text">Event 27Aug</span>
+<span  (click)="Process('ConfigProd')" class="dropdown-options dropdown-text">Config Prod</span>
+<span  (click)="Process('ConfigTest')" class="dropdown-options dropdown-text">Config Test</span>
+<span  (click)="Process('LogConsole')" class="dropdown-options dropdown-text">Log console</span>
+<span  (click)="Process('Login')" class="dropdown-options dropdown-text">Login</span>
+<!--
+<ng-template #RespondContact>
+  <div  *ngIf="routing_code===1; else firstevent">
+    <app-Respond-Contact ></app-Respond-Contact>
+  </div> 
+  </ng-template>
+-->
+<br><br><br><br><br><br>
+<div *ngIf="ListOfBucket.Config!==''">
+    <h2> List of buckets is </h2>
+    
+     <span class='labelbucket even'>Contact messages</span> <span class='bucket even'> {{ListOfBucket.Contact}}</span>
+      <span class='labelbucket odd'>Login </span><span class='bucket odd'>{{ListOfBucket.Login}}</span>
+      <span class='labelbucket even'>Configuration files: </span><span class='bucket even'>{{ListOfBucket.Config}}</span>
+      <span class='labelbucket odd'>Log console</span><span class='bucket odd'>{{ListOfBucket.Console}}</span>
+    
+</div>
+
+<br><br><br>
+
+  <h2> Current configuration parameters  </h2>
+ 
+    <span class='labelbucket odd'>BucketLogin</span> <span class='bucket odd'>  {{ConfigXMV.BucketLogin}}</span>
+    <span class='labelbucket even'>BucketConsole</span> <span class='bucket even'>  {{ConfigXMV.BucketConsole}}</span>
+    <span class='labelbucket odd'>BucketContact</span> <span class='bucket odd'> {{ConfigXMV.BucketContact}}</span>
+    <span class='labelbucket even'>Max_Nb_Bucket_Wedding</span> <span class='bucket even'>  {{ConfigXMV.Max_Nb_Bucket_Wedding}}</span>
+
+   
+
+    <span class='labelbucket odd'>GetOneBucketOnly</span> <span class='bucket odd'>  {{ConfigXMV.GetOneBucketOnly}}</span>
+
+    <span class='labelbucket even'>nb_photo_per_page</span> <span class='bucket even'>  {{ConfigXMV.nb_photo_per_page}}</span>
+    <span class='labelbucket odd'>process_display_canvas</span> <span class='bucket odd'> {{ConfigXMV.process_display_canvas}}</span>
+    <span class='labelbucket even'>padding</span> <span class='bucket even'>  {{ConfigXMV.padding}}</span>
+    <span class='labelbucket odd'>width500</span> <span class='bucket odd'>  {{ConfigXMV.width500}}</span>
+    <span class='labelbucket even'>maxPhotosWidth500</span> <span class='bucket even'>  {{ConfigXMV.maxPhotosWidth500}}</span>
+    <span class='labelbucket odd'>width900</span> <span class='bucket odd'>  {{ConfigXMV.width900}}</span>
+    <span class='labelbucket even'>maxPhotosWidth900</span> <span class='bucket even'>  {{ConfigXMV.maxPhotosWidth900}}</span>
+    <span class='labelbucket odd'>maxWidth</span> <span class='bucket odd'>  {{ConfigXMV.maxWidth}}</span>
+    <span class='labelbucket even'>maxPhotosmaxWidth</span> <span class='bucket even'>  {{ConfigXMV.maxPhotosmaxWidth}}</span>
+    <span class='labelbucket odd'>BucketSource</span> <span class='bucket odd'>  {{ConfigXMV.BucketSource}}</span>
+
+    <span *ngFor='let TabBucket of ConfigXMV.TabBucketPhoto let i=index' >
+      <span *ngIf='i===0'><span class='labelbucket even'>TabBucketPhoto</span>  <span class='bucket even'> {{TabBucket}} </span>  </span>
+      <span *ngIf='i>0 '><span class='labelbucket even'> &nbsp; </span>                <span class='bucket even'> {{TabBucket}} </span>  </span>
+     
+    </span>
+    <span *ngFor='let UsrSpec of ConfigXMV.UserSpecific let i=index' >
+        <span *ngIf="i===0 "><span class='labelbucket odd'>UserSpecific  </span><span class='bucket odd'>  id={{UsrSpec.id}} ; type={{UsrSpec.type}} ; log={{UsrSpec.log}} </span> </span>
+        <span *ngIf="i===0 "><span class='labelbucket odd'>  &nbsp; </span><span class='bucket  odd'>  id={{UsrSpec.id}} ; type={{UsrSpec.type}} ; log={{UsrSpec.log}} </span> </span>
+        
+    </span>
+
+
+<br><br>
+</body>

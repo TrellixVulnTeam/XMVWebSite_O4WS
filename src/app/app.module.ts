@@ -18,7 +18,7 @@ import { Event27AugComponent}  from './Special-Services/Event-27AUG2022.componen
 import { Event02JULComponent}  from './Special-Services/Event-02JUL2022.component';
 import { WeddingPhotosComponent}  from './Special-Services/WeddingPhotos.component';
 import { GetImagesComponent}  from './Special-Services/GetImages.component';
-
+import { AdminJsonComponent}  from './Special-Services/AdminJson.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +32,8 @@ import { GetImagesComponent}  from './Special-Services/GetImages.component';
     Event27AugComponent,
     Event02JULComponent,
     WeddingPhotosComponent,
-    GetImagesComponent
+    GetImagesComponent,
+   AdminJsonComponent
   ],
   imports: [
     AppRoutingModule,

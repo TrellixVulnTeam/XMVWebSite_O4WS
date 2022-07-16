@@ -103,6 +103,14 @@ export class LoginComponent {
       this.EventHTTPReceived=false;
       this.getEventAug();
 
+
+      // ========== TO BE DELETED AFTER THE TESTS ==========
+      this.identification.UserId='XMVIT-Admin';
+      this.identification.psw='LIM!12monica#Chin';
+      this.routing_code=1;
+      // ===================================================
+
+
       if (this.identification.UserId!=='' && this.identification.psw!=='') {
        // go through login panel again to allow the change of user id if needed SIN!02#JUL
           this.myForm.controls['userId'].setValue(this.identification.UserId);
@@ -116,8 +124,8 @@ export class LoginComponent {
         }
 
 
-      this.myForm.controls['userId'].setValue(this.identification.UserId);
-      this.myForm.controls['password'].setValue(this.identification.psw);
+      //this.myForm.controls['userId'].setValue(this.identification.UserId);
+      //this.myForm.controls['password'].setValue(this.identification.psw);
   }
 
 waitHTTP(loop:number, max_loop:number){
@@ -165,9 +173,9 @@ GetObject(){
                   
                       if (this.myForm.controls['action'].value==='' || this.myForm.controls['action'].value===null){ 
                         this.routing_code=4;
-                      } else if (this.myForm.controls['action'].value==='Manage Contact'){
+                      } else if (this.myForm.controls['action'].value.toUpperCase()==='ADMINJSON'){
                           this.routing_code=1; // go to Respond_Contact
-                      } else if (this.myForm.controls['action'].value==='Event-27AUG2022'){
+                      } else if (this.myForm.controls['action'].value.toUpperCase()==='EVENT-27AUG2022'){
                         this.routing_code=3; // go to Respond_Contact
                       }
                     }

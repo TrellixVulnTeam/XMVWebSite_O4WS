@@ -9,7 +9,7 @@ import { StructurePhotos } from '../JsonServerClass';
 import { BucketExchange } from '../JsonServerClass';
 import { XMVConfig } from '../JsonServerClass';
 import { msginLogConsole } from '../consoleLog';
-
+import { LoginIdentif } from '../JsonServerClass';
 
 @Component({
   selector: 'app-GetImages',
@@ -39,14 +39,7 @@ export class GetImagesComponent {
 
     @Input() WeddingPhotos:Array<StructurePhotos>=[];
     @Input() ConfigXMV=new XMVConfig;
-    @Input() identification={
-      id: 0,
-      key:0,
-      method:'',
-      UserId:'',
-      psw:'',
-      phone:'',
-    };
+    @Input() identification=new LoginIdentif;
     EventHTTPReceived1:boolean=false;
     EventHTTPReceived2:boolean=false;
     EventHTTPReceived3:boolean=false;

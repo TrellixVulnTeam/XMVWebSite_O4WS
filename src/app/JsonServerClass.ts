@@ -125,3 +125,10 @@ export class UserParam{
     type:string="";
     log:boolean=false;
   }
+
+export class BucketList{
+  Contact: string= "XMV_messages";
+  Login:   string= "manage-login";
+  Console: string= "logconsole";
+  Config:  string= "config-xmvit";
+}

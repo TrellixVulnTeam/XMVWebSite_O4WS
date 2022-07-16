@@ -1,0 +1,95 @@
+
+
+h1{
+    font-weight: bold;
+    font-size:45px;
+    width:70%;  
+    text-align:center;
+    margin-top:40px;
+    font-family: 'Tangerine';
+    padding-left:15px;
+    letter-spacing: 2px;
+  }
+
+h2{
+  margin-top:20px;
+  width:70%;
+  font-size:36px;
+  font-weight: bold;
+  font-family: 'Tangerine';
+  letter-spacing: 2px;
+  text-align:center;
+  }
+
+h3{
+font-family: 'Roboto';
+  font-weight:bold;
+  font-size:22px;
+  letter-spacing: 2px;
+}
+
+.dropdown-options{
+    font-family: 'Roboto';
+    margin-top:5px;
+    background-color: #dedcdc;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    height:60px; 
+    width:100px;
+    margin-left:20px;;
+    float:left;
+
+  }
+  
+  .dropdown-options:hover{
+    background-color:rgb(197, 201, 217);
+    color:white;
+    font-weight:bold;
+    text-align:center;
+    vertical-align: middle;
+  }
+  
+  .dropdown-text{
+    font-family: 'Roboto';
+    margin-top:0px; 
+    font-size:18px;
+    color:black;
+    display:block;
+    text-align: center;
+  }
+
+
+ .labelbucket{
+    font-family: 'Roboto';
+    width:20%;
+    height:40px;
+    font-size:16px;
+    color:red;
+    display:block;
+    float:left;
+    padding-top:10px;
+    padding-left:10px;
+    margin-left:30px;
+ }
+
+ .bucket{
+    font-family: 'Roboto';
+     margin-left:20%;
+     height:40px;
+     color:blue;
+     font-size:16px;  
+     width:35%;
+     display:block;
+     padding-left:10px;
+     padding-top:10px;
+    
+ }
+
+.even{
+    color:blue;
+    background-color: lightgrey;
+}
+
+.odd{
+    color:white;
+    background-color: rgb(115, 110, 110);
+}
