@@ -19,8 +19,8 @@
     <div style="margin-left:20px;">
           <br><br>
         <h3>Copy from Ref table &nbsp;</h3>
-        <button  (click)="Copy('Prod')" >Prod </button> &nbsp;
-        <button  (click)="Copy('Test')" >Test</button>
+        <button class="butt" id='copyProd' (click)="Copy('Prod')" >Prod </button> &nbsp;
+        <button  class="butt"id='copyTest' (click)="Copy('Test')" >Test</button>
     </div>
 </div>
 
@@ -46,8 +46,8 @@
               <div style="margin-left:20px;">
                   <div *ngIf="ConfirmSaveTest===false">  
                     <h3>Select which type of data you want to display</h3>
-                    <button  (click)="Process('Prod')" >Prod </button> &nbsp;
-                    <button  (click)="Process('Test')" >Test</button>
+                    <button  class="butt" id='ProcessP' (click)="Process('Prod')" >Prod </button> &nbsp;
+                    <button class="butt" id='ProcessT' (click)="Process('Test')" >Test</button>
                   </div>
               </div>
               
@@ -62,14 +62,14 @@
 
                       <div><span  class="labelrecord">Record number </span>
                           <span  *ngIf="DataType==='Test'" class="recordNb">{{i-EventProdLength+1}}   
-                            <button  (click)='DeleteItem(i-EventProdLength+EventTestLength)'>Delete</button>
+                            <button  class="butt" id='DelT' (click)='DeleteItem(i-EventProdLength+EventTestLength)'>Delete</button>
                           </span>
                           <span  *ngIf="DataType==='Prod'" class="recordNb">{{i+1}}   
-                            <button  (click)='DeleteItem(i+1)'>Delete</button>
+                            <button class="butt" id='DelP'  (click)='DeleteItem(i+1)'>Delete</button>
                           </span>
                       </div>
 
-
+<br><br>
                  
                       
                       <div><span class="labelbucket  common odd"> Ref User Id</span><span class="bucket common odd"   >{{myForm.value.tabEvent[i+EventProdLength+EventTestLength].UserId}}</span></div>
@@ -95,7 +95,7 @@
                       <br><div>  <span class="labelbucket common odd"> Ref timeStamp</span><span class="bucket common odd"   >{{myForm.value.tabEvent[i+EventProdLength+EventTestLength].timeStamp}}</span></div>
                       <div>  <label class="labelbucket common">timeStamp</label><input class="input common"  formControlName="timeStamp" id="timeStamp" type="text"  ></div>
                       <br>
-                      <button class="submit" type="submit" (click)="ConfirmSave(DataType)">saveRecord</button> 
+                      <button id='save' class="submit" type="submit" (click)="ConfirmSave(DataType)">saveRecord</button> 
                       <br><br>
                       <div> <span class="labelbucket common empty">&nbsp;</span><span class="bucket common empty"   >&nbsp;</span></div>  
 
