@@ -1,0 +1,213 @@
+
+
+h1{
+    font-weight: bold;
+    font-size:45px;
+    width:70%;  
+    text-align:center;
+    margin-top:40px;
+    font-family: 'Tangerine';
+    padding-left:15px;
+    letter-spacing: 2px;
+  }
+
+h2{
+  margin-top:20px;
+  width:70%;
+  font-size:36px;
+  font-weight: bold;
+  font-family: 'Tangerine';
+  letter-spacing: 2px;
+  text-align:center;
+  }
+
+h3{
+  font-family: 'Roboto';
+  font-weight:bold;
+  font-size:22px;
+  letter-spacing: 2px;
+  
+}
+
+.dropdown-options{
+    font-family: 'Roboto';
+    margin-top:5px;
+    background-color: #dedcdc;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    height:40px; 
+    width:100px;
+    margin-left:20px;
+    font-size:16px;
+    float:left;
+    padding-top:8px;
+
+  }
+  
+.dropdown-options:hover{
+    background-color:rgb(197, 201, 217);
+    color:darkblue;
+    font-weight:bold;
+    text-align:center;
+    
+  }
+  
+.dropdown-text{
+    font-family: 'Roboto';
+    margin-top:0px; 
+    font-size:18px;
+    color:black;
+    display:block;
+    text-align: center;
+  }
+
+.labelrecord{
+    font-family: 'Roboto';
+    height:40px;
+    color:red;
+    display:block;
+    float:left;
+    padding-top:10px;
+    padding-left:10px;
+    margin-left:30px;
+    font-size:22px;  
+    width:30%;
+   }
+
+.recordNb{
+    font-size:20px;  
+    width:30px;
+    height:50px;
+    width:80%;
+    color:blue;
+    display:block;
+    padding-left:10px;
+    padding-top:12px;
+   }
+
+.recordNb:hover{
+    color:grey;
+    font-size:22px;
+    font-weight:bold;
+   }
+
+.common{
+  font-family: 'Roboto';
+  padding-left:10px;
+  padding-top:10px;
+  height:40px;
+  font-size:16px;
+  display:inline-flex;
+}
+
+.labelbucket{ 
+    width:20%;
+    color:red;
+    
+    margin-left:30px;
+ }
+
+.bucket{
+    width:50%;
+    color:blue; 
+ }
+
+.input{
+  width:50%;
+  color:blue; 
+}
+
+.input:hover{
+  background-color: lightgrey;
+
+}
+
+ .urCommentsLabel{
+  margin-left:30px;
+  width:20%;
+  height:50px; 
+  color:red;
+  font-size:16px; 
+  display:inline-flex;
+
+  padding-left:10px;
+  padding-top:30px;
+
+ }
+
+
+
+.urComments{
+  width:50%;
+  font-size:14px; 
+  height:50px; 
+  color:blue;
+  overflow:scroll;
+  display:inline-flex;
+ }
+ .urComments:hover{
+  background-color: lightgrey;
+}
+
+.even{
+    color:blue;
+    background-color: lightgrey;
+}
+
+.odd{
+    color:white;
+    background-color: rgb(115, 110, 110);
+}
+
+.empty{
+  color:white;
+  background-color: red;
+  height:10px;
+}
+
+.submit{
+  
+  background-color: lightgrey;
+  margin-left:60px;
+  font-size:16px;
+}
+.submit:hover{
+  color:white;
+  background-color: rgb(57, 34, 130);
+}
+/*** ====================================== ***/
+/*** ============== @media 790 ================ ***/
+/*** ====================================== ***/
+ @media only screen and (max-width: 790px) {
+.common{
+    font-family: 'Roboto';
+    padding-left:10px;
+    padding-top:5px;
+    height:25px;
+    font-size:12px;
+  }
+.labelrecord{
+
+  font-size:18px;  
+  height:40px;
+ }
+ .recordNb{
+  font-size:18px;  
+  width:60%;
+  padding-top:12px;
+ }
+ .labelbucket{
+  width:27%;
+ }
+.bucket{
+  width:50%;
+ }
+
+ .urCommentsLabel{
+  width:27%;
+
+ }
+ .empty{
+  height:5px;
+}
+ 
+}

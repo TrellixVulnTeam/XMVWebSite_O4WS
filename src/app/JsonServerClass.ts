@@ -45,6 +45,26 @@ export class BioData{
       timeStamp:string='';
     };
 
+    export class EventCommentStructure{
+      dishMr:string='B';
+      dishMrs:string='F';
+      day:string='';
+      golf:number=0;
+      holes:number=0;
+      practiceSaturday:string='y';
+      bouleSaturday:string='y';
+      bouleSunday:string='y';
+      theComments:string='';
+      readAccess:number=0;
+      writeAccess:number=0;
+    }
+
+export class TableOfEventLogin{
+  data:Array<EventAug>=[];
+  psw:Array<string>=[];
+  structureComment:string='';
+}
+
 
  export class Bucket_List_Info{
   kind:string='storage#object';

@@ -13,7 +13,9 @@ import { BucketExchange } from '../JsonServerClass';
 import { XMVConfig } from '../JsonServerClass';
 import { UserParam } from '../JsonServerClass';
 import { EventAug } from '../JsonServerClass';
+import { EventCommentStructure } from '../JsonServerClass';
 import { LoginIdentif } from '../JsonServerClass';
+EventCommentStructure
 
 @Component({
   selector: 'app-Event-27AUG2022',
@@ -119,20 +121,6 @@ export class Event27AugComponent {
       
     });
 
-    CommentStructure={
-      dishMr:'B',
-      dishMrs:'F',
-      day:'',
-      golf:0,
-      holes:0,
-      practiceSaturday:'y',
-      bouleSaturday:'y',
-      bouleSunday:'y',
-      theComments:'',
-      readAccess:0,
-      writeAccess:0,
-    }
-
     Encrypt:string='';
     Decrypt:string='';
     Crypto_Method:string='AES';
@@ -194,14 +182,15 @@ export class Event27AugComponent {
     HTTP_Address:string='';
     HTTP_AddressMetaData:string='';
     Error_Access_Server:string='';
-
-
-    
     bucket_data:string='';
+
+    CommentStructure=new EventCommentStructure;
     Table_User_Data:Array<EventAug>=[];
     Table_DecryptPSW:Array<string>=[];
     Individual_User_Data= new EventAug;
     Retrieve_User_Data:Array<EventAug>=[];
+    
+
     Tab_Record_Update:Array<Boolean>=[];
     message:string='';
     recordToUpdate:number=0;

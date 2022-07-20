@@ -54,6 +54,8 @@ export class AdminJsonComponent {
     Google_Object_Name:string='';
     Error_Access_Server:string='';
 
+    GoToComponent:number=0;
+
     // https://storage.googleapis.com/storage/v1/b?project=xmv-it-consulting
     @Input() LoginTable_User_Data:Array<EventAug>=[];
     @Input() LoginTable_DecryptPSW:Array<string>=[];
@@ -89,7 +91,16 @@ ngOnInit(){
   }    
 
 Process(event:string){
-
+  this.GoToComponent=0;
+  if (event==='Photos'){
+    this.GoToComponent=1;
+  } else if (event==='Event27Aug'){
+    this.GoToComponent=2;
+  } else if (event==='Contact'){
+    this.GoToComponent=3;
+  } else if (event==='Login'){
+    this.GoToComponent=4;
+  }
   }
 
 

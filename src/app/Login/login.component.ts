@@ -31,9 +31,9 @@ export class LoginComponent {
     ConfigXMV=new XMVConfig;
     ConfigTestProd=new XMVTestProd;
 
-    id_Animation:number=0;
-    id_Animation_Two:number=0;
-    j_loop:number=0;
+    id_Animation:Array<number>=[];
+
+    j_loop:Array<number>=[];
     max_j_loop:number=20000;
 
     @Output() my_output1= new EventEmitter<any>();
@@ -77,7 +77,8 @@ export class LoginComponent {
     Google_Object_Name_Extension:string='.json';
     Bucket_Info_Array=new Bucket_List_Info;
 
-    EventHTTPReceived:boolean=false;
+    EventHTTPReceived:Array<boolean>=[];
+    FileType={TestProd:''};
   
   @HostListener('window:resize', ['$event'])
   onWindowResize() {
@@ -95,24 +96,37 @@ export class LoginComponent {
         'content-type': 'application/json',
         'cache-control': 'private, max-age=0'
       });
+      for (let i=0; i<10; i++){
+        this.EventHTTPReceived.push(false);
+        this.id_Animation.push(0);
+        this.j_loop.push(0);
+      }
+      this.EventHTTPReceived[3]=false;
       this. getConfigAsset();
-      this.waitHTTP(0, 30000);
+      // id_animation=3; EventHTTPReceived=3
+      this.j_loop[3]=0;
+      this.waitHTTP(30000,3,3);
       //this.httpHeader.append('content-type', 'application/json');
       //this.httpHeader.append('Cache-Control', 'no-store, must-revalidate, private, max-age=0, no-transform');
       this.routing_code=0;
-      this.EventHTTPReceived=false;
-      this.getEventAug();
-
+      this.EventHTTPReceived[0]=false;
+      this.getEventAug(0);
+      // id_animation=0; EventHTTPReceived=0
+      this.j_loop[0]=0;
+      this.waitHTTP(30000,0,0);
 
       // ========== TO BE DELETED AFTER THE TESTS ==========
       this.identification.UserId='XMVIT-Admin';
-      this.identification.psw='LIM!12monica#Chin';
-      this.routing_code=1;
+      this.Crypto_Key=this.identification.key;
+      this.Crypto_Method=this.identification.method;
+      this.Decrypt='LIM!12monica#Chin';
+      this.onCrypt("Encrypt");
+      this.identification.psw=this.Encrypt;
       // ===================================================
 
 
       if (this.identification.UserId!=='' && this.identification.psw!=='') {
-       // go through login panel again to allow the change of user id if needed SIN!02#JUL
+       // go through login panel again to allow the change of user id if needed 
           this.myForm.controls['userId'].setValue(this.identification.UserId);
           this.Crypto_Key=this.identification.key;
           this.Crypto_Method=this.identification.method;
@@ -124,80 +138,87 @@ export class LoginComponent {
         }
 
 
-      //this.myForm.controls['userId'].setValue(this.identification.UserId);
-      //this.myForm.controls['password'].setValue(this.identification.psw);
+
   }
 
-waitHTTP(loop:number, max_loop:number){
+waitHTTP( max_loop:number, id:number,event:number){
     const pas=500;
-    if (loop%pas === 0){
-      console.log('waitHTTP ==> loop=', loop, ' max_loop=', max_loop, ' this.EventHTTPReceived=', this.EventHTTPReceived);
+    if (this.j_loop[event]%pas === 0){
+      console.log('waitHTTP ==> loop=', this.j_loop[event], ' max_loop=', max_loop, ' [EventHTTP] ' +event+ '  this.EventHTTPReceived=', this.EventHTTPReceived[event]);
     }
-   loop++
+    this.j_loop[event]++
     
-    this.id_Animation=window.requestAnimationFrame(() => this.waitHTTP(loop, max_loop));
-    if (loop>max_loop || this.EventHTTPReceived===true){
-              console.log('exit waitHTTP ==> loop=', loop, ' max_loop=', max_loop, ' this.EventHTTPReceived=', this.EventHTTPReceived);
-              window.cancelAnimationFrame(this.id_Animation);
+    this.id_Animation[id]=window.requestAnimationFrame(() => this.waitHTTP(max_loop, id, event));
+    if (this.j_loop[event]>max_loop || this.EventHTTPReceived[event]===true){
+              console.log('exit waitHTTP ==> loop=', this.j_loop[event], ' max_loop=', max_loop + ' [EventHTTP]  = ' + event+ 'this.EventHTTPReceived=', this.EventHTTPReceived[event]);
+              window.cancelAnimationFrame(this.id_Animation[id]);
         }  
 
     }
 
-GetObject(){
+GetObject(event:number){
 // ****** get content of object *******
       this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name   + "?alt=media"; 
       // this.HTTP_AddressMetaData=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name ; 
       console.log('GetObject() - object:', this.Google_Object_Name);
-      this.EventHTTPReceived=false;
+      this.text_error='';
+      this.EventHTTPReceived[event]=false;
             this.http.get<LoginIdentif>(this.HTTP_Address, {'headers':this.myHeader} )
             .subscribe(data => {
             //console.log(data);
             this.Encrypt_Data = data;
-            this.EventHTTPReceived=true;
-            console.log('GetObject(); data received');
+            this.EventHTTPReceived[event]=true;
+            console.log('GetObject(); data received from '+ ' [event]' + event + ' '+this.EventHTTPReceived[event]);
             this.Crypto_Key=this.Encrypt_Data.key;
             this.Crypto_Method=this.Encrypt_Data.method;
             this.Encrypt=this.Encrypt_Data.psw;
             
             this.onCrypt("Decrypt");
-                
+            let i=0;
             if (this.Encrypt_Data.UserId===this.myForm.controls['userId'].value && this.Decrypt===this.myForm.controls['password'].value){
               // identification is correct
-
+              // send information to XMV Company so that user does not need to re-enter when back on Login page
                 this.my_output1.emit(this.Encrypt_Data);
-                let i=0;
+                
                 for (this.i=0; this.i<this.ConfigXMV.UserSpecific.length && this.Encrypt_Data.UserId!==this.ConfigXMV.UserSpecific[this.i].id; this.i++){}
 
                 
-                if (this.i<this.ConfigXMV.UserSpecific.length && this.Encrypt_Data.UserId===this.ConfigXMV.UserSpecific[this.i].id && this.ConfigXMV.UserSpecific[this.i].type==='ADMIN') {
-                  
-                      if (this.myForm.controls['action'].value==='' || this.myForm.controls['action'].value===null){ 
-                        this.routing_code=4;
-                      } else if (this.myForm.controls['action'].value.toUpperCase()==='ADMINJSON'){
-                          this.routing_code=1; // go to Respond_Contact
-                      } else if (this.myForm.controls['action'].value.toUpperCase()==='EVENT-27AUG2022'){
-                        this.routing_code=3; // go to Respond_Contact
-                      }
-                    }
-                  else if (this.Encrypt_Data.UserId==='Event-02JUL2022'){
+                
+                if (this.Encrypt_Data.UserId==='Event-02JUL2022' || this.Encrypt_Data.UserId==='HO'){
                     this.routing_code=2;
                   }
-                  else if (this.Encrypt_Data.UserId==='Event-27AUG2022'){
+                else if (this.Encrypt_Data.UserId==='Event-27AUG2022'){
                     this.routing_code=3;
-                  } else {
+                  }
+                else if (this.i<this.ConfigXMV.UserSpecific.length && this.Encrypt_Data.UserId===this.ConfigXMV.UserSpecific[this.i].id && this.ConfigXMV.UserSpecific[this.i].type==='ADMIN') {
+                    this.routing_code=1;
+                    /*** OLD PROCESS
+                    if (this.myForm.controls['action'].value==='' || this.myForm.controls['action'].value===null){ 
+                      this.routing_code=4;
+                    } else if (this.myForm.controls['action'].value.toUpperCase()==='ADMINJSON'){
+                        this.routing_code=1; // go to Respond_Contact
+                    } else if (this.myForm.controls['action'].value.toUpperCase()==='EVENT-27AUG2022'){
+                      this.routing_code=3; // go to Respond_Contact
+                    }
+                     */
+                  } 
+                  else {
                     this.ValidateEventAug();
+                    if (this.text_error!==''){
+                      this.text_error= this.text_error+" within getObject() after ValidateEventAug() id's are "+ this.Encrypt_Data.UserId + ' ' + this.ConfigXMV.UserSpecific[this.i].id + 'i='+i;
+                    }
                   }
                   this.my_output2.emit(this.routing_code.toString());
                   }
               else{
-                this.text_error="identification failed; retry";
+                this.text_error="identification failed in getObject(); retry";
               }
             },
             error_handler => {
                   // user id not found
-                  this.EventHTTPReceived=true;
+                  this.EventHTTPReceived[event]=true;
                   console.log('INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url);
-                  this.text_error='identification failed; retry';
+                  this.text_error='identification failed on error_handler; retry ';
                   this.routing_code=0;
             } 
         )
@@ -211,29 +232,31 @@ ValidateEventAug(){
 
   if (this.i>=this.Table_User_Data.length){
     // user id not found
-    this.text_error='identification failed; retry';
+    this.text_error='identification failed in validate event Aug; retry - length table is '+this.Table_User_Data.length;
     this.routing_code=0;
   } 
 }
 
 
 ValidateData(){
-    this.j_loop=0;
+  this.j_loop[0]=0;
     this.max_j_loop=20000;
-    this.ValidateDataTer();
+    // check that getEventAug() has been received as well as Config
+    // id_animation=4; EventHTTPReceived=0
+    this.ValidateDataTer(4,0,3);
 }
 
-ValidateDataTer(){
-  const pas=10;
-  if (this.j_loop%pas === 0){
-    console.log('ValidateDataTer ==> loop=', this.j_loop, ' max_loop=', this.max_j_loop, ' this.EventHTTPReceived=', this.EventHTTPReceived);
+ValidateDataTer(id_anim:number,event:number, eventtwo:number){
+  const pas=1000;
+  if (this.j_loop[event]%pas === 0){
+    console.log('ValidateDataTer ==> loop=', this.j_loop[event], ' max_loop=', this.max_j_loop, '  [EventHTTP0]  = ' + event+' [EventHTTP3]  = ' + eventtwo+  ' this.EventHTTPReceived=', this.EventHTTPReceived[event]);
   }
-  this.j_loop++
+  this.j_loop[event]++
   
-  this.id_Animation=window.requestAnimationFrame(() => this.ValidateDataTer());
-  if (this.j_loop>this.max_j_loop || this.EventHTTPReceived===true){
-            console.log('exit ValidateDataTer ==> loop=', this.j_loop, ' max_loop=', this.max_j_loop, ' this.EventHTTPReceived=', this.EventHTTPReceived);
-            window.cancelAnimationFrame(this.id_Animation);
+  this.id_Animation[id_anim]=window.requestAnimationFrame(() => this.ValidateDataTer(id_anim,event, eventtwo));
+  if (this.j_loop[event]>this.max_j_loop || (this.EventHTTPReceived[event]===true && this.EventHTTPReceived[eventtwo]===true)){
+            console.log('exit ValidateDataTer ==> loop=', this.j_loop[event], ' max_loop=', this.max_j_loop+' [EventHTTP0]  = ' + event+' [EventHTTP3]  = ' + eventtwo+  ' this.EventHTTPReceived=', this.EventHTTPReceived[event]);
+            window.cancelAnimationFrame(this.id_Animation[id_anim]);
             this.ValidateDataBis();
       }  
 }
@@ -261,12 +284,14 @@ ValidateDataBis(){
         this.Google_Object_Name=this.Google_Object_Name+this.Google_Object_Name_Extension;
         this.text_error='';
 
-        this.EventHTTPReceived=false;
+        this.EventHTTPReceived[2]=false;
         // once data is received all validation checks are performed in GetObject() and routing_code is assigned
-        this.GetObject(); 
+        this.GetObject(2); 
         // wait for the data from GetObject()
-        this.waitHTTP(0, 40000); 
-        console.log('after getObject()');
+        // id_animation=2; EventHTTPReceived=2
+        this.j_loop[2]=0;
+        this.waitHTTP(40000,2,2); 
+        console.log('after call of getObject()');
     } else {
         this.routing_code=3;
         this.Encrypt_Data.UserId=this.Table_User_Data[this.i].UserId;
@@ -275,19 +300,20 @@ ValidateDataBis(){
   }
 }
 
-getEventAug(){
-  console.log('getEventAug(); this.Table_User_Data = ', this.Table_User_Data.length);
+getEventAug(event:number){
+  console.log('getEventAug(); this.Table_User_Data = ', this.Table_User_Data.length + ' [event]' + event + ' '+this.EventHTTPReceived[event]);
   this.Google_Object_Name="Event-27AUG2022.json";
    
   this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name   + "?alt=media" ;
 
   this.HTTP_AddressMetaData=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name  + "?cacheContro=max-age=0, no-store, private"; 
-  
+  this.EventHTTPReceived[event]=false;
           
           this.http.get(this.HTTP_Address, {'headers':this.myHeader} )
             .subscribe((data ) => {
-              console.log('getEventAug() - data received');
-              this.EventHTTPReceived=true;
+              this.EventHTTPReceived[event]=true;
+              console.log('getEventAug() - data received'+ ' [event]' + event + ' '+this.EventHTTPReceived[event]);
+              
               this.bucket_data=JSON.stringify(data);
               var obj = JSON.parse(this.bucket_data);
         
@@ -307,7 +333,7 @@ getEventAug(){
 
               },
               error_handler => {
-                this.EventHTTPReceived=true;
+                this.EventHTTPReceived[event]=true;
                 console.log('getEventAug() - error handler');
                 this.text_error='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
               } 
@@ -316,14 +342,16 @@ getEventAug(){
   }
 
 
-getConfig(ObjectName:string){
-  console.log('getConfig() of '+ObjectName);
-
+getConfig(ObjectName:string, event:number){
+  console.log('getConfig() of '+ObjectName + ' [event]' + event + ' '+this.EventHTTPReceived[event]);
+  this.EventHTTPReceived[event]=false;
   this.HTTP_Address=this.Google_Bucket_Access_Root +  "config-xmvit/o/" + ObjectName + "?alt=media" ;    
           this.http.get<XMVConfig>(this.HTTP_Address )
             .subscribe((data ) => {
-              console.log('getConfig() - data received');
+              this.EventHTTPReceived[event]=true;
+              console.log('getConfig() - data received '+ ' [event]' + event + ' '+this.EventHTTPReceived[event]);
               this.ConfigXMV=data;
+              
             },
               error_handler => {
                 console.log('getConfig() - error handler');
@@ -331,7 +359,7 @@ getConfig(ObjectName:string){
               } 
         )
   }
-FileType={TestProd:''};
+
 
 getConfigAsset(){
     console.log('getConfigAsset()');
@@ -360,16 +388,19 @@ getConfigAsset(){
 
   getConfigXMV(){
     console.log('getConfigXMV()');
+    this.EventHTTPReceived[3]=false;
     //this.Google_Object_Name="ConfigXMVTestProd.json";
    const HTTP_Address=this.Google_Bucket_Access_Root +  "config-xmvit/o/ConfigXMVTestProd.json?alt=media" ;    
             this.http.get<XMVTestProd>(HTTP_Address )
               .subscribe((data ) => {
-                console.log('getConfigXMV() - data received');
+                this.EventHTTPReceived[3]=true;
+                console.log('getConfigXMV() - data received'+ ' [event]' + 3 + ' '+this.EventHTTPReceived[3]);
                 this.ConfigTestProd=data;
+                
                 if (this.FileType.TestProd==='Test'){
-                    this.getConfig(this.ConfigTestProd.TestFile);
+                    this.getConfig(this.ConfigTestProd.TestFile,3);
                 } else {
-                  this.getConfig(this.ConfigTestProd.ProdFile);
+                  this.getConfig(this.ConfigTestProd.ProdFile,3);
                 }
               },
                 error_handler => {
@@ -389,6 +420,7 @@ onClear(){
     userId: '',
     password:''
   });
+  this.text_error='';
 }
 
 onCrypt(type_crypto:string){

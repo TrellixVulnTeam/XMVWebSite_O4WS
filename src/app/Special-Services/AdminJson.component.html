@@ -17,17 +17,13 @@
 <span  (click)="Process('BucketList')" class="dropdown-options dropdown-text">Bucket List</span>
 <span  (click)="Process('Contact')" class="dropdown-options dropdown-text">Contact</span>
 <span  (click)="Process('27Aug')" class="dropdown-options dropdown-text">Event 27Aug</span>
-<span  (click)="Process('ConfigProd')" class="dropdown-options dropdown-text">Config Prod</span>
-<span  (click)="Process('ConfigTest')" class="dropdown-options dropdown-text">Config Test</span>
+<span  (click)="Process('Config')" class="dropdown-options dropdown-text">Config</span>
 <span  (click)="Process('LogConsole')" class="dropdown-options dropdown-text">Log console</span>
 <span  (click)="Process('Login')" class="dropdown-options dropdown-text">Login</span>
-<!--
-<ng-template #RespondContact>
-  <div  *ngIf="routing_code===1; else firstevent">
-    <app-Respond-Contact ></app-Respond-Contact>
-  </div> 
-  </ng-template>
--->
+<span  (click)="Process('Photos')" class="dropdown-options dropdown-text">Photos</span>
+
+
+<div *ngIf="GoToComponent===0; else CompoOne" >
 <br><br><br><br><br><br>
 <div *ngIf="ListOfBucket.Config!==''">
     <h2> List of buckets is </h2>
@@ -73,6 +69,41 @@
         <span *ngIf="i===0 "><span class='labelbucket odd'>  &nbsp; </span><span class='bucket  odd'>  id={{UsrSpec.id}} ; type={{UsrSpec.type}} ; log={{UsrSpec.log}} </span> </span>
         
     </span>
+  </div>
+
+  <ng-template #CompoOne>
+    <div *ngIf="GoToComponent===1; else CompoTwo ">
+        <app-GetImages [identification]="identification" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="LoginTable_User_Data" 
+            [LoginTable_DecryptPSW]="LoginTable_DecryptPSW">
+        </app-GetImages>
+    </div>
+  </ng-template>
+  
+  <ng-template #CompoTwo>
+    <div *ngIf="GoToComponent===2 else CompoThree ">
+      <app-Event-27AUG2022 [identification]="identification" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="LoginTable_User_Data" 
+          [LoginTable_DecryptPSW]="LoginTable_DecryptPSW"> <!--  (returnDATA)="GetUpdatedTable($event)" -->
+      </app-Event-27AUG2022>
+  </div>
+  </ng-template>
+  
+  <ng-template #CompoThree>
+    <div *ngIf="GoToComponent===3; else CompoFour ">
+      <app-Respond-Contact ></app-Respond-Contact>
+    </div>
+  </ng-template>  
+  
+
+  <ng-template #CompoFour>
+    <div *ngIf="GoToComponent===4; else CompoFour ">
+        <app-AdminLogin [ConfigXMV]="ConfigXMV"></app-AdminLogin>
+    </div>
+  </ng-template>
+
+  <ng-template #CompoFive>
+    
+      Error GoToComponent={{GoToComponent}}
+  </ng-template>
 
 
 <br><br>
