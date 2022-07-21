@@ -14,7 +14,8 @@ import { environment } from 'src/environments/environment';
 import { EventAug } from '../JsonServerClass';
 import { EventCommentStructure } from '../JsonServerClass';
 import { TableOfEventLogin } from '../JsonServerClass';
-import { ThisReceiver } from '@angular/compiler';
+import { BucketList } from '../JsonServerClass';
+import { Bucket_List_Info } from '../JsonServerClass';
 
 @Component({
   selector: 'app-AdminLogin',
@@ -103,6 +104,7 @@ export class AdminLoginComponent {
       
     }
     @Input() ConfigXMV=new XMVConfig;
+    @Input() ListOfBucket=new BucketList;
 
     Encrypt:string='';
     Decrypt:string='';
@@ -110,8 +112,6 @@ export class AdminLoginComponent {
     Crypto_Error:string='';
     Crypto_Key:number=0;
     Encrypt_Data=new LoginIdentif;
-  
-    id_Animation:number=0;
 
     CommentStructure=new EventCommentStructure;
     Table_User_Data:Array<EventAug>=[];
@@ -122,12 +122,14 @@ export class AdminLoginComponent {
 
     i:number=0;
 
+    EventHTTPReceived:Array<boolean>=[false,false,false,false,false,false];
+    id_Animation:Array<number>=[0,0,0,0,0];
+    TabLoop:Array<number>=[0,0,0,0,0];
     FileName:Array<string>=['Event-27AUG2022Prod.json', 'Event-27AUG2022Test.json' ] ;
-    EventHTTPReceived:Array<boolean>=[false,false];
     FileNameNew:Array<string>=['Event-27AUG2022ProdNew.json', 'Event-27AUG2022TestNew.json' ] ;
 
     bucket_data:string='';
-   
+    myListOfObjects=new Bucket_List_Info;
 
     myHeader=new HttpHeaders();    
     getScreenWidth: any;
@@ -152,6 +154,7 @@ export class AdminLoginComponent {
     Google_Bucket_Name:string='manage-login'; 
     Google_Object_Name:string='';
     Error_Access_Server:string='';
+    Message:string='';
 
     EventProdLength:number=0;
     EventTestLength:number=0;
@@ -159,14 +162,25 @@ export class AdminLoginComponent {
     DataType:string='Test';
     ConfirmSaveTest:boolean=false;
     ConfirmSaveProd:boolean=false;
+    DisplayListOfObjects=false;
+    ObjectTodisplay=false;
+
+
+    SelectedFile=false;
+    FileToRetrieve:string='';
+    FileMedialink:string='';
+    ContentTodisplay=false;
+    ContentObject:string='';
+    ContentObjectRef:string='';
+    ContentModified:boolean=false;
+
+    TestObjectStructure:any;
  
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
     }
-
-
 
 ngOnInit(){
       //**this.LogMsgConsole('AdminLogin ===== Device ' + navigator.userAgent + '======');
@@ -184,19 +198,174 @@ ngOnInit(){
         this.RefTestProd.structureComment=this.i.toString();
         this.TabTestProd.push(this.RefTestProd);
        
-  
       }
+      this.Message='List of objects is being retrieved from the cloud';
+      /**** list all objects of 'manage-login' bucket */
       this.isFormFilled=false;
       this.DataType='Test';
-      this.getEventAug(0);
-
-      this.getEventAug(1);
-      
-      this.waitHTTP(0,30000);
+      this.RetrieveAllObjects();
 
   }    
+
+
+
+RetrieveAllObjects(){
+// bucket name is ListOfObject.login
+console.log('RetrieveAllObjects()');
+this.Error_Access_Server='';
+this.EventHTTPReceived[2]=false;
+this.HTTP_Address=this.Google_Bucket_Access_Root + this.ListOfBucket.Login + "/o";
+this.http.get<Bucket_List_Info>(this.HTTP_Address )
+        .subscribe((data ) => {
+          console.log('RetrieveAllObjects() - data received');
+          this.Error_Access_Server='';
+          this.myListOfObjects=data;
+          this.DisplayListOfObjects=true;
+          this.Message='';
+        },
+        error_handler => {
+          this.EventHTTPReceived[3]=true;
+          
+          console.log('RetrieveAllObjects() - error handler');
+          this.Message='HTTP_Address='+this.HTTP_Address;
+          this.Error_Access_Server='RetrieveAllObjects()==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
+        } 
+)
+
+}
+
+ConfirmSelectedFile(event:any){
+  this.scroller.scrollToAnchor('SelectedFile');
+  console.log('ConfirmSelectedFile()');
+  //this.Message='selected event = '+event.mediaLink;
+  this.FileToRetrieve=event.name;
+  this.FileMedialink=event.mediaLink;
+  this.SelectedFile=true;
+}
+
+RetrieveSelectedFile(event:any){
+  this.scroller.scrollToAnchor('SelectedFile');
   
+  this.SelectedFile=false;
+  if (event='YES'){
+    // this.waitHTTP(this.TabLoop[3],30000,3);
+    this.http.get<any>(this.FileMedialink )
+    .subscribe((data ) => {
+      console.log('RetrieveSelectedFile='+this.FileToRetrieve);
+      this.Error_Access_Server='';
+      this.ContentObject=JSON.stringify(data);
+      this.ContentObjectRef=this.ContentObject;
+      this.ContentTodisplay=true;
+
+      //
+      this.TestObjectStructure=data;
+      if (Array.isArray(this.TestObjectStructure)===false){
+        this.Crypto_Key=2;
+        this.Crypto_Method='AES';
+        this.Encrypt=data.psw;
+        this.onCrypt("Decrypt");
+      }
+
+      //
+    },
+    error_handler => {
+      this.EventHTTPReceived[2]=true;
+      console.log('RetrieveAllObjects- error handler');
+      this.Message='HTTP_Address='+this.HTTP_Address;
+      this.Error_Access_Server='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
+    } 
+    )
+  } else {
+      this.scroller.scrollToAnchor('targetTop');
+  }
+  
+}
+
+ModifPSW(event:any){
+  this.Crypto_Key=2;
+  this.Crypto_Method='AES';
+  this.Decrypt=event.target.value;
+  this.onCrypt("Encrypt");
+  
+}
+ModifContent(event:any){
+  this.ContentModified=true;
+  this.ContentObject=event.target.value;
+}
+
+SaveModif(event:string){
+  const myTime=new Date();
+  const myDate= myTime.toString().substring(4,25);
+  this.ContentModified=false;
+  const theFile=this.FileMedialink;
+  this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" +myDate+ this.FileToRetrieve   + "&uploadType=media" ;
+  if (this.ContentObjectRef!==this.ContentObject && event==='YES'){
+    // update the file
+    this.http.post(this.HTTP_Address,  this.ContentObject  )
+      .subscribe(res => {
+            this.Message='File ' + this.FileToRetrieve+' is saved';
+            console.log(this.Message);
+            },
+            error_handler => {
+              this.Error_Access_Server=error_handler.status + ' HTTP='+ this.HTTP_Address;
+              console.log(this.Error_Access_Server);
+            } 
+          )
+  } else if (event==='NO'){
+    this.Message='No change has been identified';
+    } ;
+  
+  this.ClearVar();
+}
+
+
+
+ClearVar(){
+  this.SelectedFile=false;
+  this.ContentModified=false;
+  this.ContentTodisplay=false;
+  this.FileToRetrieve='';
+  this.FileMedialink='';
+
+  this.ContentObject='';
+  this.ContentObjectRef='';
+
+  this.scroller.scrollToAnchor('targetTop');
+}
+  
+DisplayEventAug(event:string){
+  if (event==='YES'){
+    this.ObjectTodisplay=true;
+    this.SelectedFile=false;
+    this.ContentModified=false;
+    this.ContentTodisplay=false;
+
+    this.Google_Bucket_Name =this.ListOfBucket.Login ;
+    this.FileName[0] = this.FileToRetrieve;
+    this.FileName[1] = '';
+    this.Message='On-going process to format file'+this.FileToRetrieve;
+    for (let i=0; i<this.EventHTTPReceived.length; i++){
+        this.EventHTTPReceived[i]=false;
+    }
+    this.EventHTTPReceived[1]=true; // simulates that Test file has been received though there is none
+    this.DataType='Prod';
+    this.ProcessEventAug();
+  }
+
+}
+
+
+ProcessEventAug(){
+  this.getEventAug(0);
+  this.waitHTTP(this.TabLoop[0],30000,0);
+  //this.getEventAug(1);
+  //this.waitHTTP(this.TabLoop[1],30000,1);
+
+}
+
+
 Process(event:string){
+  this.Message='';
   if (event==='Test'){
         this.DataType='Test';
     } else {
@@ -206,8 +375,9 @@ Process(event:string){
 
 Copy(event:string){
   this.scroller.scrollToAnchor('targetCopy');
+  this.Message='';
   let i=2;
-  if (this.DataType='Test') {
+  if (this.DataType==='Test') {
     i=3;
   } 
   this.CopyTo(i);
@@ -218,8 +388,6 @@ Copy(event:string){
 }
 
 CopyTo(objectNb:number){
-
-
   for (this.i=0; this.i<this.TabTestProd[objectNb-2].data.length; this.i++){
 
       this.TabTestProd[objectNb].psw[this.i]=this.TabTestProd[objectNb-2].psw[this.i]
@@ -240,13 +408,18 @@ CopyTo(objectNb:number){
 }
 
 DeleteItem(recordId:number){
-  console.log("DeleteItem# "+ recordId);
+  console.log("DeleteItem# in the form is "+ recordId);
+  this.Message='';
   let i=0;
-  if (this.DataType='Test') {i=3} else {i=1};
-  if (recordId>this.EventProdLength-1){
-    recordId=recordId-this.EventProdLength;
-    console.log("DeleteItem# "+ recordId);
-  } 
+  if (this.DataType==='Test') {
+      i=3;
+      recordId=recordId-this.EventProdLength;
+    } else {
+      i=2;
+      recordId--
+    };
+    
+    console.log("Item# in the table is  "+ recordId);
   //this.TabTestProd[i].data.splice(recordId,1); // should only be done at time of SaveRecord
  
   this.clearItem(i,recordId);
@@ -266,10 +439,11 @@ ConfirmSave(event:string){
   }
   // ask for confirmation
 }
+
 saveRecord(event:string){
   const myTime=new Date();
-  const myDate= myTime.toString().substring(8,24);
-  const thetime=myTime.getTime();
+  const myDate= myTime.toString().substring(4,25);
+  
   let i=0;
   if (event==='No'){
     this.ConfirmSaveProd=false;
@@ -287,6 +461,8 @@ saveRecord(event:string){
     }
 const savei=i;
 if (i!==0){
+    // CANNOT UPDATE ./assets ==> read only
+    /*** 
     if (environment.production === false){
       this.HTTP_Address = './assets/'+ this.FileName[i-2];
       //
@@ -294,13 +470,15 @@ if (i!==0){
     else {     
         this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.FileName[i-2]   + "&uploadType=media" ;
     }
-
-    this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" +myDate+myTime+ this.FileName[i-2]   + "&uploadType=media" ;
+    ***/
+    this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" +myDate+ this.FileName[i-2]   + "&uploadType=media" ;
 
     
     this.Table_User_Data.splice(0, this.Table_User_Data.length);
 
-    
+    // check if psw changed; then encrypt it before saving
+    // check how to get the data at time of input
+
     for (let j=0; j<this.TabTestProd[i].data.length; j++){
       if (this.TabTestProd[i].data[j].UserId!=='RECORD IS DELETED'){
         const Individual_User_Data= new EventAug;
@@ -311,8 +489,9 @@ if (i!==0){
     
     this.http.post(this.HTTP_Address,  this.Table_User_Data , {'headers':this.myHeader} )
       .subscribe(res => {
-            this.Error_Access_Server='record saved';
-            console.log(this.Error_Access_Server);
+            this.Message='record saved';
+            console.log(this.Message);
+            this.scroller.scrollToAnchor('targetMessage');
             //this.restoreTabSize(i);
             },
             error_handler => {
@@ -332,6 +511,28 @@ restoreTabSize(i:number){
   } 
 }
 **/
+managePSW(recordId:number){
+let i=0;
+let j=0;
+this.FieldsReference=this.myForm.value.tabEvent[recordId];
+
+if (this.DataType==='Test') {
+    i=3;
+    j=recordId-this.EventProdLength;
+  } else {
+    i=2;
+   j=recordId;
+  };
+
+this.Crypto_Key=this.TabTestProd[i].data[j].key;
+this.Crypto_Method=this.TabTestProd[i].data[j].method;
+this.Decrypt=this.myForm.value.tabEvent[recordId].psw;
+this.onCrypt("Encrypt");
+this.TabTestProd[i].psw[j]= this.Decrypt;
+this.TabTestProd[i].data[j].psw=this.Encrypt;
+
+}
+
 
 fillinForm(){
     let j=0;
@@ -361,7 +562,19 @@ fillinForm(){
   }
 
   FillInFields(i:number, reference:boolean){
+
     for (let j=0; j<this.TabTestProd[i].data.length; j++){
+      if (this.TabTestProd[i].data[j].night===undefined){
+        this.TabTestProd[i].data[j].night='';
+        if (this.TabTestProd[i].data[j].brunch===undefined){ this.TabTestProd[i].data[j].brunch='';}
+        if (this.TabTestProd[i].data[j].nbinvitees===undefined){ this.TabTestProd[i].data[j].nbinvitees=0;}
+        if (this.TabTestProd[i].data[j].myComment===undefined){ this.TabTestProd[i].data[j].myComment='';}
+        if (this.TabTestProd[i].data[j].yourComment===undefined){ this.TabTestProd[i].data[j].yourComment='';}
+        if (this.TabTestProd[i].data[j].key===undefined){ this.TabTestProd[i].data[j].key=0;}
+        if (this.TabTestProd[i].data[j].surname===undefined){ this.TabTestProd[i].data[j].surname='';}
+        if (this.TabTestProd[i].data[j].firstname===undefined){ this.TabTestProd[i].data[j].firstname='';}
+        if (this.TabTestProd[i].data[j].timeStamp===undefined){ this.TabTestProd[i].data[j].timeStamp='';}
+        }
         this.FieldsReference.UserId=this.TabTestProd[i].data[j].UserId;
         this.FieldsReference.firstname=this.TabTestProd[i].data[j].firstname;
         this.FieldsReference.surname=this.TabTestProd[i].data[j].surname;
@@ -375,14 +588,16 @@ fillinForm(){
         this.FieldsReference.timeStamp=this.TabTestProd[i].data[j].timeStamp;
         this.FieldsReference.key=this.TabTestProd[i].data[j].key;
         this.FieldsReference.id=this.TabTestProd[i].data[j].id;
-        if (reference===false){
+
+
+        }
+      if (reference===false){
             this.theEvent.push(this.newEvent());
             this.theEvent.controls[this.theEvent.length-1].setValue(this.FieldsReference);
       } else {
             this.theEventRef.push(this.newEventRef());
             this.theEventRef.controls[this.theEvent.length-1].setValue(this.FieldsReference);
       }
-   }
   }
 
   clearItem(i:number,j:number){
@@ -392,8 +607,8 @@ fillinForm(){
       this.TabTestProd[i].data[j].night='';
       this.TabTestProd[i].data[j].psw='';
       this.TabTestProd[i].data[j].brunch='';
-      this.TabTestProd[i].data[j].method='';
       this.TabTestProd[i].data[j].nbinvitees=0;
+      this.TabTestProd[i].data[j].method='';
       //this.TabTestProd[i].data[j].id=0; keep it
       this.TabTestProd[i].data[j].key=0;
       this.TabTestProd[i].data[j].myComment='';
@@ -411,12 +626,14 @@ fillinForm(){
     this.FieldsReference.night=this.TabTestProd[i].data[j].night;
     this.FieldsReference.brunch=this.TabTestProd[i].data[j].brunch;
     this.FieldsReference.method=this.TabTestProd[i].data[j].method;
+    this.FieldsReference.id=this.TabTestProd[i].data[j].id;
+    this.FieldsReference.key=this.TabTestProd[i].data[j].key;
     this.FieldsReference.nbinvitees=this.TabTestProd[i].data[j].nbinvitees;
     this.FieldsReference.myComment=this.TabTestProd[i].data[j].myComment;
     this.FieldsReference.yourComment=this.TabTestProd[i].data[j].yourComment;
     this.FieldsReference.timeStamp=this.TabTestProd[i].data[j].timeStamp;
     let iForm=0;
-    if (this.DataType='Test') {iForm=j+this.TabTestProd[i-2].data.length} else {iForm=j};
+    if (this.DataType==='Test') {iForm=j+this.TabTestProd[i-2].data.length} else {iForm=j};
     this.theEvent.controls[iForm].setValue(this.FieldsReference);
 
   }
@@ -425,31 +642,45 @@ fillinForm(){
     console.log('check record nb '+event);
   }
   
+
+
+
   getEventAug(objectNb:number){
     console.log('getEventAug(); this.Table_User_Data = ');
+    /**** As ./assets cannot be updated no need to retrieve files from this directory*****/
+    /***
     if (environment.production === false){
       this.HTTP_Address = './assets/'+ this.FileName[objectNb];
     }
     else {     
         this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.FileName[objectNb]   + "?alt=media" ;
     }
-    
+     */
+    let theLength=0;
+    this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.FileName[objectNb]   + "?alt=media" ;
     this.http.get<EventAug>(this.HTTP_Address, {'headers':this.myHeader} )
               .subscribe((data ) => {
                 console.log('getEventAug() - data received');
                 this.Error_Access_Server='';
-                this.EventHTTPReceived[objectNb]=true;
+                this.Message='';
+
 
                 this.bucket_data=JSON.stringify(data);
                 var obj = JSON.parse(this.bucket_data);
                 this.Table_User_Data.splice(0, this.Table_User_Data.length);
       
                 this.Table_DecryptPSW.splice(0, this.Table_DecryptPSW.length);
-                for (this.i=0; this.i<obj.length; this.i++){
+                if (Array.isArray(data)===false){
+                  theLength=1;
+                } else { theLength=obj.length;}
+                for (this.i=0; this.i<theLength; this.i++){
                   let Individual_User_Data= new EventAug;
                   this.Table_User_Data.push(Individual_User_Data);
-
-                  this.Table_User_Data[this.i] =obj[this.i];
+                  if (theLength===1){
+                    this.Table_User_Data[this.i]=data;
+                  } else {
+                    this.Table_User_Data[this.i] =obj[this.i];
+                    }
 
                   Individual_User_Data= new EventAug;
                   this.TabTestProd[objectNb].data.push(Individual_User_Data);
@@ -483,7 +714,7 @@ fillinForm(){
                   this.TabTestProd[objectNb+2].psw[this.i]=this.Decrypt;
                 }
 
-
+                this.EventHTTPReceived[objectNb]=true;
 
 
                 },
@@ -507,22 +738,31 @@ onCrypt(type_crypto:string){
 
 
 
-waitHTTP(loop:number, max_loop:number){
+waitHTTP(loop:number, max_loop:number, eventNb:number){
   const pas=500;
   if (loop%pas === 0){
     console.log('waitHTTP ==> loop=', loop, ' max_loop=', max_loop);
   }
  loop++
   
-  this.id_Animation=window.requestAnimationFrame(() => this.waitHTTP(loop, max_loop));
+  this.id_Animation[eventNb]=window.requestAnimationFrame(() => this.waitHTTP(loop, max_loop, eventNb));
   if (loop>max_loop || (this.EventHTTPReceived[0]===true && this.EventHTTPReceived[1]===true)){
             console.log('exit waitHTTP ==> loop=', loop + ' max_loop=', max_loop + ' this.EventHTTPReceived=' + 
                     this.EventHTTPReceived[0] + '  ' +  this.EventHTTPReceived[1]);
-            window.cancelAnimationFrame(this.id_Animation);
-            this.fillinForm();
+            if (this.EventHTTPReceived[0]===true && this.EventHTTPReceived[1]===true){
+              window.cancelAnimationFrame(this.id_Animation[0]);
+              window.cancelAnimationFrame(this.id_Animation[1]);
+              this.fillinForm();
+            } 
+            //else   if (this.EventHTTPReceived[2]===true) {
+            //    window.cancelAnimationFrame(this.id_Animation[2]);
+            //} 
+            
       }  
 
   }
+
+
 
 LogMsgConsole(msg:string){
     msginLogConsole(msg, this.myConsole,this.myLogConsole, this.SaveConsoleFinished,this.HTTP_AddressLog, this.type);

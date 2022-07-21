@@ -144,7 +144,7 @@ export class UserParam{
     id:string="XMVanstaen";
     type:string="";
     log:boolean=false;
-  }
+  } 
 
 export class BucketList{
   Contact: string= "XMV_messages";

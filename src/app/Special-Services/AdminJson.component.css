@@ -3,17 +3,17 @@
 h1{
     font-weight: bold;
     font-size:45px;
-    width:70%;  
+    width:90%;  
     text-align:center;
-    margin-top:40px;
     font-family: 'Tangerine';
-    padding-left:15px;
     letter-spacing: 2px;
+    line-height: 50px;
   }
 
 h2{
   margin-top:20px;
-  width:70%;
+  margin-left:30px;
+  width:90%;
   font-size:36px;
   font-weight: bold;
   font-family: 'Tangerine';
@@ -37,15 +37,17 @@ font-family: 'Roboto';
     width:100px;
     margin-left:20px;;
     float:left;
+    align-items: center;
+    display:inline-flex;
+    vertical-align: middle;
 
   }
   
   .dropdown-options:hover{
-    background-color:rgb(197, 201, 217);
-    color:white;
+    background-color:cyan;
+    color:black;
     font-weight:bold;
-    text-align:center;
-    vertical-align: middle;
+
   }
   
   .dropdown-text{
@@ -55,6 +57,7 @@ font-family: 'Roboto';
     color:black;
     display:block;
     text-align: center;
+    display:inline-flex;
   }
 
 
@@ -100,6 +103,18 @@ font-family: 'Roboto';
 /*** ============== @media 600 ================ ***/
 /*** ====================================== ***/
  @media only screen and (max-width: 790px) {
+  .dropdown-text{
+    font-size:12px;
+    align-items: center;
+    display:inline-flex;
+    vertical-align: middle;
+  }
+  .dropdown-options{
+    height:40px; 
+    width:700px;
+    margin-left:10px;
+    display:inline-flex;
+  }
 
 .labelbucket{
   margin-left:10px;

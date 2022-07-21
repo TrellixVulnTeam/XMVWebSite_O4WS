@@ -3,11 +3,10 @@
 h1{
     font-weight: bold;
     font-size:45px;
-    width:70%;  
+    width:90%;  
     text-align:center;
     margin-top:40px;
     font-family: 'Tangerine';
-    padding-left:15px;
     letter-spacing: 2px;
   }
 
@@ -22,10 +21,12 @@ h2{
   }
 
 h3{
+  margin-left:70px;
   font-family: 'Roboto';
   font-weight:bold;
   font-size:22px;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
+  color:blue;
   
 }
 
@@ -44,7 +45,7 @@ h3{
   }
   
 .dropdown-options:hover{
-    background-color:rgb(197, 201, 217);
+    background-color:cyan;
     color:darkblue;
     font-weight:bold;
     text-align:center;
@@ -60,60 +61,109 @@ h3{
     text-align: center;
   }
 
+
+.object{
+    font-family: 'Roboto';
+    height:30px;
+    margin-left:30px;
+    font-size:16px;  
+    width:90%;
+    font-weight: bold;
+    display:block;
+    border:solid 2px blue;
+}
+
+.odd{
+  background-color: lightgray;
+  color:blue;
+}
+
+.even{
+  background-color: blue;
+  color:white; 
+  font-weight:bold
+}
+
+.object li {
+  cursor: pointer;
+  border-radius: 4px;
+  display: block;
+  border: solid 0px black;
+}
+
+.object li.selected:hover {
+  background-color: #0b9db1 !important;
+  border: solid 1px blue(0, 255, 42);
+}
+.object li:hover {
+  color: #607D8B;
+  background-color: rgb(30, 216, 200);
+  left: .1em;
+  border: solid 1px black;
+}
+
+
+
+.object:hover{
+  background-color: cyan;
+  font-size:18px;  
+}
+
 .labelrecord{
     font-family: 'Roboto';
-    height:40px;
+    height:50px;
     color:red;
-    display:block;
-    float:left;
-    padding-top:10px;
+    padding-top:3px;
     padding-left:10px;
     margin-left:30px;
     font-size:22px;  
-    width:30%;
-   }
+    width:170px;
+    font-weight: bold;
+    display:inline-flex;
+}
 
 .recordNb{
-    font-size:20px;  
+    font-size:22px;  
     width:30px;
     height:50px;
-    width:80%;
+    width:60px;
     color:blue;
-    display:block;
     padding-left:10px;
-    padding-top:12px;
+    padding-top:3px;
+    font-weight: bold;
+    display:inline-flex;
    }
 
-.recordNb:hover{
-    color:grey;
-    font-size:22px;
-    font-weight:bold;
-   }
+  .breakLine{
+    margin-top:80px;
+  }
 
 .common{
   font-family: 'Roboto';
   padding-left:10px;
   padding-top:10px;
   height:40px;
-  font-size:16px;
+  
   display:inline-flex;
 }
 
 .labelbucket{ 
-    width:20%;
+    width:180px;
     color:red;
-    
+    font-size:16px;
     margin-left:30px;
  }
 
 .bucket{
     width:50%;
-    color:blue; 
+    color:blue;
+    font-size:16px; 
  }
 
 .input{
   width:50%;
   color:blue; 
+  font-size:16px;
 }
 
 .input:hover{
@@ -124,28 +174,30 @@ h3{
  .urCommentsLabel{
   margin-left:30px;
   width:20%;
-  height:50px; 
+  height:90px; 
   color:red;
   font-size:16px; 
   display:inline-flex;
-
   padding-left:10px;
-  padding-top:30px;
-
+  padding-top:40px;
+  float:left;
  }
 
 
 
 .urComments{
-  width:50%;
-  font-size:14px; 
-  height:50px; 
-  color:blue;
-  overflow:scroll;
+  font-family: 'Roboto';
+  font-size:16px;
   display:inline-flex;
+  height:90px; 
+  width:50%;
+
+  color:blue;
+ 
  }
  .urComments:hover{
   background-color: lightgrey;
+ 
 }
 
 .even{
@@ -171,23 +223,81 @@ h3{
   font-size:16px;
 }
 .submit:hover{
-  color:white;
-  background-color: rgb(57, 34, 130);
+  color:blue;
+  background-color:cyan;
 }
 
 .butt{
-  
-  background-color: lightgrey;
-  font-size:16px;
+  font-family: 'Tangerine';
+  margin-left:80px;
+  /** box-shadow: left top blur around ; can have multiple***/
+  box-shadow: 0px 0px 4px 0px rgba(0,128,255,0.2);
+  background-color: rgb(201, 227, 212);
+  color:blue;
+  font-size:28px;
+  border-radius: 30%;
+  width:90px;
+  height:40px;
+  align-items: center;
+  border:solid 0px black;
 }
 .butt:hover{
-  color:white;
-  background-color: rgb(57, 34, 130);
+  color:blue;
+  background-color:cyan;
+}
+.savePos{
+  margin-left:100px;
+}
+.savePos:hover{
+  color:blue;
+  background-color:cyan;
+}
+
+.inputObject{
+  height:200px;
+  width:90%;
+  margin-left:20px;
+  font-size: 16px;
+  
+}
+
+.inputColorRef{
+  display:block;
+  border:solid 1px black;
+  color:rgb(241, 241, 246);
+  background-color: rgb(54, 47, 204);
+  overflow: scroll;
+  display:flex;
+}
+.inputColor{
+  color:blue;
+  background-color: lightcyan;
+  display:inline-flex;
+}
+
+.inputColor:hover{
+  background-color: cyan;
+
+}
+
+.pswField{
+  height:100px;
+  width:90%;
+  margin-left:20px;
+  font-size: 16px;
+  overflow: scroll;
+
 }
 /*** ====================================== ***/
-/*** ============== @media 790 ================ ***/
+/*** ============== @media1000 ================ ***/
 /*** ====================================== ***/
- @media only screen and (max-width: 790px) {
+ @media only screen and (max-width:10000px) {
+  h3{
+    margin-left:30px;
+    font-size:16px;
+    letter-spacing: 1px;
+  }
+
 .common{
     font-family: 'Roboto';
     padding-left:10px;
@@ -195,33 +305,61 @@ h3{
     height:25px;
     font-size:12px;
   }
-.labelrecord{
 
-  font-size:18px;  
-  height:40px;
+.labelrecord{
+  width:120px;
+  font-size:16px;  
+  height:20px;
+  padding-top:2px;
+  display:inline-flex;
  }
+
  .recordNb{
-  font-size:18px;  
-  width:60%;
-  padding-top:12px;
+  font-size:16px;  
+  width:25px;
+  padding-top:2px;
+  display:inline-flex;
+  height:20px;
  }
+
+ .breakLine{
+   margin-top:5px;
+ }
+
  .labelbucket{
-  width:27%;
+  width:120px;
+  font-size:14px;
  }
 .bucket{
   width:50%;
+  font-size:14px;
  }
 
  .urCommentsLabel{
-  width:27%;
-
+  width:120px;
+  height:120px; 
+  font-size:14px;
  }
+
+ .urComments{
+  font-size:14px;
+  height:120px; 
+  width:50%;
+ }
+ .input{
+  font-size:14px;
+}
  .empty{
   height:5px;
 }
 .butt{
-  
-  background-color: lightgrey;
-  font-size:12px;
+  margin-left:30px;
+  font-size:22px;
+  height:30px;
+  width:80px;
+}
+.savePos{
+  margin-left:20px;
+  margin-top:5px;
 }
 }
