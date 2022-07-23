@@ -15,6 +15,7 @@ import { BucketList } from '../JsonServerClass';
 import { environment } from 'src/environments/environment';
 import { msgConsole } from '../JsonServerClass';
 import { UserParam } from '../JsonServerClass';
+import { OneBucketInfo } from '../JsonServerClass';
 
 @Component({
   selector: 'app-AdminJson',
@@ -52,8 +53,9 @@ export class AdminJsonComponent {
     HTTP_Address:string='';
 
     bucket_data:string='';
-    myListOfObjects=new Bucket_List_Info;
+    
     ListOfBucket=new BucketList;
+    SelectedBucketInfo=new OneBucketInfo;
 
     Google_Bucket_Access_Root:string='https://storage.googleapis.com/storage/v1/b/';
     Google_Bucket_Access_RootPOST:string='https://storage.googleapis.com/upload/storage/v1/b/';
@@ -79,16 +81,14 @@ export class AdminJsonComponent {
 
     Message:string='';
      
-    DisplayListOfObjects:boolean=false;
-    SelectedFile:boolean=false;
     ContentTodisplay:boolean=false;
-    FileMedialink:string='';
-    FileName:string='';
-
     ModifyText:boolean=false;
     ModifiedField:Array<string>=[];
     IsFieldModified:Array<boolean>=[];
     Max_Fields:number=0;
+
+    theReceivedData:any;
+    isDataReceived:boolean=false;
 
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
@@ -111,7 +111,7 @@ ngOnInit(){
       this.ListOfBucket.Config='';
       this.Error_Access_Server='';
       this.EventHTTPReceived[0]=false;
-      this.waitHTTP(this.TabLoop[0], 20000, 0);
+      //this.waitHTTP(this.TabLoop[0], 20000, 0);
       this.getBucketAsset();
 
 
@@ -119,6 +119,7 @@ ngOnInit(){
 
 Process(event:string){
   this.GoToComponent=0;
+  this.isDataReceived=false;
   if (event==='Photos'){
     this.GoToComponent=1;
   } else if (event==='27Aug'){
@@ -126,10 +127,13 @@ Process(event:string){
   } else if (event==='Contact'){
     this.GoToComponent=3;
   } else if (event==='Login'){
-    this.GoToComponent=4;
+    this.GoToComponent=4; 
+    this.Google_Bucket_Name=this.ListOfBucket.Login;
   } else if (event==='Console'){
     this.GoToComponent=5;
+    this.Google_Bucket_Name=this.ListOfBucket.Console;
   } else if (event==='Config'){
+    this.Google_Bucket_Name=this.ListOfBucket.Config;
     this.scroller.scrollToAnchor('targetConfig');
   }
   }
@@ -152,64 +156,35 @@ getBucketAsset(){
 }
 
 
-RetrieveAllObjects(){
-  // bucket name is ListOfObject.config
-  this.HTTP_Address=this.Google_Bucket_Access_Root+ this.ListOfBucket.Config+ "/o"  ;
-  console.log('RetrieveAllObjects()');
-  this.http.get<Bucket_List_Info>(this.HTTP_Address )
-          .subscribe((data ) => {
-            console.log('RetrieveAllObjects() - data received');
-            this.myListOfObjects=data;
-            this.DisplayListOfObjects=true;
+  // ================
 
-          },
-          error_handler => {
-            
-            console.log('RetrieveAllObjects() - error handler');
-            this.Message='HTTP_Address='+this.HTTP_Address;
-            this.Error_Access_Server='RetrieveAllObjects()==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
-          } 
-    )
+ReceivedDataConfig(event:any){
+  this.SelectedConfigFile=event;
+  this.ModifConfigFile=event;
+  this.ContentTodisplay=true;
+  this.Message='';
+  this.ModifyText=false;
+  this.scroller.scrollToAnchor('SelectedFile');
+  this.Max_Fields=20+this.ModifConfigFile.TabBucketPhoto.length+(this.ModifConfigFile.UserSpecific.length*3);
+  for (let i=0; i<this.Max_Fields; i++){
+    this.ModifiedField.push('');
+    this.IsFieldModified.push(false);
   }
-  
-  
-  RetrieveSelectedFile(event:any){
-    this.Message='';
-    this.ModifyText=false;
-    this.scroller.scrollToAnchor('SelectedFile');
-    this.ContentTodisplay=false;
-    this.FileMedialink=event.mediaLink;
-    this.FileName=event.name;
-      this.http.get<any>(this.FileMedialink )
-      .subscribe((data ) => {
-        console.log('RetrieveSelectedFile='+this.FileMedialink);
-        this.Error_Access_Server='';
-        //this.ContentObject=JSON.stringify(data);
-        this.EventHTTPReceived[1]=true;
-        this.SelectedConfigFile=data;
-        this.ModifConfigFile=data;
-        this.ContentTodisplay=true;
-        this.Max_Fields=20+this.ModifConfigFile.TabBucketPhoto.length+(this.ModifConfigFile.UserSpecific.length*3);
-        for (let i=0; i<this.Max_Fields; i++){
-          this.ModifiedField.push('');
-          this.IsFieldModified.push(false);
-        }
+}
 
-        
-        //
-      },
-      error_handler => {
-        this.EventHTTPReceived[1]=true;
-        
-        this.Message='HTTP_Address='+this.HTTP_Address;
-        this.Error_Access_Server='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
-        console.log('RetrieveSelectedFile- error handler '+this.Error_Access_Server);
-        this.Error_Access_Server='INIT - error status==> '+ error_handler.status+ '   Error url==>  '+ error_handler.url;
-      } 
-      )
-  
-    
+BucketInfo(event:any){
+  this.SelectedBucketInfo=event;
+}
+
+
+ReceivedData(event:any){
+  this.theReceivedData=event;
+  this.isDataReceived=true;
+
   }
+
+// ================
+  
   
 TextInput(event:any){
   this.ModifyText=true;
@@ -273,13 +248,13 @@ SaveRecord(event:string){
 
   this.ModifyText=false;
   const a=JSON.stringify(this.ModifConfigFile) ;
-  this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.ListOfBucket.Config + "/o?name=" +myDate+ this.FileName   + "&uploadType=media" ;
+  this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.ListOfBucket.Config + "/o?name=" +myDate+ this.SelectedBucketInfo.name  + "&uploadType=media" ;
   if (event==='YES'){
     this.UpdateConfigFile();
     // update the file
     this.http.post(this.HTTP_Address, this.ModifConfigFile  )
       .subscribe(res => {
-            this.Message='File ' +  this.FileName+' is saved';
+            this.Message='File ' +  this.SelectedBucketInfo.name+' is saved';
             console.log(this.Message);
             },
             error_handler => {
@@ -295,7 +270,7 @@ SaveRecord(event:string){
   this.scroller.scrollToAnchor('targetTop');
 
 }
-
+/****
 waitHTTP(loop:number, max_loop:number, eventNb:number){
   const pas=500;
   if (loop%pas === 0){
@@ -319,7 +294,7 @@ waitHTTP(loop:number, max_loop:number, eventNb:number){
           }      
       }  
   }
-  
+   */
 
 LogMsgConsole(msg:string){
 

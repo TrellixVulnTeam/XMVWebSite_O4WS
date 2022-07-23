@@ -1,4 +1,4 @@
-import { Component, OnInit , Input, HostListener} from '@angular/core';
+import { Component, OnInit , Input, HostListener, SimpleChanges,} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
@@ -16,6 +16,7 @@ import { EventCommentStructure } from '../JsonServerClass';
 import { TableOfEventLogin } from '../JsonServerClass';
 import { BucketList } from '../JsonServerClass';
 import { Bucket_List_Info } from '../JsonServerClass';
+import { OneBucketInfo } from '../JsonServerClass';
 import { msgConsole } from '../JsonServerClass';
 
 @Component({
@@ -106,6 +107,9 @@ export class AdminLoginComponent {
     }
     @Input() ConfigXMV=new XMVConfig;
     @Input() ListOfBucket=new BucketList;
+    @Input() theReceivedData=new EventAug;
+    @Input() SelectedBucketInfo=new OneBucketInfo;
+    FirstSelection=true;
 
     Encrypt:string='';
     Decrypt:string='';
@@ -168,7 +172,7 @@ export class AdminLoginComponent {
 
 
     SelectedFile=false;
-    FileToRetrieve:string='';
+
     FileMedialink:string='';
     ContentTodisplay=false;
     ContentObject:string='';
@@ -201,15 +205,28 @@ ngOnInit(){
         this.TabTestProd.push(this.RefTestProd);
        
       }
-      this.Message='List of objects is being retrieved from the cloud';
-      /**** list all objects of 'manage-login' bucket */
+
       this.isFormFilled=false;
       this.DataType='Test';
-      this.RetrieveAllObjects();
+      this.Initialize();
 
   }    
 
+Initialize(){
 
+  this.ContentObject=JSON.stringify(this.theReceivedData);
+  this.ContentObjectRef=this.ContentObject;
+  //
+  // this.TestObjectStructure=this.theReceivedData;
+  if (Array.isArray(this.theReceivedData)===false){
+    this.Crypto_Key=2;
+    this.Crypto_Method='AES';
+    this.Encrypt=this.theReceivedData.psw;
+    this.onCrypt("Decrypt");
+  }
+  this.scroller.scrollToAnchor('targetTop');
+  this.ContentTodisplay=true;
+}
 
 RetrieveAllObjects(){
 // bucket name is ListOfObject.login
@@ -240,8 +257,6 @@ ConfirmSelectedFile(event:any){
   this.scroller.scrollToAnchor('SelectedFile');
   console.log('ConfirmSelectedFile()');
   //this.Message='selected event = '+event.mediaLink;
-  this.FileToRetrieve=event.name;
-  this.FileMedialink=event.mediaLink;
   this.SelectedFile=true;
   this.ObjectTodisplay=false;
 }
@@ -252,9 +267,9 @@ RetrieveSelectedFile(event:any){
   this.SelectedFile=false;
   if (event='YES'){
     // this.waitHTTP(this.TabLoop[3],30000,3);
-    this.http.get<any>(this.FileMedialink )
+    this.http.get<any>(this.SelectedBucketInfo.mediaLink )
     .subscribe((data ) => {
-      console.log('RetrieveSelectedFile='+this.FileToRetrieve);
+      console.log('RetrieveSelectedFile='+this.SelectedBucketInfo.name);
       this.Error_Access_Server='';
       this.ContentObject=JSON.stringify(data);
       this.ContentObjectRef=this.ContentObject;
@@ -300,13 +315,13 @@ SaveModif(event:string){
   const myTime=new Date();
   const myDate= myTime.toString().substring(4,25);
   this.ContentModified=false;
-  const theFile=this.FileMedialink;
-  this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" +myDate+ this.FileToRetrieve   + "&uploadType=media" ;
+  const theFile=this.SelectedBucketInfo.mediaLink;
+  this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" +myDate+ this.SelectedBucketInfo.name   + "&uploadType=media" ;
   if (this.ContentObjectRef!==this.ContentObject && event==='YES'){
     // update the file
     this.http.post(this.HTTP_Address,  this.ContentObject  )
       .subscribe(res => {
-            this.Message='File ' + this.FileToRetrieve+' is saved';
+            this.Message='File ' + this.SelectedBucketInfo.name+' is saved';
             console.log(this.Message);
             },
             error_handler => {
@@ -328,8 +343,8 @@ ClearVar(){
   this.ContentModified=false;
   this.ContentTodisplay=false;
   this.ObjectTodisplay=false;
-  this.FileToRetrieve='';
-  this.FileMedialink='';
+  this.SelectedBucketInfo.name='';
+  this.SelectedBucketInfo.mediaLink='';
 
   this.ContentObject='';
   this.ContentObjectRef='';
@@ -345,10 +360,10 @@ DisplayEventAug(event:string){
     this.ContentTodisplay=false;
 
     this.Google_Bucket_Name =this.ListOfBucket.Login ;
-    this.FileName[0] = this.FileToRetrieve;
+    this.FileName[0] = this.SelectedBucketInfo.name;
     this.FileName[1] = '';
     this.ProdTestFiles='Prod';
-    this.Message='On-going process to format file'+this.FileToRetrieve;
+    this.Message='On-going process to format file'+this.SelectedBucketInfo.name;
     for (let i=0; i<this.EventHTTPReceived.length; i++){
         this.EventHTTPReceived[i]=false;
     }
@@ -771,7 +786,15 @@ waitHTTP(loop:number, max_loop:number, eventNb:number){
 
   }
 
-
+  ngOnChanges(changes: SimpleChanges) { 
+    if (this.FirstSelection===true){
+      this.FirstSelection=false;
+    } else {
+      // must check which data is returned
+      this.ContentTodisplay=false;
+      this.Initialize();
+    }
+  }
 
 LogMsgConsole(msg:string){
     msginLogConsole(msg, this.myConsole,this.myLogConsole, this.SaveConsoleFinished,this.HTTP_AddressLog, this.type);

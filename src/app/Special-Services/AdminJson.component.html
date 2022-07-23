@@ -35,31 +35,10 @@
         <span class='labelbucket odd'>Log console</span><span class='bucket odd'>{{ListOfBucket.Console}}</span>
       </div>
   </div>
-
-    <!-- ================ -->
-   <div id='targetConfig' ></div>
-      <h2 style="margin-top:2px;"><br></h2>
-      <h1>Administration of Configuration files</h1>
-
-      <div *ngIf="Error_Access_Server!==''">
-        <span style='margin-top:30px; color:red; font-size:16px;'> Error access to the server : {{Error_Access_Server}}
-        </span>
-      </div>
-      <span style='margin-top:30px; color:blue; font-size:16px;'>{{Message}}</span>
-      <div *ngIf="DisplayListOfObjects===true">
-        <div>
-            <li style="list-style-type: none;" *ngFor="let ListObject of  myListOfObjects.items; let i=index"  
-                  (click)="RetrieveSelectedFile(ListObject)">  
-                <span  *ngIf="i % 2 === 0" class="object even">{{i+1}} - {{ListObject.name}}</span>
-                <span  *ngIf="i % 2 !== 0" class="object odd">{{i+1}} - {{ListObject.name}}</span>
-          </li>
-        </div>
-      </div>
-      <div *ngIf="DisplayListOfObjects===false">
-
-            <h2 style=' color:red; margin-top:50px;'>List of objects is being retrieved from the cloud</h2>
-            {{HTTP_Address}}
-      </div>
+<div *ngIf="EventHTTPReceived[0]===true">
+    <app-ListBucketContent [ConfigXMV]="ConfigXMV"  [Bucket_Name]="Google_Bucket_Name"  
+          (Return_Data)="ReceivedDataConfig($event)" (Return_SelectedBucketInfo)="BucketInfo($event)"></app-ListBucketContent>
+</div>   
 
       <div id='SelectedFile' ></div>
 
@@ -67,7 +46,7 @@
       <div *ngIf="ContentTodisplay===true">
         
           <h2> Current configuration parameters of file  </h2>
-          <h2>{{FileName}}</h2>
+          <h2>{{SelectedBucketInfo.name}}</h2>
           <div style="margin-left:20px;">
                 <span class='labelbucket odd'>BucketLogin</span> <span class='bucket odd'>  {{SelectedConfigFile.BucketLogin}}</span>
                 <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field01' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.BucketLogin}}</textarea>
@@ -164,6 +143,15 @@
 
 
   <ng-template #CompoOne>
+    <div *ngIf="GoToComponent===4 || GoToComponent===5">
+      <div *ngIf="EventHTTPReceived[0]===true">
+          <app-ListBucketContent [ConfigXMV]="ConfigXMV"  [Bucket_Name]="Google_Bucket_Name"  
+                  (Return_Data)="ReceivedData($event)" (Return_SelectedBucketInfo)="BucketInfo($event)"></app-ListBucketContent>
+      </div>   
+  </div>  
+
+
+
     <div *ngIf="GoToComponent===1; else CompoTwo ">
         <app-GetImages [identification]="identification" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="LoginTable_User_Data" 
             [LoginTable_DecryptPSW]="LoginTable_DecryptPSW">
@@ -188,14 +176,20 @@
 
   <ng-template #CompoFour>
     <div *ngIf="GoToComponent===4; else CompoFive ">
-        <app-AdminLogin [ConfigXMV]="ConfigXMV" [ListOfBucket]="ListOfBucket"></app-AdminLogin>
+      <div *ngIf="isDataReceived===true">
+        <app-AdminLogin [ConfigXMV]="ConfigXMV" [ListOfBucket]="ListOfBucket" 
+            [theReceivedData]="theReceivedData" [SelectedBucketInfo]="SelectedBucketInfo"></app-AdminLogin>
+      </div>
     </div>
   </ng-template>
 
 
   <ng-template #CompoFive>
     <div *ngIf="GoToComponent===5; else CompoSix ">
-        <app-AdminConsole [ConfigXMV]="ConfigXMV" [ListOfBucket]="ListOfBucket"></app-AdminConsole>
+      <div *ngIf="isDataReceived===true">
+        <app-AdminConsole [ConfigXMV]="ConfigXMV" [ListOfBucket]="ListOfBucket"
+        [theReceivedData]="theReceivedData" [SelectedBucketInfo]="SelectedBucketInfo"></app-AdminConsole>
+      </div>
     </div>
   </ng-template>
 

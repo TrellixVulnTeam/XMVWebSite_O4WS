@@ -4,7 +4,7 @@
 </head>
 <body>
 
-<div id='targetTop' ></div>
+
 
 <h2 style="margin-top:2px;"><br></h2>
 <h1>Administration of Logins</h1>
@@ -14,31 +14,8 @@
   </span>
 </div>
 <span style='margin-top:30px; color:blue; font-size:16px;'>{{Message}}</span>
-<div *ngIf="DisplayListOfObjects===true">
-  <div>
-      <li style="list-style-type: none;" *ngFor="let ListObject of  myListOfObjects.items; let i=index"  
-            (click)="ConfirmSelectedFile(ListObject)">  
-          <span  *ngIf="i % 2 === 0" class="object even">{{i+1}} - {{ListObject.name}}</span>
-          <span  *ngIf="i % 2 !== 0" class="object odd">{{i+1}} - {{ListObject.name}}</span>
-    </li>
-</div>
-</div>
-<div *ngIf="DisplayListOfObjects===false">
 
-      <h2 style=' color:red; margin-top:50px;'>List of objects is being retrieved from the cloud</h2>
-      {{HTTP_Address}}
-</div>
 
-<div id='SelectedFile' ></div>
-
-<div *ngIf="SelectedFile===true">
-      <div style="margin-left:30px; margin-top:20px; color:blue; font-size:16px;">
-        Do you confirm  you want to retrieve content of file &nbsp;{{FileToRetrieve}}?
-        <button id="butt10" (click)="RetrieveSelectedFile('YES')" class="butt">Yes</button>
-        <button id="butt10" (click)="RetrieveSelectedFile('YES')" class="butt">No</button>
-
-      </div>
-</div>
 
 <div *ngIf="ContentTodisplay===true">
   <br><br>
@@ -48,7 +25,7 @@
           <button id="butt11" (click)="DisplayEventAug('YES')" class="butt">Yes</button>
           <button id="butt11" (click)="DisplayEventAug('NO')" class="butt">No</button>
     <br><br><br><br>
-    <h4>Content reference from file &nbsp;{{FileToRetrieve}}</h4>
+    <h4>Content reference from file &nbsp;SelectedBucketInfo.name}}</h4>
     <textarea readonly class="inputObject inputColorRef">
       {{ContentObjectRef}}
     </textarea>
@@ -88,7 +65,7 @@
 
       </div>
 
-
+<div id='SelectedFile' ></div>
       <div *ngIf="ConfirmSaveTest===true">
         <span style="margin-top:20px;">&nbsp;</span>
           <h3>Please confirm you want to save Test data</h3>
@@ -101,8 +78,8 @@
         <button  id='Conf3' (click)="saveRecord('Yes')" class="butt">Yes </button>
         <button  id='Conf4' (click)="saveRecord('No')" class="butt">No </button>
       </div>
-
-      <div id='targetMessage' ></div>
+  <div id='targetTop' ></div>
+  <div id='targetMessage' ></div>
       <div *ngIf="Message!==''">
         <span style='margin-top:40px; color:blue; font-size:22px;'>  {{Message}}
         </span>

@@ -21,6 +21,8 @@ import { GetImagesComponent}  from './Special-Services/GetImages.component';
 import { AdminJsonComponent}  from './Special-Services/AdminJson.component';
 import { AdminLoginComponent}  from './Special-Services/AdminLogin.component';
 import { AdminConsoleComponent}  from './Special-Services/AdminConsole.component';
+import { ListBucketContentComponent}  from './Special-Services/ListBucketContent.component';
+
 
 
 @NgModule({
@@ -38,7 +40,8 @@ import { AdminConsoleComponent}  from './Special-Services/AdminConsole.component
     GetImagesComponent,
     AdminJsonComponent,
     AdminLoginComponent,
-    AdminConsoleComponent
+    AdminConsoleComponent,
+    ListBucketContentComponent
 
   ],
   imports: [

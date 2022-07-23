@@ -15,7 +15,7 @@ import { UserParam } from '../JsonServerClass';
 import { EventAug } from '../JsonServerClass';
 import { EventCommentStructure } from '../JsonServerClass';
 import { LoginIdentif } from '../JsonServerClass';
-EventCommentStructure
+// EventCommentStructure
 
 @Component({
   selector: 'app-Event-27AUG2022',

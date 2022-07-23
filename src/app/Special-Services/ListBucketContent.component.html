@@ -1,0 +1,40 @@
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+</head>
+<body>
+
+
+<h4 style="margin-top:2px;"><br></h4>
+<h4 style="margin-top:50px;"><br></h4>
+
+
+    <!-- ================ -->
+   <div id='targetConfig' ></div>
+      <h2 style="margin-top:2px;"><br></h2>
+      <h1>Administration of Configuration files</h1>
+
+      <div *ngIf="Error_Access_Server!==''">
+        <span style='margin-top:30px; color:red; font-size:16px;'> Error access to the server : {{Error_Access_Server}}
+        </span>
+      </div>
+      <span style='margin-top:30px; color:blue; font-size:16px;'>{{Message}}</span>
+      <div *ngIf="DisplayListOfObjects===true">
+        <div>
+            <li style="list-style-type: none;" *ngFor="let ListObject of  myListOfObjects.items; let i=index"  
+                  (click)="RetrieveSelectedFile(ListObject)">  
+                <span  *ngIf="i % 2 === 0" class="object even">{{i+1}} - {{ListObject.name}}</span>
+                <span  *ngIf="i % 2 !== 0" class="object odd">{{i+1}} - {{ListObject.name}}</span>
+          </li>
+        </div>
+      </div>
+      <div *ngIf="DisplayListOfObjects===false">
+
+            <h2 style=' color:red; margin-top:50px;'>List of objects is being retrieved from the cloud</h2>
+            {{HTTP_Address}}
+      </div>
+
+ 
+
+<br><br>
+</body>
