@@ -114,44 +114,41 @@
                 <span class='labelbucket even'>maxPhotosmaxWidth</span> <span class='bucket even'>  {{SelectedConfigFile.maxPhotosmaxWidth}}</span>
                 <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field015' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.maxPhotosmaxWidth}}</textarea>
 
-                <form class="form_box" [formGroup]="myFormBucketPhoto" >
+               
                 <div *ngFor='let TabBucket of SelectedConfigFile.TabBucketPhoto let i=index' >
-                  <span *ngIf='i===0'>
-                      <span class='labelbucket even'>TabBucketPhoto</span> 
-                      <span class='bucket even'> {{TabBucket}} </span>  
-                      <span class='labelbucket even'>&nbsp;&nbsp;</span> 
-                      <textarea id='field{{16+i}}' (input)='TextInput($event)' formControlName="bucketName" value=[ModifConfigFile.TabBucketPhoto[i]] class='FieldText '> {{ModifConfigFile.TabBucketPhoto[i]}} </textarea> 
-                  </span>
-                  <span *ngIf='i>0 '>
-                      <span class='labelbucket even'> &nbsp; </span>   
+                      <span *ngIf='i===0'>
+                          <span class='labelbucket even'>TabBucketPhoto</span> 
+                      </span>
+                      <span *ngIf='i>0 '>
+                          <span class='labelbucket even'> &nbsp; </span>   
+                      </span>
+
                       <span class='bucket even'> {{TabBucket}} </span>  
                       <span class='labelbucket even'> &nbsp; </span>      
-                      <textarea id='field{{16+i}}' (input)='TextInput($event)' formControlName="bucketName" value=[ModifConfigFile.TabBucketPhoto[i]] class='FieldText '> {{ModifConfigFile.TabBucketPhoto[i]}} </textarea>  
-                  </span>
+                      <textarea id='field{{16+i}}' (input)='TextInput($event)'  value=[ModifConfigFile.TabBucketPhoto[i]] class='FieldText '> {{ModifConfigFile.TabBucketPhoto[i]}} </textarea>  
                 </div>
-              </form>
-                <form class="form_box" [formGroup]="myFormParam" >
+           
+
 
                 <div *ngFor='let UsrSpec of SelectedConfigFile.UserSpecific let i=index' >
                     <span *ngIf="i===0">
                         <span class='labelbucket odd'>UserSpecific  </span>
-                        <span class='bucket odd'>  id={{UsrSpec.id}} ; type={{UsrSpec.type}} ; log={{UsrSpec.log}} </span>
-  
-                        <span class='labelbucket odd'>&nbsp;&nbsp;  </span>
-                        <textarea id='field{{i+SelectedConfigFile.TabBucketPhoto.length+16}}' (input)='TextInput($event)' class='FieldText '>  id={{ModifConfigFile.UserSpecific[i].id}} ; type={{ModifConfigFile.UserSpecific[i].type}} ; log={{ModifConfigFile.UserSpecific[i].log}} </textarea>
-                    </span>
-
-                    <span *ngIf="i!==0 ">
-                        <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
-                        <span class='bucket  odd'>  id={{UsrSpec.id}} ; type={{UsrSpec.type}} ; log={{UsrSpec.log}} </span> 
-                        <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
-                        <textarea id='field{{i+SelectedConfigFile.TabBucketPhoto.length+16}}' (input)='TextInput($event)' class='FieldText '>  id={{ModifConfigFile.UserSpecific[i].id}} ; type={{ModifConfigFile.UserSpecific[i].type}} ; log={{ModifConfigFile.UserSpecific[i].log}} </textarea>
-                        
-                       
-                    </span>
+                    </span>   
+                    <span *ngIf="i!==0">
+                      <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
+                    </span> 
+                    <span class='bucketA  odd'>id</span>
+                    <textarea id='field{{i+(2*i)+ModifConfigFile.TabBucketPhoto.length+16}}' 
+                                  (input)='TextInput($event)' class='FieldTextA '>  {{ModifConfigFile.UserSpecific[i].id}}  </textarea>
+                    <span class='bucketA  odd'>type</span>
+                    <textarea id='field{{i+1+(2*i)+ModifConfigFile.TabBucketPhoto.length+16}}' 
+                                  (input)='TextInput($event)' class='FieldTextA '>  {{ModifConfigFile.UserSpecific[i].type}}</textarea>
+                    <span class='bucketA  odd'>log</span>
+                    <textarea id='field{{i+2+(2*i)+ModifConfigFile.TabBucketPhoto.length+16}}' 
+                                  (input)='TextInput($event)' class='FieldTextA '> {{ModifConfigFile.UserSpecific[i].log}} </textarea>
                     
                 </div>
-                </form>
+  
           </div>
           <div *ngIf="ModifyText===true">
             <h3>

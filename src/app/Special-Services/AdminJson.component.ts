@@ -30,14 +30,6 @@ export class AdminJsonComponent {
     private scroller: ViewportScroller,
     ) {}
   
-    myFormParam = new FormGroup({
-      id: new FormControl(''),
-      type: new FormControl(''),
-      log: new  FormControl(''),
-    });
-    myFormBucketPhoto = new FormGroup({
-      bucketName: new FormControl(''),
-    });
 
     myHeader=new HttpHeaders();    
     getScreenWidth: any;
@@ -96,7 +88,7 @@ export class AdminJsonComponent {
     ModifyText:boolean=false;
     ModifiedField:Array<string>=[];
     IsFieldModified:Array<boolean>=[];
-    Max_Fields:number=30;
+    Max_Fields:number=0;
 
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
@@ -121,10 +113,7 @@ ngOnInit(){
       this.EventHTTPReceived[0]=false;
       this.waitHTTP(this.TabLoop[0], 20000, 0);
       this.getBucketAsset();
-      for (let i=0; i<this.Max_Fields; i++){
-        this.ModifiedField.push('');
-        this.IsFieldModified.push(false);
-      }
+
 
   }    
 
@@ -200,10 +189,12 @@ RetrieveAllObjects(){
         this.SelectedConfigFile=data;
         this.ModifConfigFile=data;
         this.ContentTodisplay=true;
-        for (let i=0; i<this.ModifConfigFile.TabBucketPhoto.length; i++){
-          // need to define an array of FormControl
-          //this.myFormBucketPhoto.controls[i].setValue(this.ModifConfigFile.TabBucketPhoto[i]);
+        this.Max_Fields=20+this.ModifConfigFile.TabBucketPhoto.length+(this.ModifConfigFile.UserSpecific.length*3);
+        for (let i=0; i<this.Max_Fields; i++){
+          this.ModifiedField.push('');
+          this.IsFieldModified.push(false);
         }
+
         
         //
       },
@@ -250,20 +241,28 @@ UpdateConfigFile(){
 
   if (this.IsFieldModified[10]===true){this.ModifConfigFile.width500=Number(this.ModifiedField[10])};
   if (this.IsFieldModified[11]===true){this.ModifConfigFile.maxPhotosWidth500=Number(this.ModifiedField[11])};
-  if (this.IsFieldModified[11]===true){this.ModifConfigFile.width900=Number(this.ModifiedField[12])};
+  if (this.IsFieldModified[12]===true){this.ModifConfigFile.width900=Number(this.ModifiedField[12])};
   if (this.IsFieldModified[13]===true){this.ModifConfigFile.maxPhotosWidth900=Number(this.ModifiedField[13])};
   if (this.IsFieldModified[14]===true){this.ModifConfigFile.maxWidth=Number(this.ModifiedField[14])};
   if (this.IsFieldModified[15]===true){this.ModifConfigFile.maxPhotosmaxWidth=Number(this.ModifiedField[15])};
 
 
   let j=16;
-  for (let i=0; i<this.ModifConfigFile.TabBucketPhoto.length-1; i++){
+  for (let i=0; i<this.ModifConfigFile.TabBucketPhoto.length; i++){
     if (this.IsFieldModified[i+j]===true){this.ModifConfigFile.TabBucketPhoto[i]=this.ModifiedField[i+j]};
   };
   //j=j+this.ModifConfigFile.TabBucketPhoto.length-1;
-  j=25;
-  for (let i=0; i<this.ModifConfigFile.UserSpecific.length-1; i++){
-    if (this.IsFieldModified[i+j]===true){this.ModifConfigFile.UserSpecific[i]=JSON.parse(this.ModifiedField[i+j])};
+  
+  for (let i=0; i<this.ModifConfigFile.UserSpecific.length; i++){
+    let j=this.ModifConfigFile.TabBucketPhoto.length+16+(i*2);
+    if (this.IsFieldModified[j+i]===true)
+             {this.ModifConfigFile.UserSpecific[i].id=this.ModifiedField[j+i]};
+    if (this.IsFieldModified[j+i+1]===true)
+             {this.ModifConfigFile.UserSpecific[i].type=this.ModifiedField[i+j+1]};
+    if (this.IsFieldModified[j+i+2]===true){
+              if (this.ModifiedField[i+j+2]==='true'){ this.ModifConfigFile.UserSpecific[i].log=true};
+              if (this.ModifiedField[i+j+2]==='false'){ this.ModifConfigFile.UserSpecific[i].log=false};
+          };
   };
 
 }
