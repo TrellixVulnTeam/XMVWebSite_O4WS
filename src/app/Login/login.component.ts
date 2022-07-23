@@ -116,14 +116,14 @@ export class LoginComponent {
       this.waitHTTP(30000,0,0);
 
       // ========== TO BE DELETED AFTER THE TESTS ==========
-      /**
+      
       this.identification.UserId='XMVIT-Admin';
       this.Crypto_Key=this.identification.key;
       this.Crypto_Method=this.identification.method;
       this.Decrypt='LIM!12monica#Chin';
       this.onCrypt("Encrypt");
       this.identification.psw=this.Encrypt;
-       */
+    
       // ===================================================
 
 

@@ -116,10 +116,8 @@ export class XMVConfig{
   BucketConsole:string="";
   BucketContact:string="";
   Max_Nb_Bucket_Wedding:number=6;
-
   BucketSource:string="";
   TabBucketPhoto:Array<string>=[];
-
   GetOneBucketOnly:boolean=false;
   // BucketWeddingRoot:string="";
   nb_photo_per_page:number=10;
@@ -151,4 +149,9 @@ export class BucketList{
   Login:   string= "manage-login";
   Console: string= "logconsole";
   Config:  string= "config-xmvit";
+}
+
+export class msgConsole{
+  msg: string= '';
+  timestamp:string= '';
 }

@@ -16,6 +16,7 @@ import { EventCommentStructure } from '../JsonServerClass';
 import { TableOfEventLogin } from '../JsonServerClass';
 import { BucketList } from '../JsonServerClass';
 import { Bucket_List_Info } from '../JsonServerClass';
+import { msgConsole } from '../JsonServerClass';
 
 @Component({
   selector: 'app-AdminLogin',
@@ -137,8 +138,8 @@ export class AdminLoginComponent {
     device_type:string='';
 
     myLogConsole:boolean=false;
-    myConsole:Array<string>=[];
-    returnConsole:Array<string>=[];
+    myConsole:Array< msgConsole>=[];
+    returnConsole:Array<msgConsole>=[];
     SaveConsoleFinished:boolean=true;
     type:string='';
     isFormFilled:boolean=false;
@@ -175,6 +176,7 @@ export class AdminLoginComponent {
     ContentModified:boolean=false;
 
     TestObjectStructure:any;
+    ProdTestFiles:string='';
  
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
@@ -241,6 +243,7 @@ ConfirmSelectedFile(event:any){
   this.FileToRetrieve=event.name;
   this.FileMedialink=event.mediaLink;
   this.SelectedFile=true;
+  this.ObjectTodisplay=false;
 }
 
 RetrieveSelectedFile(event:any){
@@ -324,6 +327,7 @@ ClearVar(){
   this.SelectedFile=false;
   this.ContentModified=false;
   this.ContentTodisplay=false;
+  this.ObjectTodisplay=false;
   this.FileToRetrieve='';
   this.FileMedialink='';
 
@@ -343,12 +347,18 @@ DisplayEventAug(event:string){
     this.Google_Bucket_Name =this.ListOfBucket.Login ;
     this.FileName[0] = this.FileToRetrieve;
     this.FileName[1] = '';
+    this.ProdTestFiles='Prod';
     this.Message='On-going process to format file'+this.FileToRetrieve;
     for (let i=0; i<this.EventHTTPReceived.length; i++){
         this.EventHTTPReceived[i]=false;
     }
     this.EventHTTPReceived[1]=true; // simulates that Test file has been received though there is none
     this.DataType='Prod';
+    this.theEvent.controls.splice(0,this.theEvent.length)
+    for (let i=0; i<this.TabTestProd.length; i++){
+        this.TabTestProd[i].data.splice(0,this.TabTestProd[i].data.length);
+        this.TabTestProd[i].psw.splice(0,this.TabTestProd[i].psw.length);
+    }
     this.ProcessEventAug();
   }
 
@@ -360,7 +370,7 @@ ProcessEventAug(){
   this.waitHTTP(this.TabLoop[0],30000,0);
   //this.getEventAug(1);
   //this.waitHTTP(this.TabLoop[1],30000,1);
-
+  //this.ProdTestFiles='Both';
 }
 
 
@@ -564,17 +574,17 @@ fillinForm(){
   FillInFields(i:number, reference:boolean){
 
     for (let j=0; j<this.TabTestProd[i].data.length; j++){
-      if (this.TabTestProd[i].data[j].night===undefined){
-        this.TabTestProd[i].data[j].night='';
-        if (this.TabTestProd[i].data[j].brunch===undefined){ this.TabTestProd[i].data[j].brunch='';}
-        if (this.TabTestProd[i].data[j].nbinvitees===undefined){ this.TabTestProd[i].data[j].nbinvitees=0;}
-        if (this.TabTestProd[i].data[j].myComment===undefined){ this.TabTestProd[i].data[j].myComment='';}
-        if (this.TabTestProd[i].data[j].yourComment===undefined){ this.TabTestProd[i].data[j].yourComment='';}
-        if (this.TabTestProd[i].data[j].key===undefined){ this.TabTestProd[i].data[j].key=0;}
-        if (this.TabTestProd[i].data[j].surname===undefined){ this.TabTestProd[i].data[j].surname='';}
-        if (this.TabTestProd[i].data[j].firstname===undefined){ this.TabTestProd[i].data[j].firstname='';}
-        if (this.TabTestProd[i].data[j].timeStamp===undefined){ this.TabTestProd[i].data[j].timeStamp='';}
-        }
+        if (this.TabTestProd[i].data[j].night===undefined){
+          this.TabTestProd[i].data[j].night='';
+          if (this.TabTestProd[i].data[j].brunch===undefined){ this.TabTestProd[i].data[j].brunch='';}
+          if (this.TabTestProd[i].data[j].nbinvitees===undefined){ this.TabTestProd[i].data[j].nbinvitees=0;}
+          if (this.TabTestProd[i].data[j].myComment===undefined){ this.TabTestProd[i].data[j].myComment='';}
+          if (this.TabTestProd[i].data[j].yourComment===undefined){ this.TabTestProd[i].data[j].yourComment='';}
+          if (this.TabTestProd[i].data[j].key===undefined){ this.TabTestProd[i].data[j].key=0;}
+          if (this.TabTestProd[i].data[j].surname===undefined){ this.TabTestProd[i].data[j].surname='';}
+          if (this.TabTestProd[i].data[j].firstname===undefined){ this.TabTestProd[i].data[j].firstname='';}
+          if (this.TabTestProd[i].data[j].timeStamp===undefined){ this.TabTestProd[i].data[j].timeStamp='';}
+          }
         this.FieldsReference.UserId=this.TabTestProd[i].data[j].UserId;
         this.FieldsReference.firstname=this.TabTestProd[i].data[j].firstname;
         this.FieldsReference.surname=this.TabTestProd[i].data[j].surname;
@@ -589,15 +599,14 @@ fillinForm(){
         this.FieldsReference.key=this.TabTestProd[i].data[j].key;
         this.FieldsReference.id=this.TabTestProd[i].data[j].id;
 
-
+        if (reference===false){
+              this.theEvent.push(this.newEvent());
+              this.theEvent.controls[this.theEvent.length-1].setValue(this.FieldsReference);
+        } else {
+              this.theEventRef.push(this.newEventRef());
+              this.theEventRef.controls[this.theEvent.length-1].setValue(this.FieldsReference);
         }
-      if (reference===false){
-            this.theEvent.push(this.newEvent());
-            this.theEvent.controls[this.theEvent.length-1].setValue(this.FieldsReference);
-      } else {
-            this.theEventRef.push(this.newEventRef());
-            this.theEventRef.controls[this.theEvent.length-1].setValue(this.FieldsReference);
-      }
+    }
   }
 
   clearItem(i:number,j:number){

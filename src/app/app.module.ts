@@ -20,6 +20,7 @@ import { WeddingPhotosComponent}  from './Special-Services/WeddingPhotos.compone
 import { GetImagesComponent}  from './Special-Services/GetImages.component';
 import { AdminJsonComponent}  from './Special-Services/AdminJson.component';
 import { AdminLoginComponent}  from './Special-Services/AdminLogin.component';
+import { AdminConsoleComponent}  from './Special-Services/AdminConsole.component';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { AdminLoginComponent}  from './Special-Services/AdminLogin.component';
     WeddingPhotosComponent,
     GetImagesComponent,
     AdminJsonComponent,
-    AdminLoginComponent
+    AdminLoginComponent,
+    AdminConsoleComponent
 
   ],
   imports: [

@@ -1,0 +1,198 @@
+
+body{
+  max-width: 1200px;
+}
+
+h1{
+    font-weight: bold;
+    font-size:45px;
+    width:90%;  
+    text-align:center;
+    margin-top:40px;
+    font-family: 'Tangerine';
+    letter-spacing: 2px;
+  }
+
+h2{
+  margin-top:20px;
+  width:70%;
+  font-size:36px;
+  font-weight: bold;
+  font-family: 'Tangerine';
+  letter-spacing: 2px;
+  text-align:center;
+  }
+
+h3{
+  margin-left:70px;
+  font-family: 'Roboto';
+  font-weight:bold;
+  font-size:22px;
+  letter-spacing: 3px;
+  display:block;
+  
+  color:blue;
+  
+}
+
+h4{
+   margin-left:20px;
+  font-family: 'Roboto serif';
+  font-weight:bold;
+  font-size:14px;
+  letter-spacing: 2px;
+  background-color: rgb(194, 201, 201);
+  color:black;
+  width:90%;
+  text-align:center;
+
+  
+}
+
+
+
+
+.message{
+  font-family: 'Roboto';
+  height:100px;
+  width:90%;
+  margin-left:30px;
+  font-size:16px;  
+  display:block;
+  border:solid 1px blue;
+  overflow:scroll;
+}
+
+.oddmsg{
+  background-color: rgb(221, 183, 183);
+  color:black;
+}
+
+.evenmsg{
+  background-color: rgb(204, 216, 185);
+  color:black; 
+  font-weight:bold
+}
+
+.object{
+    font-family: 'Roboto';
+    height:30px;
+    margin-left:30px;
+    font-size:16px;  
+    width:85%;
+    font-weight: bold;
+    display:block;
+    border:solid 2px blue;
+}
+
+.odd{
+  background-color: lightgray;
+  color:blue;
+}
+
+.even{
+  background-color: blue;
+  color:white; 
+  font-weight:bold
+}
+
+.object li {
+  cursor: pointer;
+  border-radius: 4px;
+  display: block;
+  border: solid 0px black;
+}
+
+.object li.selected:hover {
+  background-color: #0b9db1 !important;
+  border: solid 1px blue(0, 255, 42);
+}
+.object li:hover {
+  color: #607D8B;
+  background-color: rgb(30, 216, 200);
+  left: .1em;
+  border: solid 1px black;
+}
+
+
+
+.object:hover{
+  background-color: cyan;
+  font-size:18px;  
+}
+
+/*** ====================================== ***/
+/*** ============== @media1000 ================ ***/
+/*** ====================================== ***/
+ @media only screen and (max-width:10000px) {
+  h3{
+    margin-left:30px;
+    font-size:16px;
+    letter-spacing: 1px;
+  }
+
+.common{
+    font-family: 'Roboto';
+    padding-left:10px;
+    padding-top:5px;
+    height:25px;
+    font-size:12px;
+  }
+
+.labelrecord{
+  width:120px;
+  font-size:16px;  
+  height:20px;
+  padding-top:2px;
+  display:inline-flex;
+ }
+
+ .recordNb{
+  font-size:16px;  
+  width:25px;
+  padding-top:2px;
+  display:inline-flex;
+  height:20px;
+ }
+
+ .breakLine{
+   margin-top:5px;
+ }
+
+ .labelbucket{
+  width:120px;
+  font-size:14px;
+ }
+.bucket{
+  width:50%;
+  font-size:14px;
+ }
+
+ .urCommentsLabel{
+  width:120px;
+  height:120px; 
+  font-size:14px;
+ }
+
+ .urComments{
+  font-size:14px;
+  height:120px; 
+  width:50%;
+ }
+ .input{
+  font-size:14px;
+}
+ .empty{
+  height:5px;
+}
+.butt{
+  margin-left:30px;
+  font-size:22px;
+  height:30px;
+  width:80px;
+}
+.savePos{
+  margin-left:20px;
+  margin-top:5px;
+}
+}

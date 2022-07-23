@@ -15,57 +15,157 @@
   </span>
 </div>
 <div style="display:inline-flex; width:90%; height:60px;">
-<span  (click)="Process('BucketList')" class="dropdown-options dropdown-text">Bucket List</span>
-<span  (click)="Process('Contact')" class="dropdown-options dropdown-text">&nbsp;&nbsp;Contact</span>
-<span  (click)="Process('27Aug')" class="dropdown-options dropdown-text">Event 27Aug</span>
-<span  (click)="Process('Config')" class="dropdown-options dropdown-text">&nbsp;&nbsp;Config</span>
-<span  (click)="Process('LogConsole')" class="dropdown-options dropdown-text">Log console</span>
-<span  (click)="Process('Login')" class="dropdown-options dropdown-text">&nbsp;&nbsp;&nbsp;&nbsp;Login</span>
-<span  (click)="Process('Photos')" class="dropdown-options dropdown-text"> &nbsp;&nbsp;Photos</span>
+    <span  (click)="Process('BucketList')" class="dropdown-options dropdown-text">Bucket List</span>
+    <span  (click)="Process('Contact')" class="dropdown-options dropdown-text">&nbsp;&nbsp;Contact</span>
+    <span  (click)="Process('27Aug')" class="dropdown-options dropdown-text">Event 27Aug</span>
+    <span  (click)="Process('Config')" class="dropdown-options dropdown-text">&nbsp;&nbsp;Config</span>
+    <span  (click)="Process('Console')" class="dropdown-options dropdown-text">Log console</span>
+    <span  (click)="Process('Login')" class="dropdown-options dropdown-text">&nbsp;&nbsp;&nbsp;&nbsp;Login</span>
+    <span  (click)="Process('Photos')" class="dropdown-options dropdown-text"> &nbsp;&nbsp;Photos</span>
 </div>
 
 <div *ngIf="GoToComponent===0; else CompoOne" >
-<div style="margin-top:50px;">&nbsp;</div>
- <h2> List of buckets is </h2>
-<div *ngIf="ListOfBucket.Config!==''">
-    <div style="margin-left:20px;">
-     <span class='labelbucket even'>Contact messages</span> <span class='bucket even'> {{ListOfBucket.Contact}}</span>
-      <span class='labelbucket odd'>Login </span><span class='bucket odd'>{{ListOfBucket.Login}}</span>
-      <span class='labelbucket even'>Configuration files: </span><span class='bucket even'>{{ListOfBucket.Config}}</span>
-      <span class='labelbucket odd'>Log console</span><span class='bucket odd'>{{ListOfBucket.Console}}</span>
+  <div style="margin-top:50px;">&nbsp;</div>
+  <h2> List of buckets is </h2>
+  <div *ngIf="ListOfBucket.Config!==''">
+      <div style="margin-left:20px;">
+      <span class='labelbucket even'>Contact messages</span> <span class='bucket even'> {{ListOfBucket.Contact}}</span>
+        <span class='labelbucket odd'>Login </span><span class='bucket odd'>{{ListOfBucket.Login}}</span>
+        <span class='labelbucket even'>Configuration files: </span><span class='bucket even'>{{ListOfBucket.Config}}</span>
+        <span class='labelbucket odd'>Log console</span><span class='bucket odd'>{{ListOfBucket.Console}}</span>
+      </div>
+  </div>
+
+    <!-- ================ -->
+   <div id='targetConfig' ></div>
+      <h2 style="margin-top:2px;"><br></h2>
+      <h1>Administration of Configuration files</h1>
+
+      <div *ngIf="Error_Access_Server!==''">
+        <span style='margin-top:30px; color:red; font-size:16px;'> Error access to the server : {{Error_Access_Server}}
+        </span>
+      </div>
+      <span style='margin-top:30px; color:blue; font-size:16px;'>{{Message}}</span>
+      <div *ngIf="DisplayListOfObjects===true">
+        <div>
+            <li style="list-style-type: none;" *ngFor="let ListObject of  myListOfObjects.items; let i=index"  
+                  (click)="RetrieveSelectedFile(ListObject)">  
+                <span  *ngIf="i % 2 === 0" class="object even">{{i+1}} - {{ListObject.name}}</span>
+                <span  *ngIf="i % 2 !== 0" class="object odd">{{i+1}} - {{ListObject.name}}</span>
+          </li>
+        </div>
+      </div>
+      <div *ngIf="DisplayListOfObjects===false">
+
+            <h2 style=' color:red; margin-top:50px;'>List of objects is being retrieved from the cloud</h2>
+            {{HTTP_Address}}
+      </div>
+
+      <div id='SelectedFile' ></div>
+
+
+      <div *ngIf="ContentTodisplay===true">
+        
+          <h2> Current configuration parameters of file  </h2>
+          <h2>{{FileName}}</h2>
+          <div style="margin-left:20px;">
+                <span class='labelbucket odd'>BucketLogin</span> <span class='bucket odd'>  {{SelectedConfigFile.BucketLogin}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field01' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.BucketLogin}}</textarea>
+
+                <span class='labelbucket even'>BucketConsole</span> <span class='bucket even'>  {{SelectedConfigFile.BucketConsole}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;e</span> <textarea id='field02' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.BucketConsole}}</textarea>
+                
+                <span class='labelbucket odd'>BucketContact</span> <span class='bucket odd'> {{SelectedConfigFile.BucketContact}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field03' (input)='TextInput($event)' class='FieldText '> {{ModifConfigFile.BucketContact}}</textarea>
+
+                <span class='labelbucket odd'>BucketSource</span> <span class='bucket odd'>  {{SelectedConfigFile.BucketSource}}</span>
+                <span class='labelbucket odd'>B&nbsp;&nbsp;</span> <textarea id='field04' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.BucketSource}}</textarea>
+
+                <span class='labelbucket even'>Max_Nb_Bucket_Wedding</span> <span class='bucket even'>  {{SelectedConfigFile.Max_Nb_Bucket_Wedding}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field05' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.Max_Nb_Bucket_Wedding}}</textarea>
+
+                <span class='labelbucket odd'>GetOneBucketOnly</span> <span class='bucket odd'>  {{SelectedConfigFile.GetOneBucketOnly}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field06' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.GetOneBucketOnly}}</textarea>
+
+                <span class='labelbucket even'>nb_photo_per_page</span> <span class='bucket even'>  {{SelectedConfigFile.nb_photo_per_page}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field07' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.nb_photo_per_page}}</textarea>
+
+                <span class='labelbucket odd'>process_display_canvas</span> <span class='bucket odd'> {{SelectedConfigFile.process_display_canvas}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field08' (input)='TextInput($event)' class='FieldText '> {{ModifConfigFile.process_display_canvas}}</textarea>
+
+                <span class='labelbucket even'>padding</span> <span class='bucket even'>  {{SelectedConfigFile.padding}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field09' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.padding}}</textarea>
+
+                <span class='labelbucket odd'>width500</span> <span class='bucket odd'>  {{SelectedConfigFile.width500}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field10' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.width500}}</textarea>
+
+                <span class='labelbucket even'>maxPhotosWidth500</span> <span class='bucket even'>  {{SelectedConfigFile.maxPhotosWidth500}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field11' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.maxPhotosWidth500}}</textarea>
+
+                <span class='labelbucket odd'>width900</span> <span class='bucket odd'>  {{SelectedConfigFile.width900}}</span>
+                <span class='labelbucket odd'>&nbsp;&nbsp;</span> <textarea id='field012' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.width900}}</textarea>
+
+                <span class='labelbucket even'>maxPhotosWidth900</span> <span class='bucket even'>  {{SelectedConfigFile.maxPhotosWidth900}}</span>
+                <span class='labelbucket even'>m&nbsp;&nbsp;</span> <textarea id='field013' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.maxPhotosWidth900}}</textarea>
+
+                <span class='labelbucket odd'>maxWidth</span> <span class='bucket odd'>  {{SelectedConfigFile.maxWidth}}</span>
+                <span class='labelbucket odd'>m&nbsp;&nbsp;</span> <textarea id='field014' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.maxWidth}}</textarea>
+
+                <span class='labelbucket even'>maxPhotosmaxWidth</span> <span class='bucket even'>  {{SelectedConfigFile.maxPhotosmaxWidth}}</span>
+                <span class='labelbucket even'>&nbsp;&nbsp;</span> <textarea id='field015' (input)='TextInput($event)' class='FieldText '>  {{ModifConfigFile.maxPhotosmaxWidth}}</textarea>
+
+                <form class="form_box" [formGroup]="myFormBucketPhoto" >
+                <div *ngFor='let TabBucket of SelectedConfigFile.TabBucketPhoto let i=index' >
+                  <span *ngIf='i===0'>
+                      <span class='labelbucket even'>TabBucketPhoto</span> 
+                      <span class='bucket even'> {{TabBucket}} </span>  
+                      <span class='labelbucket even'>&nbsp;&nbsp;</span> 
+                      <textarea id='field{{16+i}}' (input)='TextInput($event)' formControlName="bucketName" value=[ModifConfigFile.TabBucketPhoto[i]] class='FieldText '> {{ModifConfigFile.TabBucketPhoto[i]}} </textarea> 
+                  </span>
+                  <span *ngIf='i>0 '>
+                      <span class='labelbucket even'> &nbsp; </span>   
+                      <span class='bucket even'> {{TabBucket}} </span>  
+                      <span class='labelbucket even'> &nbsp; </span>      
+                      <textarea id='field{{16+i}}' (input)='TextInput($event)' formControlName="bucketName" value=[ModifConfigFile.TabBucketPhoto[i]] class='FieldText '> {{ModifConfigFile.TabBucketPhoto[i]}} </textarea>  
+                  </span>
+                </div>
+              </form>
+                <form class="form_box" [formGroup]="myFormParam" >
+
+                <div *ngFor='let UsrSpec of SelectedConfigFile.UserSpecific let i=index' >
+                    <span *ngIf="i===0">
+                        <span class='labelbucket odd'>UserSpecific  </span>
+                        <span class='bucket odd'>  id={{UsrSpec.id}} ; type={{UsrSpec.type}} ; log={{UsrSpec.log}} </span>
+  
+                        <span class='labelbucket odd'>&nbsp;&nbsp;  </span>
+                        <textarea id='field{{i+SelectedConfigFile.TabBucketPhoto.length+16}}' (input)='TextInput($event)' class='FieldText '>  id={{ModifConfigFile.UserSpecific[i].id}} ; type={{ModifConfigFile.UserSpecific[i].type}} ; log={{ModifConfigFile.UserSpecific[i].log}} </textarea>
+                    </span>
+
+                    <span *ngIf="i!==0 ">
+                        <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
+                        <span class='bucket  odd'>  id={{UsrSpec.id}} ; type={{UsrSpec.type}} ; log={{UsrSpec.log}} </span> 
+                        <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
+                        <textarea id='field{{i+SelectedConfigFile.TabBucketPhoto.length+16}}' (input)='TextInput($event)' class='FieldText '>  id={{ModifConfigFile.UserSpecific[i].id}} ; type={{ModifConfigFile.UserSpecific[i].type}} ; log={{ModifConfigFile.UserSpecific[i].log}} </textarea>
+                        
+                       
+                    </span>
+                    
+                </div>
+                </form>
+          </div>
+          <div *ngIf="ModifyText===true">
+            <h3>
+              <span  style='margin-top:30px;'>Do you want to save your modifications?</span>
+            </h3>
+              <button id="butt1" class="butt" (click)="SaveRecord('YES')">YES</button> 
+              <button id="butt2" class="butt" (click)="SaveRecord('NO')">NO</button> 
+            
+          </div>
     </div>
 </div>
 
-<div style="margin-top:30px;">&nbsp;</div>
-<h2> Current configuration parameters  </h2>
-  <div style="margin-left:20px;">
-        <span class='labelbucket odd'>BucketLogin</span> <span class='bucket odd'>  {{ConfigXMV.BucketLogin}}</span>
-        <span class='labelbucket even'>BucketConsole</span> <span class='bucket even'>  {{ConfigXMV.BucketConsole}}</span>
-        <span class='labelbucket odd'>BucketContact</span> <span class='bucket odd'> {{ConfigXMV.BucketContact}}</span>
-        <span class='labelbucket even'>Max_Nb_Bucket_Wedding</span> <span class='bucket even'>  {{ConfigXMV.Max_Nb_Bucket_Wedding}}</span>
-        <span class='labelbucket odd'>GetOneBucketOnly</span> <span class='bucket odd'>  {{ConfigXMV.GetOneBucketOnly}}</span>
-        <span class='labelbucket even'>nb_photo_per_page</span> <span class='bucket even'>  {{ConfigXMV.nb_photo_per_page}}</span>
-        <span class='labelbucket odd'>process_display_canvas</span> <span class='bucket odd'> {{ConfigXMV.process_display_canvas}}</span>
-        <span class='labelbucket even'>padding</span> <span class='bucket even'>  {{ConfigXMV.padding}}</span>
-        <span class='labelbucket odd'>width500</span> <span class='bucket odd'>  {{ConfigXMV.width500}}</span>
-        <span class='labelbucket even'>maxPhotosWidth500</span> <span class='bucket even'>  {{ConfigXMV.maxPhotosWidth500}}</span>
-        <span class='labelbucket odd'>width900</span> <span class='bucket odd'>  {{ConfigXMV.width900}}</span>
-        <span class='labelbucket even'>maxPhotosWidth900</span> <span class='bucket even'>  {{ConfigXMV.maxPhotosWidth900}}</span>
-        <span class='labelbucket odd'>maxWidth</span> <span class='bucket odd'>  {{ConfigXMV.maxWidth}}</span>
-        <span class='labelbucket even'>maxPhotosmaxWidth</span> <span class='bucket even'>  {{ConfigXMV.maxPhotosmaxWidth}}</span>
-        <span class='labelbucket odd'>BucketSource</span> <span class='bucket odd'>  {{ConfigXMV.BucketSource}}</span>
 
-        <span *ngFor='let TabBucket of ConfigXMV.TabBucketPhoto let i=index' >
-          <span *ngIf='i===0'><span class='labelbucket even'>TabBucketPhoto</span>  <span class='bucket even'> {{TabBucket}} </span>  </span>
-          <span *ngIf='i>0 '><span class='labelbucket even'> &nbsp; </span>                <span class='bucket even'> {{TabBucket}} </span>  </span>
-        </span>
-        <span *ngFor='let UsrSpec of ConfigXMV.UserSpecific let i=index' >
-            <span *ngIf="i===0 "><span class='labelbucket odd'>UserSpecific  </span><span class='bucket odd'>  id={{UsrSpec.id}} ; type={{UsrSpec.type}} ; log={{UsrSpec.log}} </span> </span>
-            <span *ngIf="i===0 "><span class='labelbucket odd'>  &nbsp; </span><span class='bucket  odd'>  id={{UsrSpec.id}} ; type={{UsrSpec.type}} ; log={{UsrSpec.log}} </span> </span>
-            
-        </span>
-  </div>
-</div>
+
   <ng-template #CompoOne>
     <div *ngIf="GoToComponent===1; else CompoTwo ">
         <app-GetImages [identification]="identification" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="LoginTable_User_Data" 
@@ -90,12 +190,19 @@
   
 
   <ng-template #CompoFour>
-    <div *ngIf="GoToComponent===4; else CompoFour ">
+    <div *ngIf="GoToComponent===4; else CompoFive ">
         <app-AdminLogin [ConfigXMV]="ConfigXMV" [ListOfBucket]="ListOfBucket"></app-AdminLogin>
     </div>
   </ng-template>
 
+
   <ng-template #CompoFive>
+    <div *ngIf="GoToComponent===5; else CompoSix ">
+        <app-AdminConsole [ConfigXMV]="ConfigXMV" [ListOfBucket]="ListOfBucket"></app-AdminConsole>
+    </div>
+  </ng-template>
+
+  <ng-template #CompoSix>
     
       Error GoToComponent={{GoToComponent}}
   </ng-template>

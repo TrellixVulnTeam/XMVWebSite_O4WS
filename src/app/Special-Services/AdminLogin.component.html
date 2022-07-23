@@ -41,28 +41,30 @@
 </div>
 
 <div *ngIf="ContentTodisplay===true">
+  <br><br>
  <h3>
    Do you want to convert this file in the EventAug readable format?
   </h3>
           <button id="butt11" (click)="DisplayEventAug('YES')" class="butt">Yes</button>
           <button id="butt11" (click)="DisplayEventAug('NO')" class="butt">No</button>
- 
-    <h3>Content reference from file &nbsp;{{FileToRetrieve}}</h3>
+    <br><br><br><br>
+    <h4>Content reference from file &nbsp;{{FileToRetrieve}}</h4>
     <textarea readonly class="inputObject inputColorRef">
       {{ContentObjectRef}}
     </textarea>
     <br>
-    <h3>Content to modify </h3>
+    <h4>Content to modify </h4>
     <textarea  class="inputObject inputColor" (input)='ModifContent($event)' 
                  type='text' [value]="ContentObject">  </textarea>
 
-    <h3>
-      If you change the psw then it must be encrypted (default values are key=2 and method=AES)
-      <br> psw: <textarea  class="pswField inputColor" (input)='ModifPSW($event)' 
+    
+      <br> <br>
+      <h4> If you change the psw then it must be encrypted (default values are key=2 and method=AES)</h4>
+      <h4> psw:</h4> <textarea  class="pswField inputColor" (input)='ModifPSW($event)' 
       type='text' [value]="Decrypt">  </textarea>
-      <br> Encrypted psw is <textarea readonly class="pswField inputColorRef">{{Encrypt}}</textarea>
+      <br> <br> <h4>Encrypted psw is </h4><textarea readonly class="pswField inputColorRef">{{Encrypt}}</textarea>
 
-    </h3>
+    
     <span *ngIf="ContentModified===true">
     Do you want to save your modifications?
           <button id="butt12" (click)="SaveModif('YES')" class="butt">Yes</button>
@@ -75,9 +77,14 @@
       <div id='targetConfirm' ></div>
 
       <div *ngIf="ConfirmSaveTest===false && ConfirmSaveProd===false">
+        <br><br>
               <h3>Copy from reference table &nbsp;</h3>
-              <button class="butt" id='copyProd' (click)="Copy('Prod')" >Prod </button> &nbsp;
-              <button  class="butt"id='copyTest' (click)="Copy('Test')" >Test</button>
+              <span *ngIf="DataType==='Prod'">
+                    <button class="butt" id='copyProd' (click)="Copy('Prod')" >Prod </button> &nbsp;
+              </span>
+              <span *ngIf="DataType==='Test'">
+                  <button  class="butt"id='copyTest' (click)="Copy('Test')" >Test</button>
+              </span>
 
       </div>
 
@@ -106,13 +113,16 @@
                 <div formArrayName="tabEvent">
                 <div style="margin-top:50px;">
                     
-                        <div *ngIf="ConfirmSaveTest===false && ConfirmSaveProd===false">  
-                          <h3>Select which type of data you want to display</h3>
-                          <button  class="butt" id='ProcessP' (click)="Process('Prod')" >Prod </button> &nbsp;
-                          <button class="butt" id='ProcessT' (click)="Process('Test')" >Test</button>
+                        <div *ngIf="ConfirmSaveTest===false && ConfirmSaveProd===false">
+                          <span *ngIf="ProdTestFiles==='Both'">
+                              <h3>Select which type of data you want to display</h3>
+                              <button  class="butt" id='ProcessP' (click)="Process('Prod')" >Prod </button> &nbsp;
+                              <button class="butt" id='ProcessT' (click)="Process('Test')" >Test</button>
+                              <br><br>
+                         </span>
                         </div>
                     
-                  <br><br>
+
                   <div *ngIf="DataType==='Prod'"><h2>Production data</h2></div>
                   <div *ngIf="DataType==='Test'" ><h2>Test data</h2></div>
                 </div>  

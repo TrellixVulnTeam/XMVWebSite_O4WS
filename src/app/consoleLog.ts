@@ -1,13 +1,18 @@
 
-
-export function msginLogConsole(msg:string, myConsole:any, myLogConsole:boolean, SaveConsoleFinished:boolean, HTTP_Address:string,type:string){
+import { msgConsole } from './JsonServerClass';
+export function msginLogConsole(msg:string, myConsole:Array<msgConsole>, myLogConsole:boolean, SaveConsoleFinished:boolean, HTTP_Address:string,type:string){
     console.log(msg);
+    let theMSG=new msgConsole;
+
     const myTime=new Date();
-    const myDate= myTime.toString().substring(8,24);
-    const thetime=myDate+myTime.getTime().toString();
+    const myDate= myTime.toString().substring(4,26);
+    //const thetime=myDate+myTime.getTime().toString();
     if (myLogConsole===true){
-            myConsole.push('');
-            myConsole[myConsole.length-1]='<==> '+thetime.substr(0,20) + ' ' +msg;
+            //myConsole.push('');
+            //myConsole[myConsole.length-1]='<==> '+thetime.substr(0,20) + ' ' +msg;
+            myConsole.push(theMSG)
+            myConsole[myConsole.length-1].msg=msg;
+            myConsole[myConsole.length-1].timestamp=myDate;
   
     }
     if (myConsole.length>500 && SaveConsoleFinished===true){
@@ -18,10 +23,10 @@ export function msginLogConsole(msg:string, myConsole:any, myLogConsole:boolean,
 
 
 
-export function saveLogConsole(LogConsole:any, type:string, HTTP_Address:string){
+export function saveLogConsole(LogConsole:Array<msgConsole>, type:string, HTTP_Address:string){
     const Http = new XMLHttpRequest();
     const myTime=new Date();
-    var myDate= myTime.toString().substring(8,24);
+    var myDate= myTime.toString().substring(4,26);
     var thetime=myDate+myTime.getTime().toString();
     const consoleLength=LogConsole.length;
     var SaveConsoleFinished=false;
@@ -31,8 +36,8 @@ export function saveLogConsole(LogConsole:any, type:string, HTTP_Address:string)
   
     Http.open('POST',HTTP_Address+thetime.substr(0,20)+  type + '.json&uploadType=media')
     Http.setRequestHeader("Content-Type", "application/json");
-    //Http.send(JSON.stringify(LogConsole));
-    Http.send(LogConsole);
+    Http.send(JSON.stringify(LogConsole));
+    //Http.send(LogConsole);
     Http.onload = (e) => {
    // Http.onreadystatechange = (e) => {
         console.log('####POST result=',Http);
@@ -46,8 +51,13 @@ export function saveLogConsole(LogConsole:any, type:string, HTTP_Address:string)
                     LogConsole.splice(i-1,1);
                 }
             }
-            LogConsole.push('');
-            LogConsole[LogConsole.length-1]='Log Console ' + type + ' has been deleted at '+myDate+'  ' +thetime;
+            let theMSG=new msgConsole;
+            LogConsole.push(theMSG)
+            LogConsole[LogConsole.length-1].msg='Log Console ' + type + ' has been deleted at '+myDate;
+            LogConsole[LogConsole.length-1].timestamp=myDate;
+
+            //LogConsole.push('');
+            //LogConsole[LogConsole.length-1]='Log Console ' + type + ' has been deleted at '+myDate;
             //return(LogConsole);   
         }     
     } 
