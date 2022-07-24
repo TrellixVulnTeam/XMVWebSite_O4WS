@@ -178,3 +178,9 @@ export class msgConsole{
   msg: string= '';
   timestamp:string= '';
 }
+
+export class Return_Data{
+  Message:string= '';
+  Error_Access_Server='';
+  SaveIsCancelled:boolean=false;
+}

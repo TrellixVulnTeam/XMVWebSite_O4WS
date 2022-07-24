@@ -18,6 +18,7 @@ import { BucketList } from '../JsonServerClass';
 import { Bucket_List_Info } from '../JsonServerClass';
 import { OneBucketInfo } from '../JsonServerClass';
 import { msgConsole } from '../JsonServerClass';
+import { Return_Data } from '../JsonServerClass';
 
 @Component({
   selector: 'app-AdminLogin',
@@ -109,6 +110,7 @@ export class AdminLoginComponent {
     @Input() ListOfBucket=new BucketList;
     @Input() theReceivedData=new EventAug;
     @Input() SelectedBucketInfo=new OneBucketInfo;
+    
     FirstSelection=true;
 
     Encrypt:string='';
@@ -181,6 +183,8 @@ export class AdminLoginComponent {
 
     TestObjectStructure:any;
     ProdTestFiles:string='';
+
+    Return_SaveStatus=new Return_Data;
  
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
@@ -228,77 +232,6 @@ Initialize(){
   this.ContentTodisplay=true;
 }
 
-RetrieveAllObjects(){
-// bucket name is ListOfObject.login
-console.log('RetrieveAllObjects()');
-this.Error_Access_Server='';
-this.EventHTTPReceived[2]=false;
-this.HTTP_Address=this.Google_Bucket_Access_Root + this.ListOfBucket.Login + "/o";
-this.http.get<Bucket_List_Info>(this.HTTP_Address )
-        .subscribe((data ) => {
-          console.log('RetrieveAllObjects() - data received');
-          this.Error_Access_Server='';
-          this.myListOfObjects=data;
-          this.DisplayListOfObjects=true;
-          this.Message='';
-        },
-        error_handler => {
-          this.EventHTTPReceived[3]=true;
-          
-          console.log('RetrieveAllObjects() - error handler');
-          this.Message='HTTP_Address='+this.HTTP_Address;
-          this.Error_Access_Server='RetrieveAllObjects()==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
-        } 
-)
-
-}
-
-ConfirmSelectedFile(event:any){
-  this.scroller.scrollToAnchor('SelectedFile');
-  console.log('ConfirmSelectedFile()');
-  //this.Message='selected event = '+event.mediaLink;
-  this.SelectedFile=true;
-  this.ObjectTodisplay=false;
-}
-
-RetrieveSelectedFile(event:any){
-  this.scroller.scrollToAnchor('SelectedFile');
-  
-  this.SelectedFile=false;
-  if (event='YES'){
-    // this.waitHTTP(this.TabLoop[3],30000,3);
-    this.http.get<any>(this.SelectedBucketInfo.mediaLink )
-    .subscribe((data ) => {
-      console.log('RetrieveSelectedFile='+this.SelectedBucketInfo.name);
-      this.Error_Access_Server='';
-      this.ContentObject=JSON.stringify(data);
-      this.ContentObjectRef=this.ContentObject;
-      this.ContentTodisplay=true;
-
-      //
-      this.TestObjectStructure=data;
-      if (Array.isArray(this.TestObjectStructure)===false){
-        this.Crypto_Key=2;
-        this.Crypto_Method='AES';
-        this.Encrypt=data.psw;
-        this.onCrypt("Decrypt");
-      }
-
-      //
-    },
-    error_handler => {
-      this.EventHTTPReceived[2]=true;
-      console.log('RetrieveAllObjects- error handler');
-      this.Message='HTTP_Address='+this.HTTP_Address;
-      this.Error_Access_Server='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
-    } 
-    )
-  } else {
-      this.scroller.scrollToAnchor('targetTop');
-  }
-  
-}
-
 ModifPSW(event:any){
   this.Crypto_Key=2;
   this.Crypto_Method='AES';
@@ -309,6 +242,12 @@ ModifPSW(event:any){
 ModifContent(event:any){
   this.ContentModified=true;
   this.ContentObject=event.target.value;
+}
+
+BackToSaveFile(event:any){
+  this.Message=event.Message;
+  this.Error_Access_Server=event.Error_Access_Server;
+  this.ClearVar();
 }
 
 SaveModif(event:string){
@@ -343,8 +282,8 @@ ClearVar(){
   this.ContentModified=false;
   this.ContentTodisplay=false;
   this.ObjectTodisplay=false;
-  this.SelectedBucketInfo.name='';
-  this.SelectedBucketInfo.mediaLink='';
+  //this.SelectedBucketInfo.name='';
+  //this.SelectedBucketInfo.mediaLink='';
 
   this.ContentObject='';
   this.ContentObjectRef='';
@@ -790,9 +729,23 @@ waitHTTP(loop:number, max_loop:number, eventNb:number){
     if (this.FirstSelection===true){
       this.FirstSelection=false;
     } else {
-      // must check which data is returned
-      this.ContentTodisplay=false;
-      this.Initialize();
+
+      for (const propName in changes){
+        const j=changes[propName];
+        if (propName==='SelectedBucketInfo'){
+          this.ContentTodisplay=false;
+        } 
+        if (propName==='theReceivedData'){
+           this.Initialize();
+        }
+       
+        // const to=JSON.stringify(j.currentValue);
+        // const from=JSON.stringify(j.previousValue);
+        // this.LogMsgConsole('$$$$$ onChanges '+' to '+to+' from '+from + ' ---- JSON.stringify(j) '+ JSON.stringify(j));
+      }
+  
+    
+     
     }
   }
 

@@ -43,10 +43,15 @@
 
     
     <span *ngIf="ContentModified===true">
+    <!--
     Do you want to save your modifications?
           <button id="butt12" (click)="SaveModif('YES')" class="butt">Yes</button>
           <button id="butt12" (click)="SaveModif('NO')" class="butt">No</button>
+    -->
+    <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" [LoginToHttpPost]="ContentObject" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
     </span>
+  
+
 </div>
 
 
@@ -66,6 +71,12 @@
       </div>
 
 <div id='SelectedFile' ></div>
+<div *ngIf="ConfirmSaveTest===true || ConfirmSaveProd===true">
+  <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" [LoginToHttpPost]="Table_User_Data" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
+ 
+
+</div>
+<!--
       <div *ngIf="ConfirmSaveTest===true">
         <span style="margin-top:20px;">&nbsp;</span>
           <h3>Please confirm you want to save Test data</h3>
@@ -78,7 +89,8 @@
         <button  id='Conf3' (click)="saveRecord('Yes')" class="butt">Yes </button>
         <button  id='Conf4' (click)="saveRecord('No')" class="butt">No </button>
       </div>
-  <div id='targetTop' ></div>
+ -->
+
   <div id='targetMessage' ></div>
       <div *ngIf="Message!==''">
         <span style='margin-top:40px; color:blue; font-size:22px;'>  {{Message}}

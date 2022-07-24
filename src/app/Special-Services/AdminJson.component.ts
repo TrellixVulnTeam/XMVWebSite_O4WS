@@ -98,7 +98,7 @@ onWindowResize() {
 
 
 ngOnInit(){
-      //**this.LogMsgConsole('ngOnInit ManageJson ===== Device ' + navigator.userAgent + '======');
+      this.LogMsgConsole('ngOnInit ManageJson ===== Device ' + navigator.userAgent + '======');
 
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
@@ -108,8 +108,6 @@ ngOnInit(){
         'content-type': 'application/json',
         'cache-control': 'private, max-age=0'
       });
-      this.ListOfBucket.Config='';
-      this.Error_Access_Server='';
       this.EventHTTPReceived[0]=false;
       //this.waitHTTP(this.TabLoop[0], 20000, 0);
       this.getBucketAsset();
@@ -118,7 +116,10 @@ ngOnInit(){
   }    
 
 Process(event:string){
+  
   this.GoToComponent=0;
+  this.isDataReceived=false;
+  this.ContentTodisplay=false;
   this.isDataReceived=false;
   if (event==='Photos'){
     this.GoToComponent=1;
@@ -134,6 +135,7 @@ Process(event:string){
     this.Google_Bucket_Name=this.ListOfBucket.Console;
   } else if (event==='Config'){
     this.Google_Bucket_Name=this.ListOfBucket.Config;
+    this.GoToComponent=6;
     this.scroller.scrollToAnchor('targetConfig');
   }
   }
@@ -144,8 +146,10 @@ getBucketAsset(){
   this.Error_Access_Server='';
   this.http.get<BucketList>('./assets/ListOfBuckets.json' )
   .subscribe((data ) => {
-    console.log('getBucketAsset() - data received');
+    
     this.ListOfBucket=data;
+
+    console.log('getBucketAsset() - data received '+this.ListOfBucket.Config+' ; '+this.ListOfBucket.Login+' ; ');
     this.EventHTTPReceived[0]=true;
   },
     error_handler => {
@@ -164,7 +168,7 @@ ReceivedDataConfig(event:any){
   this.ContentTodisplay=true;
   this.Message='';
   this.ModifyText=false;
-  this.scroller.scrollToAnchor('SelectedFile');
+  this.scroller.scrollToAnchor('targeEndList');
   this.Max_Fields=20+this.ModifConfigFile.TabBucketPhoto.length+(this.ModifConfigFile.UserSpecific.length*3);
   for (let i=0; i<this.Max_Fields; i++){
     this.ModifiedField.push('');
@@ -180,6 +184,7 @@ BucketInfo(event:any){
 ReceivedData(event:any){
   this.theReceivedData=event;
   this.isDataReceived=true;
+  this.scroller.scrollToAnchor('targeEndList');
 
   }
 
@@ -241,7 +246,7 @@ UpdateConfigFile(){
   };
 
 }
-
+/******
 SaveRecord(event:string){
   const myTime=new Date();
   const myDate= myTime.toString().substring(4,25);
@@ -270,6 +275,13 @@ SaveRecord(event:string){
   this.scroller.scrollToAnchor('targetTop');
 
 }
+ */
+BackToSaveFile(event:any){
+  this.ContentTodisplay=false;
+  this.scroller.scrollToAnchor('targetTop');
+}
+
+
 /****
 waitHTTP(loop:number, max_loop:number, eventNb:number){
   const pas=500;

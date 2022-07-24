@@ -1,5 +1,5 @@
 
-import { Component, OnInit , Input, Output, EventEmitter,HostListener} from '@angular/core';
+import { Component, OnInit , Input, Output, EventEmitter,HostListener, OnChanges, SimpleChanges} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
@@ -46,7 +46,7 @@ export class ListBucketContentComponent {
     SaveConsoleFinished:boolean=true;
     type:string='';
 
-
+    isObjectToSave:boolean=false;
     EventHTTPReceived:Array<boolean>=[false,false,false,false,false,false];
     id_Animation:Array<number>=[0,0,0,0,0];
     TabLoop:Array<number>=[0,0,0,0,0];
@@ -84,7 +84,7 @@ export class ListBucketContentComponent {
     FileName:string='';
     ModifyText:boolean=false;
 
-
+    IsngInitDone:boolean=false;
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
       this.getScreenWidth = window.innerWidth;
@@ -93,7 +93,7 @@ onWindowResize() {
 
 
 ngOnInit(){
-      //**this.LogMsgConsole('ngOnInit ManageJson ===== Device ' + navigator.userAgent + '======');
+      this.LogMsgConsole('ngOnInit ManageJson ===== Device ' + navigator.userAgent + '======');
 
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
@@ -104,6 +104,7 @@ ngOnInit(){
         'cache-control': 'private, max-age=0'
       });
       this.Error_Access_Server='';
+      this.IsngInitDone=true;
       this.RetrieveAllObjects();
   }   
 
@@ -118,11 +119,11 @@ RetrieveAllObjects(){
             console.log('RetrieveAllObjects() - data received');
             this.myListOfObjects=data;
             this.DisplayListOfObjects=true;
-
+            this.scroller.scrollToAnchor('targetTopObjects');
           },
           error_handler => {
             
-            console.log('RetrieveAllObjects() - error handler');
+            console.log('RetrieveAllObjects() - error handler; HTTP='+this.HTTP_Address);
             this.Message='HTTP_Address='+this.HTTP_Address;
             this.Error_Access_Server='RetrieveAllObjects()==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
           } 
@@ -132,14 +133,14 @@ RetrieveAllObjects(){
   
   RetrieveSelectedFile(event:any){
     this.Message='';
-    this.scroller.scrollToAnchor('SelectedFile');
+    
     //this.FileMedialink=event.mediaLink;
     //this.FileName=event.name;
     this.Return_SelectedBucketInfo.emit(event);
       this.http.get<any>(event.mediaLink )
       .subscribe((data ) => {
         console.log('RetrieveSelectedFile='+event.mediaLink);
-        //this.ContentObject=JSON.stringify(data);
+        this.scroller.scrollToAnchor('SelectedObjectsFile');
         this.Return_Data.emit(data);
         //
       },
@@ -153,10 +154,31 @@ RetrieveAllObjects(){
   
     
   }
-  
 
 
+  ngOnChanges(changes: SimpleChanges) { 
+
+  if (this.IsngInitDone===true){
+      for (const propName in changes){
+        const j=changes[propName];
+        if (propName==='Bucket_Name'){
+         // const to=JSON.stringify(j.currentValue);
+         // const from=JSON.stringify(j.previousValue);
+         
+         // if (to!==from ){
+            this.RetrieveAllObjects();
+            this.DisplayListOfObjects=true;
+         // }
+        }
+      }
+       
+        
+        // this.LogMsgConsole('$$$$$ onChanges '+' to '+to+' from '+from + ' ---- JSON.stringify(j) '+ JSON.stringify(j));
+      }
+     
+    }
   
+
 
 LogMsgConsole(msg:string){
 

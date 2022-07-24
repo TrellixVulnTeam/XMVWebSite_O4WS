@@ -22,8 +22,7 @@ import { AdminJsonComponent}  from './Special-Services/AdminJson.component';
 import { AdminLoginComponent}  from './Special-Services/AdminLogin.component';
 import { AdminConsoleComponent}  from './Special-Services/AdminConsole.component';
 import { ListBucketContentComponent}  from './Special-Services/ListBucketContent.component';
-
-
+import { ChangeSaveFileNameComponent}  from './Special-Services/ChangeSaveFileName.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +40,8 @@ import { ListBucketContentComponent}  from './Special-Services/ListBucketContent
     AdminJsonComponent,
     AdminLoginComponent,
     AdminConsoleComponent,
-    ListBucketContentComponent
+    ListBucketContentComponent,
+    ChangeSaveFileNameComponent,
 
   ],
   imports: [

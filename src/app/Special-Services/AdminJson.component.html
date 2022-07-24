@@ -24,7 +24,7 @@
     <span  (click)="Process('Photos')" class="dropdown-options dropdown-text"> &nbsp;&nbsp;Photos</span>
 </div>
 
-<div *ngIf="GoToComponent===0; else CompoOne" >
+<div *ngIf="GoToComponent===0 || GoToComponent===6" >
   <div style="margin-top:50px;">&nbsp;</div>
   <h2> List of buckets is </h2>
   <div *ngIf="ListOfBucket.Config!==''">
@@ -35,10 +35,11 @@
         <span class='labelbucket odd'>Log console</span><span class='bucket odd'>{{ListOfBucket.Console}}</span>
       </div>
   </div>
-<div *ngIf="EventHTTPReceived[0]===true">
-    <app-ListBucketContent [ConfigXMV]="ConfigXMV"  [Bucket_Name]="Google_Bucket_Name"  
-          (Return_Data)="ReceivedDataConfig($event)" (Return_SelectedBucketInfo)="BucketInfo($event)"></app-ListBucketContent>
-</div>   
+
+  <div *ngIf="EventHTTPReceived[0]===true && Google_Bucket_Name!=='' && GoToComponent===6">
+      <app-ListBucketContent [ConfigXMV]="ConfigXMV"  [Bucket_Name]="Google_Bucket_Name"  
+            (Return_Data)="ReceivedDataConfig($event)" (Return_SelectedBucketInfo)="BucketInfo($event)"></app-ListBucketContent>
+  </div>   
 
       <div id='SelectedFile' ></div>
 
@@ -130,26 +131,26 @@
   
           </div>
           <div *ngIf="ModifyText===true">
+            <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" [LoginToHttpPost]="ModifConfigFile" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
+ 
+<!--
             <h3>
               <span  style='margin-top:30px;'>Do you want to save your modifications?</span>
             </h3>
               <button id="butt1" class="butt" (click)="SaveRecord('YES')">YES</button> 
               <button id="butt2" class="butt" (click)="SaveRecord('NO')">NO</button> 
+-->
             
           </div>
     </div>
+</div> 
+
+
+
+<div *ngIf="(GoToComponent===4 || GoToComponent===5 ) && EventHTTPReceived[0]===true && Google_Bucket_Name!=='' ">
+      <app-ListBucketContent [ConfigXMV]="ConfigXMV"  [Bucket_Name]="Google_Bucket_Name"  
+            (Return_Data)="ReceivedData($event)" (Return_SelectedBucketInfo)="BucketInfo($event)"></app-ListBucketContent>
 </div>
-
-
-
-  <ng-template #CompoOne>
-    <div *ngIf="GoToComponent===4 || GoToComponent===5">
-      <div *ngIf="EventHTTPReceived[0]===true">
-          <app-ListBucketContent [ConfigXMV]="ConfigXMV"  [Bucket_Name]="Google_Bucket_Name"  
-                  (Return_Data)="ReceivedData($event)" (Return_SelectedBucketInfo)="BucketInfo($event)"></app-ListBucketContent>
-      </div>   
-  </div>  
-
 
 
     <div *ngIf="GoToComponent===1; else CompoTwo ">
@@ -157,7 +158,7 @@
             [LoginTable_DecryptPSW]="LoginTable_DecryptPSW">
         </app-GetImages>
     </div>
-  </ng-template>
+
   
   <ng-template #CompoTwo>
     <div *ngIf="GoToComponent===2 else CompoThree ">
@@ -185,7 +186,7 @@
 
 
   <ng-template #CompoFive>
-    <div *ngIf="GoToComponent===5; else CompoSix ">
+    <div *ngIf="GoToComponent===5 ">
       <div *ngIf="isDataReceived===true">
         <app-AdminConsole [ConfigXMV]="ConfigXMV" [ListOfBucket]="ListOfBucket"
         [theReceivedData]="theReceivedData" [SelectedBucketInfo]="SelectedBucketInfo"></app-AdminConsole>
@@ -193,11 +194,14 @@
     </div>
   </ng-template>
 
-  <ng-template #CompoSix>
+  <!--
+<ng-template #CompoSeven>
     
-      Error GoToComponent={{GoToComponent}}
+    
   </ng-template>
 
 
+  -->
+  
 <br><br>
 </body>
