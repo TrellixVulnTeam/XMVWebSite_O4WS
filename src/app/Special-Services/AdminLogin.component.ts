@@ -691,6 +691,15 @@ waitHTTP(loop:number, max_loop:number, eventNb:number){
     }
   }
 
+  goUpandDown(event:string){
+    if (event='NewFile'){
+      this.scroller.scrollToAnchor('targetLogTop');
+    } else  if (event='Selection'){
+      this.scroller.scrollToAnchor('targetSelectedFile');
+    }
+
+  }
+
 LogMsgConsole(msg:string){
     msginLogConsole(msg, this.myConsole,this.myLogConsole, this.SaveConsoleFinished,this.HTTP_AddressLog, this.type);
 }

@@ -7,13 +7,13 @@
 
   <div id='targetLogTop' ></div>
 <span style="margin-top:2px;"><br></span>
-<span>Administration of Logins</span>
+
 
 <div *ngIf="Error_Access_Server!==''">
   <span style='margin-top:10px; margin-left:30px; color:red; font-size:16px;'> Error access to the server : {{Error_Access_Server}}
   </span>
 </div>
-<span style='margin-top:10px; margin-left:30px;color:blue; font-size:16px;'>{{Message}}</span>
+<span style='margin-top:20px; margin-left:30px;color:blue; font-size:16px;'>{{Message}}</span>
 
 
 
@@ -131,7 +131,7 @@
                                
                                 <button id='save' class="butt savePos"   (click)="ConfirmSave(DataType)">Save</button> 
                                 
-
+                                <button id="butt14" style='font-size:10px; margin-left:5px;'(click)="goUpandDown('Selection')">Top</button>
 
                                  
                             </div>
@@ -181,6 +181,7 @@
               
             </form>
           </div>
+          
       </div>
   </div>
 

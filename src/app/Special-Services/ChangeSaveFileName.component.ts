@@ -23,7 +23,7 @@ import { Return_Data } from '../JsonServerClass';
 @Component({
     selector: 'app-ChangeSaveFileName',
     templateUrl: './ChangeSaveFileName.component.html',
-    styleUrls: ['./AdminLogin.component.css']
+    styleUrls: ['./ChangeSaveFileName.component.css']
   })
   
 export class ChangeSaveFileNameComponent {
@@ -62,7 +62,7 @@ export class ChangeSaveFileNameComponent {
             this.Return_SaveStatus.SaveIsCancelled=false;
         }
         else {
-            this.Return_SaveStatus.Message='File ' +  this.FileName +' is not saved as per your request';
+            this.Return_SaveStatus.Message='File ' +  this.FileName +' was not saved as per your request';
             this.isObjectToSave=false;
             this.ConfirmSave=true;
             this.Return_SaveStatus.SaveIsCancelled=true;
