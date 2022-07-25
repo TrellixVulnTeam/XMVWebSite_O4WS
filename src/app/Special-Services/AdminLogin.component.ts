@@ -522,26 +522,20 @@ fillinForm(){
   }
 
   FormToRecord(i:number){
-  
+    this.Crypto_Key=this.Table_User_Data[1].key;
+    this.Crypto_Method=this.Table_User_Data[1].method;
+
+    this.Table_DecryptPSW[this.i]= this.Decrypt;
     for (let j=0; j<  this.TabTestProd[i].data.length; j++){
         this.FieldsReference= this.theEvent.controls[j].value;
+        this.Decrypt=this.FieldsReference.psw;
+        this.onCrypt("Encrypt");
         this.TabTestProd[i].data[j]=this.FieldsReference;
+        this.TabTestProd[i].data[j].psw=this.Encrypt;
+        this.TabTestProd[i].psw[this.i]=this.Decrypt;
     }
-    /**
-    this.TabTestProd[i].data[j].UserId=this.FieldsReference.UserId;
-    this.TabTestProd[i].data[j].firstname=this.FieldsReference.firstname;
-    this.TabTestProd[i].data[j].surname=this.FieldsReference.surname;
-    this.TabTestProd[i].psw[j]=this.FieldsReference.psw;
-    this.TabTestProd[i].data[j].night=this.FieldsReference.night;
-    this.TabTestProd[i].data[j].brunch=this.FieldsReference.brunch;
-    this.TabTestProd[i].data[j].method=this.FieldsReference.method;
-    this.TabTestProd[i].data[j].id=this.FieldsReference.id;
-    this.TabTestProd[i].data[j].key=this.FieldsReference.key;
-    this.TabTestProd[i].data[j].nbinvitees=this.FieldsReference.nbinvitees;
-    this.TabTestProd[i].data[j].myComment=this.FieldsReference.myComment;
-    this.TabTestProd[i].data[j].yourComment=this.FieldsReference.yourComment;
-    this.TabTestProd[i].data[j].timeStamp=this.FieldsReference.timeStamp;
-     */
+
+    
   }
 
   getEventAug(objectNb:number){

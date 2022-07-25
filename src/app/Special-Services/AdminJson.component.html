@@ -48,7 +48,10 @@
    
 
       <div id='SelectedFile' ></div>
-
+      <div *ngIf="SpecificConfigFormat!==''">
+        <span style="color:blue; font-size:20px; width:80%; margin-left:20px; display:inline-flex;"> File {{SelectedBucketInfo.name}} is specific</span>
+        <div  class='labelbucket odd'>{{SpecificConfigFormat}}</div>
+      </div>
 
       <div *ngIf="ContentTodisplay===true">
         
@@ -117,21 +120,32 @@
 
 
                 <div *ngFor='let UsrSpec of SelectedConfigFile.UserSpecific let i=index' >
-                    <span *ngIf="i===0">
+                    <span *ngIf="i%2===0">
                         <span class='labelbucket odd'>UserSpecific  </span>
                     </span>   
-                    <span *ngIf="i!==0">
-                      <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
+                    <span *ngIf="i%2!==0">
+                      <span style=" height:5px; margin-left:20px; margin-bottom:5px; width:83%;  display:block; background-color:blue; max-width:800px;">&nbsp;</span>
+                        <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
                     </span> 
-                    <span class='bucketA  odd'>id</span>
+                    
+                    <span class='bucketA  odd'>id</span> <span class='FieldTextA  odd'> {{SelectedConfigFile.UserSpecific[i].id}}  </span>
+                    <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
+                    <span class='bucketA  even'> &nbsp;</span>
                     <textarea id='field{{i+(2*i)+ModifConfigFile.TabBucketPhoto.length+16}}' 
-                                  (input)='TextInput($event)' class='FieldTextA '>  {{ModifConfigFile.UserSpecific[i].id}}  </textarea>
-                    <span class='bucketA  odd'>type</span>
+                                (input)='TextInput($event)' class='FieldTextA '>  {{SelectedConfigFile.UserSpecific[i].id}}  </textarea>
+                    <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
+                    <span class='bucketA  odd'>type</span> <span class='FieldTextA  odd'> {{SelectedConfigFile.UserSpecific[i].type}}  </span>
+                    <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
+                    <span class='bucketA  even'> &nbsp;</span>
                     <textarea id='field{{i+1+(2*i)+ModifConfigFile.TabBucketPhoto.length+16}}' 
-                                  (input)='TextInput($event)' class='FieldTextA '>  {{ModifConfigFile.UserSpecific[i].type}}</textarea>
-                    <span class='bucketA  odd'>log</span>
+                                  (input)='TextInput($event)' class='FieldTextA '>  {{SelectedConfigFile.UserSpecific[i].type}}</textarea>
+                    <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
+                    
+                    <span class='bucketA  odd'>log</span> <span class='FieldTextA  odd'> {{SelectedConfigFile.UserSpecific[i].log}}  </span>
+                    <span class='labelbucket odd'>  &nbsp;&nbsp;&nbsp; </span>
+                    <span class='bucketA  even'> &nbsp;</span>
                     <textarea id='field{{i+2+(2*i)+ModifConfigFile.TabBucketPhoto.length+16}}' 
-                                  (input)='TextInput($event)' class='FieldTextA '> {{ModifConfigFile.UserSpecific[i].log}} </textarea>
+                              (input)='TextInput($event)' class='FieldTextA '> {{SelectedConfigFile.UserSpecific[i].log}} </textarea>
                     
                 </div>
   

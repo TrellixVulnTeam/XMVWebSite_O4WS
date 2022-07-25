@@ -44,9 +44,9 @@ export class AdminJsonComponent {
     type:string='';
 
 
-    EventHTTPReceived:Array<boolean>=[false,false,false,false,false,false];
-    id_Animation:Array<number>=[0,0,0,0,0];
-    TabLoop:Array<number>=[0,0,0,0,0];
+    EventHTTPReceived:Array<boolean>=[];
+    id_Animation:Array<number>=[];
+    TabLoop:Array<number>=[];
 
      // ACCESS TO GOOGLE STORAGE
     HTTP_AddressLog:string='';
@@ -61,7 +61,6 @@ export class AdminJsonComponent {
     Google_Bucket_Access_RootPOST:string='https://storage.googleapis.com/upload/storage/v1/b/';
   
     Google_Bucket_Name:string=''; 
-    Google_Object_Name:string='';
     Error_Access_Server:string='';
 
     GoToComponent:number=-1;
@@ -79,7 +78,6 @@ export class AdminJsonComponent {
     fileRetrieved:boolean=false;
          // ACCESS TO GOOGLE STORAGE
 
-    Message:string='';
      
     ContentTodisplay:boolean=false;
     ModifyText:boolean=false;
@@ -89,6 +87,7 @@ export class AdminJsonComponent {
 
     theReceivedData:any;
     isDataReceived:boolean=false;
+    SpecificConfigFormat:string='';
 
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
@@ -170,16 +169,21 @@ getBucketAsset(){
   // ================
 
 ReceivedDataConfig(event:any){
-  this.SelectedConfigFile=event;
-  this.ModifConfigFile=event;
-  this.ContentTodisplay=true;
-  this.Message='';
-  this.ModifyText=false;
-  this.scroller.scrollToAnchor('targeEndList');
-  this.Max_Fields=20+this.ModifConfigFile.TabBucketPhoto.length+(this.ModifConfigFile.UserSpecific.length*3);
-  for (let i=0; i<this.Max_Fields; i++){
-    this.ModifiedField.push('');
-    this.IsFieldModified.push(false);
+  this.SpecificConfigFormat='';
+  if (event.BucketConsole!==undefined){
+      this.SelectedConfigFile=event;
+      this.ModifConfigFile=event;
+      this.ContentTodisplay=true;
+      this.ModifyText=false;
+      this.scroller.scrollToAnchor('targeEndList');
+      this.Max_Fields=20+this.ModifConfigFile.TabBucketPhoto.length+(this.ModifConfigFile.UserSpecific.length*3);
+      for (let i=0; i<this.Max_Fields; i++){
+        this.ModifiedField.push('');
+        this.IsFieldModified.push(false);
+      }
+  } else {
+    this.SpecificConfigFormat=JSON.stringify(event);
+    this.ContentTodisplay=false;
   }
 }
 
@@ -253,67 +257,13 @@ UpdateConfigFile(){
   };
 
 }
-/******
-SaveRecord(event:string){
-  const myTime=new Date();
-  const myDate= myTime.toString().substring(4,25);
 
-  this.ModifyText=false;
-  const a=JSON.stringify(this.ModifConfigFile) ;
-  this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.ListOfBucket.Config + "/o?name=" +myDate+ this.SelectedBucketInfo.name  + "&uploadType=media" ;
-  if (event==='YES'){
-    this.UpdateConfigFile();
-    // update the file
-    this.http.post(this.HTTP_Address, this.ModifConfigFile  )
-      .subscribe(res => {
-            this.Message='File ' +  this.SelectedBucketInfo.name+' is saved';
-            console.log(this.Message);
-            },
-            error_handler => {
-              this.Error_Access_Server=error_handler.status + ' HTTP='+ this.HTTP_Address;
-              console.log(this.Error_Access_Server);
-            } 
-          )
-  } else if (event==='NO'){
-    this.Message='No change has been identified';
-    } ;
-  
-  this.ContentTodisplay=false;
-  this.scroller.scrollToAnchor('targetTop');
-
-}
- */
 BackToSaveFile(event:any){
   this.ContentTodisplay=false;
   this.scroller.scrollToAnchor('targetTop');
 }
 
 
-/****
-waitHTTP(loop:number, max_loop:number, eventNb:number){
-  const pas=500;
-  if (loop%pas === 0){
-    console.log('waitHTTP ==> loop='+ loop+ ' max_loop=', max_loop+'  event='+eventNb);
-  }
- loop++
-  
-  this.id_Animation[eventNb]=window.requestAnimationFrame(() => this.waitHTTP(loop, max_loop, eventNb));
-  if (loop>max_loop || this.EventHTTPReceived[eventNb]===true){
-            console.log('exit waitHTTP ==> loop=', loop + ' max_loop=', max_loop + ' this.EventHTTPReceived=' + 
-                    this.EventHTTPReceived[eventNb] );
-            if (this.EventHTTPReceived[0]===true && eventNb===0 ){
-                window.cancelAnimationFrame(this.id_Animation[0]);
-                this.EventHTTPReceived[1]===false;
-                this.TabLoop[1]=0;
-                this.RetrieveAllObjects();
-                this.waitHTTP(this.TabLoop[1],20000,1);
-            }      
-            if (this.EventHTTPReceived[1]===true  && eventNb===1){
-              window.cancelAnimationFrame(this.id_Animation[eventNb]);
-          }      
-      }  
-  }
-   */
 
 LogMsgConsole(msg:string){
 

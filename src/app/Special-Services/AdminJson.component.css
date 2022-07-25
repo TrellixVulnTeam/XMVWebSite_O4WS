@@ -75,13 +75,47 @@
   background-color: lightskyblue;
 }
 
+
+.bucketA{
+  font-family: 'Roboto';
+  width:15%;
+  height:40px;
+  color:red;
+  display:block;
+  float:left;
+  font-size:16px;  
+  
+  padding-top:10px;
+  padding-left:10px;
+
+  
+}
+.FieldTextA{
+  font-family: 'Roboto';
+  width:35%;
+  height:40px;
+  color:blue;
+  font-size:14px;  
+  margin-left:  0px;
+  display:inline-flex;
+  padding-left:10px;
+  padding-top:5px;
+  border:solid 0px black;
+  background-color: lightskyblue;
+}
+
+.FieldTextA:hover{
+
+  color:blue;
+  background-color: cyan;
+  
+}
 .FieldText:hover{
 
   color:blue;
   background-color: cyan;
   
 }
-
 
 .even{
     color:blue;
@@ -115,6 +149,5 @@
   font-size:12px;  
   width:35%;
  }
-
 
 }

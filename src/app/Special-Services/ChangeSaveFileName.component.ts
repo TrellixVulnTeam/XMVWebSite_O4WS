@@ -78,7 +78,7 @@ export class ChangeSaveFileNameComponent {
     if (Array.isArray(this.DataToHttpPost)===true){
         if (this.DataToHttpPost[0].night!==undefined){
           // this is type EventAUG
-          // Delete all records which are flagged with keyword 'DELETE' in UserId field
+          // Delete all records which are flagged with keyword 'RECORD IS DELETED' in UserId field
       
           for (let j=0; j<this.DataToHttpPost.length; j++){
             if (this.DataToHttpPost[j].UserId!=='RECORD IS DELETED'){

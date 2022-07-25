@@ -73,10 +73,12 @@
     <div id='SelectedFile' ></div>
     <div *ngIf="ConfirmSaveTest===true && DataType==='Test'">
 
-          <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" [DataToHttpPost]="TabTestProd[3].data" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
+          <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" 
+          [DataToHttpPost]="TabTestProd[3].data" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
     </div>
     <div *ngIf="DataType==='Prod' && ConfirmSaveProd===true">
-          <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" [DataToHttpPost]="TabTestProd[2].data" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
+          <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo"
+          [DataToHttpPost]="TabTestProd[2].data" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
     </div>
     <!--
     <div *ngIf="ConfirmSaveTest===true">
