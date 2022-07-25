@@ -93,7 +93,7 @@ onWindowResize() {
 
 
 ngOnInit(){
-      this.LogMsgConsole('ngOnInit ManageJson ===== Device ' + navigator.userAgent + '======');
+      //this.LogMsgConsole('ngOnInit ManageJson ===== Device ' + navigator.userAgent + '======');
 
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
@@ -173,7 +173,7 @@ RetrieveAllObjects(){
       }
        
         
-        // this.LogMsgConsole('$$$$$ onChanges '+' to '+to+' from '+from + ' ---- JSON.stringify(j) '+ JSON.stringify(j));
+        // //this.LogMsgConsole('$$$$$ onChanges '+' to '+to+' from '+from + ' ---- JSON.stringify(j) '+ JSON.stringify(j));
       }
      
     }

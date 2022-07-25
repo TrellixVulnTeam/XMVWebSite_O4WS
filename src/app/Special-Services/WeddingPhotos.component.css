@@ -1,31 +1,11 @@
-@import "./Event-02JUL2022.component.css";
+@import "./AdminGeneral.component.css";
 
 div{
     font-family: 'Roboto, "Helvetica Neue", sans-serif';
    
 }
 
-h2{
-    display:block;
-    width:90%;
-    font-size:48px;
-    font-weight: bold;
-    font-family: 'Tangerine';
-    letter-spacing: 2px;
-    margin-top:20px;
-    text-align:center;
-  
-    }
-h3{
-    display:block;
-    width:90%;
-    font-size:28px;
-    font-weight: bold;
-    font-family: 'Tangerine';
-    letter-spacing: 2px;
-    margin-top:20px;
-    text-align:center;
-}
+
 
 .photo{
     width:400px; 
@@ -47,21 +27,7 @@ h3{
     height:750px;
 }
 
-.butt{
-    font-family: 'Roboto, "Helvetica Neue", sans-serif';
-    margin-left:30px;
-    font-size:12px;
-    width:80px;
-    height:40px;
-    border-radius: 20%;
-}
 
-.butt:hover{
-    background-color: rgb(116, 134, 216);
-    font-size:14px;
-    font-weight: bold;
-    color:white;
-}
 
 .GOdownload{
     width:40px; 

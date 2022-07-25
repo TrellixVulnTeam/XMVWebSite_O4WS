@@ -169,14 +169,12 @@ export class AdminLoginComponent {
     DataType:string='Test';
     ConfirmSaveTest:boolean=false;
     ConfirmSaveProd:boolean=false;
-    DisplayListOfObjects=false;
+
+
     ObjectTodisplay=false;
-
-
-    SelectedFile=false;
+    ContentTodisplay=false;
 
     FileMedialink:string='';
-    ContentTodisplay=false;
     ContentObject:string='';
     ContentObjectRef:string='';
     ContentModified:boolean=false;
@@ -228,7 +226,7 @@ Initialize(){
     this.Encrypt=this.theReceivedData.psw;
     this.onCrypt("Decrypt");
   }
-  this.scroller.scrollToAnchor('targetTop');
+  this.scroller.scrollToAnchor('targetLogTop');
   this.ContentTodisplay=true;
 }
 
@@ -247,38 +245,21 @@ ModifContent(event:any){
 BackToSaveFile(event:any){
   this.Message=event.Message;
   this.Error_Access_Server=event.Error_Access_Server;
-  this.ClearVar();
+  if (event.SaveIsCancelled===true){
+        // modifications are still there 
+        this.ContentModified=true;
+        this.ObjectTodisplay=false;
+        this.ContentTodisplay=true;
+  } else { 
+          this.ClearVar();
+         
+      }
+  this.scroller.scrollToAnchor('targetLogTop');
 }
-
-SaveModif(event:string){
-  const myTime=new Date();
-  const myDate= myTime.toString().substring(4,25);
-  this.ContentModified=false;
-  const theFile=this.SelectedBucketInfo.mediaLink;
-  this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" +myDate+ this.SelectedBucketInfo.name   + "&uploadType=media" ;
-  if (this.ContentObjectRef!==this.ContentObject && event==='YES'){
-    // update the file
-    this.http.post(this.HTTP_Address,  this.ContentObject  )
-      .subscribe(res => {
-            this.Message='File ' + this.SelectedBucketInfo.name+' is saved';
-            console.log(this.Message);
-            },
-            error_handler => {
-              this.Error_Access_Server=error_handler.status + ' HTTP='+ this.HTTP_Address;
-              console.log(this.Error_Access_Server);
-            } 
-          )
-  } else if (event==='NO'){
-    this.Message='No change has been identified';
-    } ;
-  
-  this.ClearVar();
-}
-
 
 
 ClearVar(){
-  this.SelectedFile=false;
+
   this.ContentModified=false;
   this.ContentTodisplay=false;
   this.ObjectTodisplay=false;
@@ -287,14 +268,15 @@ ClearVar(){
 
   this.ContentObject='';
   this.ContentObjectRef='';
-
-  this.scroller.scrollToAnchor('targetTop');
+  this.Decrypt='';
+  this.Encrypt='';
+  this.scroller.scrollToAnchor('LogTop');
 }
   
 DisplayEventAug(event:string){
   if (event==='YES'){
     this.ObjectTodisplay=true;
-    this.SelectedFile=false;
+
     this.ContentModified=false;
     this.ContentTodisplay=false;
 
@@ -314,6 +296,7 @@ DisplayEventAug(event:string){
         this.TabTestProd[i].psw.splice(0,this.TabTestProd[i].psw.length);
     }
     this.ProcessEventAug();
+    this.scroller.scrollToAnchor('targetConfirm');
   }
 
 }
@@ -338,7 +321,7 @@ Process(event:string){
   }
 
 Copy(event:string){
-  this.scroller.scrollToAnchor('targetCopy');
+  this.scroller.scrollToAnchor('targetLogTop');
   this.Message='';
   let i=2;
   if (this.DataType==='Test') {
@@ -388,93 +371,14 @@ DeleteItem(recordId:number){
  
   this.clearItem(i,recordId);
   if (recordId!==0){this.TabTestProd[i].data[recordId].UserId='RECORD IS DELETED';}
+  else {
+    this.TabTestProd[i].data[recordId].key=2;
+    this.TabTestProd[i].data[recordId].method='AES';
+  }
   this.updateForm(i,recordId);
 
 }
 
-ConfirmSave(event:string){
-  this.scroller.scrollToAnchor('targetConfirm');
-  if (event==='Test'){
-      
-      this.ConfirmSaveTest=true;
-  } else {
-      
-      this.ConfirmSaveProd=true;
-  }
-  // ask for confirmation
-}
-
-saveRecord(event:string){
-  const myTime=new Date();
-  const myDate= myTime.toString().substring(4,25);
-  
-  let i=0;
-  if (event==='No'){
-    this.ConfirmSaveProd=false;
-    this.ConfirmSaveTest=false;
-  }
-  else if ( this.DataType==='Prod' && this.ConfirmSaveProd===true){
-      this.ConfirmSaveProd=false;
-      i=2;
-  } else if ( this.DataType==='Test' && this.ConfirmSaveTest===true){
-      this.ConfirmSaveTest=false;
-      i=3;
-  } else {
-      this.Error_Access_Server='Problem with '+ event + ' - cannot save the file as the values of ConfirmSaveProd and this.ConfirmSaveTest are both set to false';
-      console.log(this.Error_Access_Server);
-    }
-const savei=i;
-if (i!==0){
-    // CANNOT UPDATE ./assets ==> read only
-    /*** 
-    if (environment.production === false){
-      this.HTTP_Address = './assets/'+ this.FileName[i-2];
-      //
-    }
-    else {     
-        this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.FileName[i-2]   + "&uploadType=media" ;
-    }
-    ***/
-    this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" +myDate+ this.FileName[i-2]   + "&uploadType=media" ;
-
-    
-    this.Table_User_Data.splice(0, this.Table_User_Data.length);
-
-    // check if psw changed; then encrypt it before saving
-    // check how to get the data at time of input
-
-    for (let j=0; j<this.TabTestProd[i].data.length; j++){
-      if (this.TabTestProd[i].data[j].UserId!=='RECORD IS DELETED'){
-        const Individual_User_Data= new EventAug;
-        this.Table_User_Data.push(Individual_User_Data);
-        this.Table_User_Data[this.Table_User_Data.length-1]=this.TabTestProd[i].data[j];
-      }
-    }
-    
-    this.http.post(this.HTTP_Address,  this.Table_User_Data , {'headers':this.myHeader} )
-      .subscribe(res => {
-            this.Message='record saved';
-            console.log(this.Message);
-            this.scroller.scrollToAnchor('targetMessage');
-            //this.restoreTabSize(i);
-            },
-            error_handler => {
-              this.Error_Access_Server=error_handler.status + ' HTTP='+ this.HTTP_Address+ '  table='+savei;
-              console.log(this.Error_Access_Server);
-              //this.restoreTabSize(i);
-            } 
-          )
-    }
-  }
-/** 
-restoreTabSize(i:number){
-  const j=this.TabTestProd[i-2].data.length-this.TabTestProd[i].data.length;
-  for (this.i=0; this.i<j; this.i++){
-    const  Individual_User_Data= new EventAug;
-    this.TabTestProd[i].data.push(Individual_User_Data);
-  } 
-}
-**/
 managePSW(recordId:number){
 let i=0;
 let j=0;
@@ -605,8 +509,40 @@ fillinForm(){
     console.log('check record nb '+event);
   }
   
+  ConfirmSave(event:string){
+    this.scroller.scrollToAnchor('targetLogTop');
+    if (event==='Test'){
+      this.FormToRecord(3);
+      this.ConfirmSaveTest=true;
+    } else  if (event==='Prod'){
+      this.FormToRecord(2);
+      this.ConfirmSaveProd=true;
+    }
+ 
+  }
 
-
+  FormToRecord(i:number){
+  
+    for (let j=0; j<  this.TabTestProd[i].data.length; j++){
+        this.FieldsReference= this.theEvent.controls[j].value;
+        this.TabTestProd[i].data[j]=this.FieldsReference;
+    }
+    /**
+    this.TabTestProd[i].data[j].UserId=this.FieldsReference.UserId;
+    this.TabTestProd[i].data[j].firstname=this.FieldsReference.firstname;
+    this.TabTestProd[i].data[j].surname=this.FieldsReference.surname;
+    this.TabTestProd[i].psw[j]=this.FieldsReference.psw;
+    this.TabTestProd[i].data[j].night=this.FieldsReference.night;
+    this.TabTestProd[i].data[j].brunch=this.FieldsReference.brunch;
+    this.TabTestProd[i].data[j].method=this.FieldsReference.method;
+    this.TabTestProd[i].data[j].id=this.FieldsReference.id;
+    this.TabTestProd[i].data[j].key=this.FieldsReference.key;
+    this.TabTestProd[i].data[j].nbinvitees=this.FieldsReference.nbinvitees;
+    this.TabTestProd[i].data[j].myComment=this.FieldsReference.myComment;
+    this.TabTestProd[i].data[j].yourComment=this.FieldsReference.yourComment;
+    this.TabTestProd[i].data[j].timeStamp=this.FieldsReference.timeStamp;
+     */
+  }
 
   getEventAug(objectNb:number){
     console.log('getEventAug(); this.Table_User_Data = ');
@@ -734,9 +670,15 @@ waitHTTP(loop:number, max_loop:number, eventNb:number){
         const j=changes[propName];
         if (propName==='SelectedBucketInfo'){
           this.ContentTodisplay=false;
+ 
         } 
         if (propName==='theReceivedData'){
-           this.Initialize();
+          this.ObjectTodisplay=false;
+          this.ContentTodisplay=false;
+          this.ContentModified=false;
+          this.Decrypt='';
+          this.Encrypt='';
+          this.Initialize();
         }
        
         // const to=JSON.stringify(j.currentValue);

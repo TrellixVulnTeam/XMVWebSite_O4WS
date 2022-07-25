@@ -64,7 +64,7 @@ export class AdminJsonComponent {
     Google_Object_Name:string='';
     Error_Access_Server:string='';
 
-    GoToComponent:number=0;
+    GoToComponent:number=-1;
 
     // https://storage.googleapis.com/storage/v1/b?project=xmv-it-consulting
     @Input() LoginTable_User_Data:Array<EventAug>=[];
@@ -98,7 +98,7 @@ onWindowResize() {
 
 
 ngOnInit(){
-      this.LogMsgConsole('ngOnInit ManageJson ===== Device ' + navigator.userAgent + '======');
+      //this.LogMsgConsole('ngOnInit ManageJson ===== Device ' + navigator.userAgent + '======');
 
       this.getScreenWidth = window.innerWidth;
       this.getScreenHeight = window.innerHeight;
@@ -114,26 +114,33 @@ ngOnInit(){
 
 
   }    
-
+ActionMessage:string='';
 Process(event:string){
-  
-  this.GoToComponent=0;
+  this.ActionMessage='';
   this.isDataReceived=false;
   this.ContentTodisplay=false;
   this.isDataReceived=false;
+  if (event==='Bucket'){
+    this.GoToComponent=0;
+    this.ActionMessage='Administration of Buckets';
+  } else
   if (event==='Photos'){
     this.GoToComponent=1;
   } else if (event==='27Aug'){
     this.GoToComponent=2;
+  
   } else if (event==='Contact'){
     this.GoToComponent=3;
   } else if (event==='Login'){
+    this.ActionMessage='Administration of Logins';
     this.GoToComponent=4; 
     this.Google_Bucket_Name=this.ListOfBucket.Login;
   } else if (event==='Console'){
     this.GoToComponent=5;
+    this.ActionMessage='Administration of Log Console';
     this.Google_Bucket_Name=this.ListOfBucket.Console;
   } else if (event==='Config'){
+    this.ActionMessage='Administration of Configuration parameters';
     this.Google_Bucket_Name=this.ListOfBucket.Config;
     this.GoToComponent=6;
     this.scroller.scrollToAnchor('targetConfig');

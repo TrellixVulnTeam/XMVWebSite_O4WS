@@ -7,7 +7,9 @@
     <h3> Confirm name of the file to save
             <textarea id="saveFile" (input)="InputFile($event)" >{{FileName}}</textarea>
             <button id="butt1" (click)="SaveFile()" class="'butt">Confirm</button>
-            <button id="butt2" class="'butt">Cancel</button>
+            <button id="butt2" (click)="SaveModif('NO')"class="'butt">Cancel save</button>
     </h3>
 
 </div>
+
+

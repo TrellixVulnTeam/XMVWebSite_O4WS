@@ -35,7 +35,7 @@ export class ChangeSaveFileNameComponent {
         private fb:FormBuilder,
         ) {}  
     
-    @Input() LoginToHttpPost:any;
+    @Input() DataToHttpPost:any;
     @Input() SelectedBucketInfo=new OneBucketInfo;
     @Output() SaveStatus=new EventEmitter<Return_Data>();
 
@@ -51,71 +51,69 @@ export class ChangeSaveFileNameComponent {
         this.FileName=myDate + this.SelectedBucketInfo.name;
     }
 
-
     InputFile(event:any){
         this.FileName=event.target.value;
-
     }
-    SaveModif(event:string){
 
-        if (event='YES'){
+    SaveModif(event:string){
+        if (event==='YES'){
             this.isObjectToSave=true;
             this.ConfirmSave=false;
+            this.Return_SaveStatus.SaveIsCancelled=false;
         }
         else {
+            this.Return_SaveStatus.Message='File ' +  this.FileName +' is not saved as per your request';
+            this.isObjectToSave=false;
+            this.ConfirmSave=true;
             this.Return_SaveStatus.SaveIsCancelled=true;
+            this.SaveStatus.emit(this.Return_SaveStatus);
         }
-
     }
 
 
-d:boolean=false;
-b:boolean=false;
-a:boolean=false;
-c:number=0;
-k:any;
-f:any;
-    SaveFile(){
-   
-    if (Array.isArray(this.LoginToHttpPost)===true){
-        if (this.LoginToHttpPost[0].night===undefined){
-          console.log('it is undefined so it is not type EventAUG');
-        }
-        else {
-          console.log('it is NOT undefined so it IS type EventAUG');
-        }
-
-
-     } else {
-      if (this.LoginToHttpPost.id===undefined){
-        console.log('it is undefined so it is not type EventAUG');
+  SaveFile(){
+    let FileToSave:any;
+    FileToSave=this.DataToHttpPost;
+    let Table_User_Data:Array<EventAug>=[];
+    if (Array.isArray(this.DataToHttpPost)===true){
+        if (this.DataToHttpPost[0].night!==undefined){
+          // this is type EventAUG
+          // Delete all records which are flagged with keyword 'DELETE' in UserId field
+      
+          for (let j=0; j<this.DataToHttpPost.length; j++){
+            if (this.DataToHttpPost[j].UserId!=='RECORD IS DELETED'){
+              const Individual_User_Data= new EventAug;
+              Table_User_Data.push(Individual_User_Data);
+              Table_User_Data[Table_User_Data.length-1]=this.DataToHttpPost[j];
+            }
+          }
+          FileToSave=Table_User_Data;
       }
-      else {
-        console.log('it is NOT undefined so it IS type EventAUG');
-      }
+
      }
-
-
-    
 
     const HTTP_Address=this.Google_Bucket_Access_RootPOST + this.SelectedBucketInfo.bucket+ "/o?name=" + this.FileName   + "&uploadType=media" ;
     
       // update the file
-      this.http.post(HTTP_Address,  this.LoginToHttpPost  )
+      this.http.post(HTTP_Address,  FileToSave  )
         .subscribe(res => {
               this.Return_SaveStatus.Message='File ' +  this.FileName +' is saved';
+              this.Return_SaveStatus.Error_Access_Server='';
+              this.Return_SaveStatus.Error_code=0;
+              this.isObjectToSave=false;
               console.log(this.Return_SaveStatus.Message);
               this.SaveStatus.emit(this.Return_SaveStatus);
               },
               error_handler => {
-                this.Return_SaveStatus.Error_Access_Server=error_handler.status + ' HTTP='+ HTTP_Address;
+                this.Return_SaveStatus.Error_Access_Server=error_handler.status + ' url='+ error_handler.url;
+                this.Return_SaveStatus.Error_code=error_handler.status;
                 console.log(this.Return_SaveStatus.Error_Access_Server);
                 this.SaveStatus.emit(this.Return_SaveStatus);
               } 
             )
     }
 
-
   }
+
 
 

@@ -182,5 +182,6 @@ export class msgConsole{
 export class Return_Data{
   Message:string= '';
   Error_Access_Server='';
+  Error_code=0;
   SaveIsCancelled:boolean=false;
 }

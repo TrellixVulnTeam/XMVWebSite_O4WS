@@ -15,8 +15,8 @@
 
   --> 
   <div id='targetTop' ></div>
-  <h2 style="margin-top:2px;"><br></h2>
- <h2 style="margin-top:140px;">Pictures of our wedding</h2>
+  <span style="margin-top:2px;"><br></span>
+ <h2 style="margin-top:60px;">Pictures of our wedding</h2>
  <h3 >Total number of photos: {{WeddingPhotos.length}}</h3>
  <h3 *ngIf="this.bucketMgt.Nb_Buckets_processed < this.bucketMgt.Max_Nb_Bucket_Wedding" > ... and more will be loaded</h3>
 
@@ -51,8 +51,8 @@
  <br><br>
 
 
-  <span *ngIf="imagesToDisplay>0" style="margin-left:20px; color:blue; font-size:18px; font-family: ROBOTO;">
-   <h2> Still {{imagesToDisplay}} photo(s) to display</h2>
+  <span *ngIf="imagesToDisplay>0" >
+   <h3> Still {{imagesToDisplay}} photo(s) to display</h3>
   </span>
 
 
@@ -75,7 +75,7 @@
     <span *ngIf="nb_current_page!==nb_total_page || this.bucketMgt.Max_Nb_Bucket_Wedding>=this.bucketMgt.Nb_Buckets_processed">
         <button class='butt' id="but4" (click)="next_prev_page('next')" >Next page</button>
        <br>
-        <span *ngIf="this.bucketMgt.Nb_Buckets_processed < this.bucketMgt.Max_Nb_Bucket_Wedding"  style="color:blue; font-size:32px; margin-left:40px;">&ensp; ... more pictures to be loaded</span>
+        <span *ngIf="this.bucketMgt.Nb_Buckets_processed < this.bucketMgt.Max_Nb_Bucket_Wedding">  <h3>&ensp; ... more pictures to be loaded</h3></span>
     </span>
   </span>
 <!--
