@@ -188,6 +188,7 @@ GetObject(event:number){
                 
                 if (this.Encrypt_Data.UserId==='Event-02JUL2022' || this.Encrypt_Data.UserId==='HO'){
                     this.routing_code=2;
+                    window.location.href = "https://xvanstaen.github.io/AllFunctions";
                   }
                 else if (this.Encrypt_Data.UserId==='Event-27AUG2022'){
                     this.routing_code=3;

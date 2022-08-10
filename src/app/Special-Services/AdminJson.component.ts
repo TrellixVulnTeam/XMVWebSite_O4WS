@@ -30,9 +30,7 @@ export class AdminJsonComponent {
     private http: HttpClient,
     private scroller: ViewportScroller,
     ) {}
-  
-
-    myHeader=new HttpHeaders();    
+     
     getScreenWidth: any;
     getScreenHeight: any;
     device_type:string='';
@@ -51,7 +49,7 @@ export class AdminJsonComponent {
      // ACCESS TO GOOGLE STORAGE
     HTTP_AddressLog:string='';
     HTTP_Address:string='';
-
+    myHeader=new HttpHeaders(); 
     bucket_data:string='';
     
     ListOfBucket=new BucketList;
@@ -63,8 +61,10 @@ export class AdminJsonComponent {
     Google_Bucket_Name:string=''; 
     Error_Access_Server:string='';
 
-    GoToComponent:number=-1;
-
+   
+   
+    Error_msgMongo:string='';
+    RecordToWrite=new LoginIdentif;
     // https://storage.googleapis.com/storage/v1/b?project=xmv-it-consulting
     @Input() LoginTable_User_Data:Array<EventAug>=[];
     @Input() LoginTable_DecryptPSW:Array<string>=[];
@@ -78,7 +78,7 @@ export class AdminJsonComponent {
     fileRetrieved:boolean=false;
          // ACCESS TO GOOGLE STORAGE
 
-     
+    GoToComponent:number=-1;
     ContentTodisplay:boolean=false;
     ModifyText:boolean=false;
     ModifiedField:Array<string>=[];
@@ -110,6 +110,7 @@ ngOnInit(){
       this.EventHTTPReceived[0]=false;
       //this.waitHTTP(this.TabLoop[0], 20000, 0);
       this.getBucketAsset();
+      this.AccessMongo();
 
 
   }    
@@ -264,6 +265,41 @@ BackToSaveFile(event:any){
 }
 
 
+ AccessMongo(){
+     const HTTP_Address="https://data.mongodb-api.com/app/data-kpsyr/endpoint/data/v1/action/insertOne" ;
+     this.myHeader=new HttpHeaders({
+      'content-type': 'application/json',
+      'Access-Control-Request-Headers':'*' ,
+      'api-key': '8fYe3bJ4J0bfxVgCSjvCyFHRBfzqFD89DGf1HYemJeWYuENYo8uU4tobkKyZ6xkm'
+    });
+    // 'cache-control': 'private, max-age=0',
+    const data_raw={
+      "collection":"TestFile.json",
+      "database":"Manage-Login",
+      "dataSource":"Cluster0",
+      "document": {
+        "name": "John Sample",
+        "age": 42
+      }
+    }
+     this.RecordToWrite.id=99;
+     this.RecordToWrite.key=0;
+     this.RecordToWrite.method='AES';
+     this.RecordToWrite.UserId='the user';
+     this.RecordToWrite.psw='thepassword';
+     this.RecordToWrite.phone='0000000';
+     // update the file
+     this.http.post(HTTP_Address, data_raw , {'headers':this.myHeader} )
+       .subscribe(res => {
+             this.Error_msgMongo='Successful POST';
+             },
+             error_handler => {
+               this.Error_msgMongo='Error of POST, code='+error_handler.status;
+               console.log(this.Error_msgMongo);
+               
+             } 
+           )
+ }
 
 LogMsgConsole(msg:string){
 

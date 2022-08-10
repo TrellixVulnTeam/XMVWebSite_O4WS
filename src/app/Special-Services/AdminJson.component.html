@@ -25,7 +25,11 @@
     <span  (click)="Process('Config')" class="dropdown-options dropdown-text">&nbsp;&nbsp;Config</span>
     <span  (click)="Process('Console')" class="dropdown-options dropdown-text">Log console</span>
     <span  (click)="Process('Login')" class="dropdown-options dropdown-text">&nbsp;&nbsp;&nbsp;&nbsp;Login</span>
+    <!--
     <span  (click)="Process('Photos')" class="dropdown-options dropdown-text"> &nbsp;&nbsp;Photos</span>
+    -->
+    <a  href = "https://xvanstaen.github.io/AllFunctions" class="dropdown-options dropdown-text"> &nbsp;&nbsp;Photos</a>
+   
 </div>
 <div *ngIf="  this.ActionMessage!==''" style="margin-top:10px;">
   <h2>{{ActionMessage}} </h2>
