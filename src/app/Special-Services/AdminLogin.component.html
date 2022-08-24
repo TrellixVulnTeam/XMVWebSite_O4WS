@@ -5,7 +5,7 @@
 <body>
 
 
-  <div id='targetLogTop' ></div>
+<div id='targetLogTop' ></div>
 <span style="margin-top:2px;"><br></span>
 
 
@@ -16,48 +16,50 @@
 <span style='margin-top:20px; margin-left:30px;color:blue; font-size:16px;'>{{Message}}</span>
 
 
-
 <div *ngIf="ContentTodisplay===true">
   <br><br>
- <h3>
-   Do you want to convert this file in the EventAug readable format?
-  </h3>
-          <button id="butt11" (click)="DisplayEventAug('YES')" class="butt">Yes</button>
-          <button id="butt11" (click)="DisplayEventAug('NO')" class="butt">No</button>
+   <h3>
+          Do you want to convert this file in the EventAug readable format?
+   </h3>
+          <button id="butt11" (click)="DisplayEventAug('YES')"  class="butt">Yes</button>
+          <button id="butt11" (click)="DisplayEventAug('NO')"   class="butt">No</button>
     <br><br><br><br>
     <h4>Content reference from file &nbsp;SelectedBucketInfo.name}}</h4>
     <textarea readonly class="inputObject inputColorRef">
-      {{ContentObjectRef}}
+          {{ContentObjectRef}}
     </textarea>
     <br>
     <h4>Content to modify </h4>
-    <textarea  class="inputObject inputColor" (input)='ModifContent($event)' 
-                 type='text' [value]="ContentObject">  </textarea>
+    <textarea  class="inputObject inputColor" (input)='ModifContent($event)' type='text' [value]="ContentObject">  </textarea>
 
     
       <br> <br>
       <h4> If you change the psw then it must be encrypted (default values are key=2 and method=AES)</h4>
       <h4> psw:</h4> <textarea  class="pswField inputColor" (input)='ModifPSW($event)' 
-      type='text' [value]="Decrypt">  </textarea>
+                  type='text' [value]="Decrypt">  </textarea>
       <br> <br> <h4>Encrypted psw is </h4><textarea readonly class="pswField inputColorRef">{{Encrypt}}</textarea>
-
     
-    <span *ngIf="ContentModified===true" >
+    <span *ngIf="ContentModified===true">
     <!--
     Do you want to save your modifications?
           <button id="butt12" (click)="SaveModif('YES')" class="butt">Yes</button>
           <button id="butt12" (click)="SaveModif('NO')" class="butt">No</button>
+          <app-ChangeSaveFileName [configServer]="configServer" [SelectedBucketInfo]="SelectedBucketInfo" [DataToHttpPost]="ContentObject" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
     -->
-          <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" [DataToHttpPost]="ContentObject" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
-    </span>
-  
-
+      <div *ngIf= "DataType==='Test'">
+            <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" [configServer]="configServer"
+            [DataToHttpPost]="TabTestProd[3].data" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
+      </div>
+      <div *ngIf="DataType==='Prod'">
+            <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" [configServer]="configServer"
+            [DataToHttpPost]="TabTestProd[2].data" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
+      </div>
+      </span>
 </div>
 
 
 <div *ngIf=" ObjectTodisplay===true">
     <div id='targetConfirm' ></div>
-
     <div *ngIf="ConfirmSaveTest===false && ConfirmSaveProd===false">
         <br><br>
               <h3>Copy from reference table &nbsp;</h3>
@@ -67,17 +69,16 @@
               <span *ngIf="DataType==='Test'">
                   <button  class="butt"id='copyTest' (click)="Copy('Test')" >Test</button>
               </span>
-
     </div>
 
     <div id='SelectedFile' ></div>
     <div *ngIf="ConfirmSaveTest===true && DataType==='Test'">
 
-          <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" 
+          <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" [configServer]="configServer"
           [DataToHttpPost]="TabTestProd[3].data" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
     </div>
     <div *ngIf="DataType==='Prod' && ConfirmSaveProd===true">
-          <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo"
+          <app-ChangeSaveFileName [SelectedBucketInfo]="SelectedBucketInfo" [configServer]="configServer"
           [DataToHttpPost]="TabTestProd[2].data" (SaveStatus)="BackToSaveFile($event)">  </app-ChangeSaveFileName>
     </div>
     <!--
@@ -94,8 +95,6 @@
         <button  id='Conf4' (click)="saveRecord('No')" class="butt">No </button>
     </div>
     -->
-
-
     <div *ngIf="TabTestProd.length>1">
           <div *ngIf="isFormFilled===true">
             <form  [formGroup]="myForm"   >
@@ -176,16 +175,11 @@
                       
                       </div>
                     </span>  
-                <br><br>
-                      
-                      
+                 <br><br>  
                 </div>
-              
             </form>
           </div>
-          
       </div>
   </div>
-
 <br><br>
 </body>

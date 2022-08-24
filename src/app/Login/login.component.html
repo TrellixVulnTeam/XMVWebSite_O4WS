@@ -70,7 +70,7 @@
 <!-- THIS IS TO MANAGE THE DIFFERENT JSON OBJECTS STORED IN GOOGLE CLOUD OR ./assets -->
 <ng-template #AdminJson> 
   <div  *ngIf="routing_code===1; else firstevent">
-    <app-AdminJson [identification]="Encrypt_Data" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="Table_User_Data" 
+    <app-AdminJson [identification]="Encrypt_Data" [ConfigXMV]="ConfigXMV" [configServer]="configServer" [LoginTable_User_Data]="Table_User_Data" 
           [LoginTable_DecryptPSW]="Table_DecryptPSW" >
     </app-AdminJson>
   </div> 
@@ -108,7 +108,7 @@
 
 <ng-template #secondevent> 
   <div  *ngIf="routing_code===3; else wrongevent">
-    <app-Event-27AUG2022 [identification]="Encrypt_Data" [ConfigXMV]="ConfigXMV" [LoginTable_User_Data]="Table_User_Data" 
+    <app-Event-27AUG2022 [identification]="Encrypt_Data" [ConfigXMV]="ConfigXMV" [configServer]="configServer" [LoginTable_User_Data]="Table_User_Data" 
           [LoginTable_DecryptPSW]="Table_DecryptPSW" (returnDATA)="GetUpdatedTable($event)">
     </app-Event-27AUG2022>
   </div> 

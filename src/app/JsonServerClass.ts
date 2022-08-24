@@ -135,11 +135,16 @@ export class  BucketExchange{
 }
 
 export class XMVConfig{
+  title:string= '';
+  SourceJson_Google_Mongo:string= '';
+  test_prod:string= '';
+  GoogleProjectId:string= '';
+  DB_Object:string= '';
   BucketLogin:string="";
   BucketConsole:string="";
   BucketContact:string="";
+  BucketConfig:string="";
   Max_Nb_Bucket_Wedding:number=6;
-  BucketSource:string="";
   TabBucketPhoto:Array<string>=[];
   GetOneBucketOnly:boolean=false;
   // BucketWeddingRoot:string="";
@@ -185,3 +190,14 @@ export class Return_Data{
   Error_code=0;
   SaveIsCancelled:boolean=false;
 }
+
+export class configServer{
+  title:string= '';
+  SourceJson_Google_Mongo:string= '';
+  test_prod:string= '';
+  GoogleProjectId:string= '';
+  Mongo_Google:string= '';
+  baseUrl:string= '';
+}
+
+

@@ -1,9 +1,15 @@
 
-import { Component, HostListener, OnInit, OnChanges, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
+import { Component, HostListener, OnInit, OnChanges, Input, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
 import { LoginIdentif } from '../JsonServerClass';
+import { configServer } from '../JsonServerClass';
+import { XMVConfig } from '../JsonServerClass';
+
+import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
+import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
 
 
 @Component({
@@ -17,9 +23,14 @@ export class XmvCompanyComponent implements OnInit, OnChanges, AfterViewChecked 
 
     private http: HttpClient, 
     private router:Router,
-    private cdref: ChangeDetectorRef
+    private cdref: ChangeDetectorRef,
+    private ManageGoogleService: ManageGoogleService,
+    private ManageMangoDBService: ManageMangoDBService,
     ) {}
   
+  @Input() configServer=new configServer;
+  @Input() XMVConfig=new XMVConfig;
+  @Input() isConfigServerRetrieved:boolean=false;
   redisplay_profile:number=0;
 
   display_GoToContact:number=0;

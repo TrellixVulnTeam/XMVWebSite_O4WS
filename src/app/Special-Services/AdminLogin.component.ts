@@ -1,4 +1,4 @@
-import { Component, OnInit , Input, HostListener, SimpleChanges,} from '@angular/core';
+import { Component, OnInit , Input, Output, HostListener, SimpleChanges,EventEmitter} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
@@ -19,6 +19,10 @@ import { Bucket_List_Info } from '../JsonServerClass';
 import { OneBucketInfo } from '../JsonServerClass';
 import { msgConsole } from '../JsonServerClass';
 import { Return_Data } from '../JsonServerClass';
+import { configServer } from '../JsonServerClass';
+
+import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
+import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
 
 @Component({
   selector: 'app-AdminLogin',
@@ -28,12 +32,15 @@ import { Return_Data } from '../JsonServerClass';
 
 export class AdminLoginComponent {
   myForm:FormGroup; 
-  
+  @Input() configServer=new configServer;
+  @Output() process_login=new EventEmitter<any>();
   constructor(
     private router:Router,
     private http: HttpClient,
     private scroller: ViewportScroller,
     private fb:FormBuilder,
+    private ManageGoogleService: ManageGoogleService,
+    private ManageMangoDBService: ManageMangoDBService,
     ) {
       this.myForm=this.fb.group({ 
         tabEvent: this.fb.array([])  
@@ -183,6 +190,8 @@ export class AdminLoginComponent {
     ProdTestFiles:string='';
 
     Return_SaveStatus=new Return_Data;
+
+    RefreshListObjects:boolean=false;
  
 @HostListener('window:resize', ['$event'])
 onWindowResize() {
@@ -205,27 +214,29 @@ ngOnInit(){
         this.RefTestProd= new TableOfEventLogin;
         this.RefTestProd.structureComment=this.i.toString();
         this.TabTestProd.push(this.RefTestProd);
-       
       }
 
       this.isFormFilled=false;
       this.DataType='Test';
       this.Initialize();
-
+      
   }    
 
 Initialize(){
 
   this.ContentObject=JSON.stringify(this.theReceivedData);
   this.ContentObjectRef=this.ContentObject;
-  //
+
+  
   // this.TestObjectStructure=this.theReceivedData;
+
   if (Array.isArray(this.theReceivedData)===false){
     this.Crypto_Key=2;
     this.Crypto_Method='AES';
     this.Encrypt=this.theReceivedData.psw;
     this.onCrypt("Decrypt");
   }
+ 
   this.scroller.scrollToAnchor('targetLogTop');
   this.ContentTodisplay=true;
 }
@@ -247,12 +258,30 @@ BackToSaveFile(event:any){
   this.Error_Access_Server=event.Error_Access_Server;
   if (event.SaveIsCancelled===true){
         // modifications are still there 
-        this.ContentModified=true;
-        this.ObjectTodisplay=false;
-        this.ContentTodisplay=true;
-  } else { 
+        
+        if (this.Message='File is saved'){
           this.ClearVar();
-         
+          this. RefreshListObjects=true;
+        } else {
+          this.ContentModified=true;
+          this.ObjectTodisplay=false;
+          this.ContentTodisplay=true;
+        }
+  } else { 
+        // nothing to do as modifications have been sent to be saved
+        // check if this.TabTesProd[3] is filled-in
+        // JSON.parse(this.ContentObject)
+        if (this.DataType==='Test'){
+          this.i=3;
+          this.ConfirmSaveTest=true;
+        } else  if (this.DataType==='Prod'){
+          this.i=2;
+          this.ConfirmSaveProd=true;
+        }
+        if (this.TabTestProd[this.i].data.length===0) {
+            this.TabTestProd[this.i].data[0]=JSON.parse(this.ContentObject);
+        }
+
       }
   this.scroller.scrollToAnchor('targetLogTop');
 }
@@ -522,20 +551,23 @@ fillinForm(){
   }
 
   FormToRecord(i:number){
-    this.Crypto_Key=this.Table_User_Data[1].key;
-    this.Crypto_Method=this.Table_User_Data[1].method;
 
-    this.Table_DecryptPSW[this.i]= this.Decrypt;
+    //this.Table_DecryptPSW[this.i]= this.Decrypt;
     for (let j=0; j<  this.TabTestProd[i].data.length; j++){
+      if (this.TabTestProd[i].data[j].UserId==='RECORD IS DELETED'){
+        this.TabTestProd[i].psw[j]='';
+      } else {
         this.FieldsReference= this.theEvent.controls[j].value;
+        this.Crypto_Key=this.TabTestProd[i].data[j].key;
+        this.Crypto_Method=this.TabTestProd[i].data[j].method;
         this.Decrypt=this.FieldsReference.psw;
         this.onCrypt("Encrypt");
         this.TabTestProd[i].data[j]=this.FieldsReference;
         this.TabTestProd[i].data[j].psw=this.Encrypt;
-        this.TabTestProd[i].psw[this.i]=this.Decrypt;
+        this.TabTestProd[i].psw[j]=this.Decrypt;
+        this.Table_DecryptPSW[i]= this.Decrypt;
+      }
     }
-
-    
   }
 
   getEventAug(objectNb:number){
@@ -550,8 +582,10 @@ fillinForm(){
     }
      */
     let theLength=0;
+    let isitarray=false;
     this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.FileName[objectNb]   + "?alt=media" ;
-    this.http.get<EventAug>(this.HTTP_Address, {'headers':this.myHeader} )
+    // this.http.get<EventAug>(this.HTTP_Address, {'headers':this.myHeader} )
+    this.ManageGoogleService.getContentObject(this.configServer, this.Google_Bucket_Name,this.FileName[objectNb] )
               .subscribe((data ) => {
                 console.log('getEventAug() - data received');
                 this.Error_Access_Server='';
@@ -559,20 +593,21 @@ fillinForm(){
 
 
                 this.bucket_data=JSON.stringify(data);
-                var obj = JSON.parse(this.bucket_data);
+                
                 this.Table_User_Data.splice(0, this.Table_User_Data.length);
-      
                 this.Table_DecryptPSW.splice(0, this.Table_DecryptPSW.length);
+
                 if (Array.isArray(data)===false){
-                  theLength=1;
-                } else { theLength=obj.length;}
+                  theLength=1;isitarray=false
+                } else { theLength=data.length; isitarray=true}
+
                 for (this.i=0; this.i<theLength; this.i++){
                   let Individual_User_Data= new EventAug;
                   this.Table_User_Data.push(Individual_User_Data);
-                  if (theLength===1){
+                  if (isitarray===false){
                     this.Table_User_Data[this.i]=data;
                   } else {
-                    this.Table_User_Data[this.i] =obj[this.i];
+                    this.Table_User_Data[this.i] =data[this.i];
                     }
 
                   Individual_User_Data= new EventAug;
@@ -599,9 +634,13 @@ fillinForm(){
 
                   this.Crypto_Key=this.Table_User_Data[this.i].key;
                   this.Crypto_Method=this.Table_User_Data[this.i].method;
-                  this.Encrypt=this.Table_User_Data[this.i].psw;
-                  this.onCrypt("Decrypt");
-                  this.Table_DecryptPSW[this.i]= this.Decrypt;
+                    if (this.Table_User_Data[this.i].psw!==undefined){
+                    this.Encrypt=this.Table_User_Data[this.i].psw;
+                    this.onCrypt("Decrypt");
+                    this.Table_DecryptPSW[this.i]= this.Decrypt;
+                  } else {
+                      this.Table_DecryptPSW[this.i]= '';
+                  }
 
                   this.TabTestProd[objectNb].psw[this.i]=this.Decrypt;
                   this.TabTestProd[objectNb+2].psw[this.i]=this.Decrypt;

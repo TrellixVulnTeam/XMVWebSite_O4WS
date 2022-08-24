@@ -3,6 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { Router} from '@angular/router';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
+import { configServer, OneBucketInfo } from '../JsonServerClass';
+import { Bucket_List_Info } from '../JsonServerClass';
+
+import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
+import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
 
 @Component({
   selector: 'app-Respond-Contact',
@@ -15,9 +20,11 @@ export class RespondContactComponent {
   constructor(
     private router:Router,
     private http: HttpClient,
+    private ManageGoogleService: ManageGoogleService,
+    private ManageMangoDBService: ManageMangoDBService,
     ) {}
   
-
+    @Input() configServer=new configServer;
     getScreenWidth: any;
     getScreenHeight: any;
     device_type:string='';
@@ -35,6 +42,7 @@ export class RespondContactComponent {
     //Google_Bucket_Name:string='my-db-json';
     Google_Bucket_Name:string='xmv_messages'; 
     Google_Object_Name:string='';
+    /**
     Bucket_Info_Array:any={
       kind:'',
       items:[
@@ -59,22 +67,24 @@ export class RespondContactComponent {
       }
     ]
     
-  };
-  
+  }; 
+  */
+
+    Bucket_Info_Array:Array<any>=[];
     mySelection:number=0;
     HTTP_Address:string='';
     HTTP_AddressPOST:string='';
 
-    Error_Access_Server:string='';
-    Error_Access_Server_Post:string='';
+    //Error_Access_Server:string='';
+    //Error_Access_Server_Post:string='';
     i:number=0;
     bucket_data:string='';
-    Contact_Message:any=
-            {name:'Xavier', email:'xvanstaen@gmail.com ', mobile:'82680480', subject:'MyWebSite', text:'Google Cloud storage and HTTP GET'};
+    //Contact_Message:any=
+    //        {name:'Xavier', email:'xvanstaen@gmail.com ', mobile:'82680480', subject:'MyWebSite', text:'Google Cloud storage and HTTP GET'};
 
     message:string='';
     message_list:string='';
-    bucket_name_list:string='';
+    //bucket_name_list:string='';
     Mydata:any= {
         name: '1A',
         email: '2A',
@@ -103,6 +113,7 @@ export class RespondContactComponent {
       this.device_type = navigator.userAgent;
       this.device_type = this.device_type.substring(10, 48);
      // ****** get bucket *******
+     /***
       this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name;
       this.http.get(this.HTTP_Address )
             .subscribe(data => {
@@ -112,18 +123,20 @@ export class RespondContactComponent {
                      alert(' get bucket failed = ' + this.HTTP_Address);
                   } 
             )
-        
+       */
      // list of objects excluding {prefix} e.g. dbXMV-Messages (only db.json is then returned in the list)
-     //https://storage.googleapis.com/storage/v1/b/xmv_message/o?delimiter=dbXMV-Messages
+     //`https://storage.googleapis.com/storage/v1/b/xmv_message/o`?delimiter=dbXMV-Messages
 
       // ****** get list of objects  *******
+      //this.http.get<any>(this.HTTP_Address )
       this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o";
-      this.http.get<any>(this.HTTP_Address )
+      this.ManageGoogleService.getListMetaObjects(this.configServer, this.Google_Bucket_Name)
             .subscribe(data => {
-                  this.Bucket_Info_Array=data;
+                
+              this.Bucket_Info_Array=data;
                   
-                  for (this.i=0; this.i<this.Bucket_Info_Array.items.length-1; this.i++ ){
-                          this.message_list= this.message_list + ' ==== ' + this.Bucket_Info_Array.items[this.i].name ;
+                  for (this.i=0; this.i<this.Bucket_Info_Array.length-1; this.i++ ){
+                          this.message_list= this.message_list + ' ==== ' + this.Bucket_Info_Array[this.i].items.name ;
                           // this.bucket_name_list=this.bucket_name_list+this.Bucket_Info_Array.items[this.i].name;
                   }
                 },   
@@ -136,9 +149,9 @@ export class RespondContactComponent {
       // ****** create an object *******          
       // this.HTTP_AddressPOST='https://storage.googleapis.com/upload/storage/v1/b/xmv_messages/o?name=Message2.json&uploadType=media'
       // https://storage.googleapis.com/storage/v1/b/xmv_messages/o?name=Message1650555790998.json&uploadType=media
-      this.myDate= this.myTime.toString().substring(8,24);
-      this.thetime=this.myTime.getTime();
-      this.HTTP_AddressPOST=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=Message" + this.thetime  + '.json&uploadType=media';
+      //this.myDate= this.myTime.toString().substring(8,24);
+      //this.thetime=this.myTime.getTime();
+      //this.HTTP_AddressPOST=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=Message" + this.thetime  + '.json&uploadType=media';
       /*
       this.http.post(this.HTTP_AddressPOST, this.Contact_Message )
             .subscribe(res => {
@@ -154,16 +167,16 @@ export class RespondContactComponent {
     }
 
 onSubmit(mySelection:any){
-this.Mydata= mySelection;
-this.MyVar = this.Mydata.name;
-this.Google_Object_Name = this.Mydata.name;
+this.MyVar = mySelection.items.name;
+this.Google_Object_Name = mySelection.items.name;
 this.GetObject();
 }
 
 GetObject(){
 // ****** get content of object *******
 this.HTTP_Address=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name   + "?alt=media"; 
-this.http.get(this.HTTP_Address )
+//this.http.get(this.HTTP_Address )
+this.ManageGoogleService.getContentObject(this.configServer, this.Google_Bucket_Name,this.Google_Object_Name )
       .subscribe(data => {
             this.Mydata = data;
             this.display_message=true;

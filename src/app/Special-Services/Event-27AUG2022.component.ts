@@ -15,7 +15,11 @@ import { UserParam } from '../JsonServerClass';
 import { EventAug } from '../JsonServerClass';
 import { EventCommentStructure } from '../JsonServerClass';
 import { LoginIdentif } from '../JsonServerClass';
+import { configServer } from '../JsonServerClass';
 // EventCommentStructure
+
+import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
+import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
 
 @Component({
   selector: 'app-Event-27AUG2022',
@@ -29,6 +33,8 @@ export class Event27AugComponent {
     private router:Router,
     private http: HttpClient,
     private scroller: ViewportScroller,
+    private ManageGoogleService: ManageGoogleService,
+    private ManageMangoDBService: ManageMangoDBService,
     ) {}
   
     PhotoNbForm: FormGroup = new FormGroup({ 
@@ -50,6 +56,7 @@ export class Event27AugComponent {
     @Input() LoginTable_DecryptPSW:Array<string>=[];
     @Input() ConfigXMV=new XMVConfig;
     @Input() identification= new LoginIdentif;
+    @Input() configServer = new configServer;
 
     Total={
       brunch:0,
@@ -575,7 +582,10 @@ SaveRecord(){
       this.HTTP_AddressMetaData=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Table_User_Data[this.identification.id].UserId  +  "?cacheControl=max-age=0, no-store, private";
       this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Table_User_Data[this.identification.id].UserId ;
       //**this.LogMsgConsole('SaveRecord(), update individual object '+ this.Table_User_Data[this.identification.id].UserId);
-      this.http.post(this.HTTP_Address,  this.Table_User_Data[this.identification.id] , {'headers':this.myHeader} )
+      
+      var file=new File ([JSON.stringify(this.Table_User_Data[this.identification.id])],this.Table_User_Data[this.identification.id].UserId ,{type: 'application/json'});
+      this.ManageGoogleService.uploadObject(this.configServer, this.Google_Bucket_Name, file )
+      //this.http.post(this.HTTP_Address,  this.Table_User_Data[this.identification.id] , {'headers':this.myHeader} )
       .subscribe(res => {
         //**this.LogMsgConsole('Individual Record is updated: '+ this.Table_User_Data[this.identification.id].UserId );
 
@@ -649,7 +659,11 @@ SaveRecord(){
                         this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name   + '&uploadType=media';
                         this.HTTP_AddressMetaData=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name  + '&uploadType=media' +  "?cache-control=max-age=0, no-store, private";    
                         //**this.LogMsgConsole('SaveRecord() - object Event-27AUG2022 to be saved');
-                        this.http.post(this.HTTP_Address,  this.Table_User_Data , {'headers':this.myHeader} )
+
+
+                        var file=new File ([JSON.stringify(this.Table_User_Data)],this.Google_Object_Name,{type: 'application/json'});
+                        this.ManageGoogleService.uploadObject(this.configServer, this.Google_Bucket_Name, file )
+                        //this.http.post(this.HTTP_Address,  this.Table_User_Data , {'headers':this.myHeader} )
                         .subscribe(res => {
                               this.returnDATA.emit(this.Table_User_Data);
                               this.message='Record is updated / Mise à jour réussie';
@@ -732,7 +746,10 @@ LogMsgConsole(msg:string){
        
   
   }
-  
+
+
+// SHOULD USE THE SERVICE condsoleLog.ts INSTEAD
+////////////////////////////////////////////////
 saveLogConsole(LogConsole:any, type:string){
   
     this.myTime=new Date();
@@ -742,8 +759,10 @@ saveLogConsole(LogConsole:any, type:string){
     this.SaveConsoleFinished=false;
     // this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.Google_Bucket_Name + "/o?name=" + this.Google_Object_Name   + '&uploadType=media';
     this.HTTP_Address=this.Google_Bucket_Access_RootPOST + this.ConfigXMV.BucketConsole+ "/o?name=" + this.thetime.substr(0,20)+ type + '.json&uploadType=media';
-  
-    this.http.post(this.HTTP_Address, LogConsole)
+        
+    var file=new File ([JSON.stringify(LogConsole)], this.thetime.substr(0,20)+ type  ,{type: 'application/json'});
+    this.ManageGoogleService.uploadObject(this.configServer, this.ConfigXMV.BucketConsole, file )
+    //this.http.post(this.HTTP_Address, LogConsole)
       .subscribe(res => {
               this.SaveConsoleFinished=true;
               if (LogConsole.length===consoleLength){

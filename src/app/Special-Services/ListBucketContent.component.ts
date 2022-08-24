@@ -6,7 +6,7 @@ import { FormGroup, FormControl, Validators} from '@angular/forms';
 import { Router} from '@angular/router';
 import { ViewportScroller } from "@angular/common";
 import { EventAug } from '../JsonServerClass';
-import {Bucket_List_Info} from '../JsonServerClass';
+import { Bucket_List_Info } from '../JsonServerClass';
 import { StructurePhotos } from '../JsonServerClass';
 import { BucketExchange } from '../JsonServerClass';
 import { XMVConfig } from '../JsonServerClass';
@@ -15,10 +15,11 @@ import { LoginIdentif } from '../JsonServerClass';
 import { BucketList } from '../JsonServerClass';
 import { environment } from 'src/environments/environment';
 import { msgConsole } from '../JsonServerClass';
-import { UserParam } from '../JsonServerClass';
+import { configServer } from '../JsonServerClass';
 import { OneBucketInfo } from '../JsonServerClass';
 
-
+import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
+import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
 
 @Component({
   selector: 'app-ListBucketContent',
@@ -32,9 +33,11 @@ export class ListBucketContentComponent {
     private router:Router,
     private http: HttpClient,
     private scroller: ViewportScroller,
+    private ManageGoogleService: ManageGoogleService,
+    private ManageMangoDBService: ManageMangoDBService,
     ) {}
   
-
+    @Input() configServer=new configServer;
     myHeader=new HttpHeaders();    
     getScreenWidth: any;
     getScreenHeight: any;
@@ -136,8 +139,9 @@ RetrieveAllObjects(){
     
     //this.FileMedialink=event.mediaLink;
     //this.FileName=event.name;
-    this.Return_SelectedBucketInfo.emit(event);
-      this.http.get<any>(event.mediaLink )
+      this.Return_SelectedBucketInfo.emit(event);
+     // this.http.get<any>(event.mediaLink )
+      this.ManageGoogleService.getContentObject(this.configServer, event.bucket,event.name )
       .subscribe((data ) => {
         console.log('RetrieveSelectedFile='+event.mediaLink);
         this.scroller.scrollToAnchor('SelectedObjectsFile');

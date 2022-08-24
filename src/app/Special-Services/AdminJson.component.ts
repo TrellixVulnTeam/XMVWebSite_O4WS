@@ -16,6 +16,10 @@ import { environment } from 'src/environments/environment';
 import { msgConsole } from '../JsonServerClass';
 import { UserParam } from '../JsonServerClass';
 import { OneBucketInfo } from '../JsonServerClass';
+import { configServer } from '../JsonServerClass';
+
+import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
+import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
 
 @Component({
   selector: 'app-AdminJson',
@@ -29,6 +33,8 @@ export class AdminJsonComponent {
     private router:Router,
     private http: HttpClient,
     private scroller: ViewportScroller,
+    private ManageGoogleService: ManageGoogleService,
+    private ManageMangoDBService: ManageMangoDBService,
     ) {}
      
     getScreenWidth: any;
@@ -55,6 +61,8 @@ export class AdminJsonComponent {
     ListOfBucket=new BucketList;
     SelectedBucketInfo=new OneBucketInfo;
 
+    TabBuckets=[{name:''}];
+
     Google_Bucket_Access_Root:string='https://storage.googleapis.com/storage/v1/b/';
     Google_Bucket_Access_RootPOST:string='https://storage.googleapis.com/upload/storage/v1/b/';
   
@@ -72,11 +80,11 @@ export class AdminJsonComponent {
     @Input() identification=new LoginIdentif;
     @Input() WeddingPhotos:Array<StructurePhotos>=[];
     @Input() ConfigXMV=new XMVConfig;
+    @Input() configServer=new configServer;
    
     SelectedConfigFile=new XMVConfig;
     ModifConfigFile=new XMVConfig;
     fileRetrieved:boolean=false;
-         // ACCESS TO GOOGLE STORAGE
 
     GoToComponent:number=-1;
     ContentTodisplay:boolean=false;
@@ -107,11 +115,11 @@ ngOnInit(){
         'content-type': 'application/json',
         'cache-control': 'private, max-age=0'
       });
-      this.EventHTTPReceived[0]=false;
+      this.EventHTTPReceived[0]=true;
       //this.waitHTTP(this.TabLoop[0], 20000, 0);
-      this.getBucketAsset();
-      this.AccessMongo();
-
+      
+      //this.AccessMongo(); TESTING OF HTTP.POST
+      this.getBucket()
 
   }    
 ActionMessage:string='';
@@ -119,7 +127,7 @@ Process(event:string){
   this.ActionMessage='';
   this.isDataReceived=false;
   this.ContentTodisplay=false;
-  this.isDataReceived=false;
+  this.theReceivedData={};
   if (event==='Bucket'){
     this.GoToComponent=0;
     this.ActionMessage='Administration of Buckets';
@@ -147,27 +155,22 @@ Process(event:string){
   }
   }
 
-
-
-getBucketAsset(){
+getBucket(){
   this.Error_Access_Server='';
-  this.http.get<BucketList>('./assets/ListOfBuckets.json' )
-  .subscribe((data ) => {
-    
-    this.ListOfBucket=data;
 
-    console.log('getBucketAsset() - data received '+this.ListOfBucket.Config+' ; '+this.ListOfBucket.Login+' ; ');
-    this.EventHTTPReceived[0]=true;
-  },
-    error_handler => {
-      console.log('getBucketAsset() - error handler');
-      this.Error_Access_Server='getBucketAsset()==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
-    } 
-  )
+  this.ManageGoogleService.getListBuckets(this.configServer)
+    .subscribe(
+      data => {
+        console.log('successful retrieval of list of buckets ', data);
+        this.TabBuckets =data;
+      },
+      error => {
+        this.Error_Access_Server='failure to get list of buckets ;  error = '+ error;
+        console.log(this.Error_Access_Server);
+       
+      });
 }
 
-
-  // ================
 
 ReceivedDataConfig(event:any){
   this.SpecificConfigFormat='';
@@ -200,9 +203,7 @@ ReceivedData(event:any){
 
   }
 
-// ================
-  
-  
+
 TextInput(event:any){
   this.ModifyText=true;
 
@@ -216,7 +217,7 @@ UpdateConfigFile(){
   if (this.IsFieldModified[1]===true){this.ModifConfigFile.BucketLogin=this.ModifiedField[1]};
   if (this.IsFieldModified[2]===true){this.ModifConfigFile.BucketConsole=this.ModifiedField[2]};
   if (this.IsFieldModified[3]===true){this.ModifConfigFile.BucketContact=this.ModifiedField[3]};
-  if (this.IsFieldModified[4]===true){this.ModifConfigFile.BucketSource=this.ModifiedField[4]};
+  if (this.IsFieldModified[4]===true){this.ModifConfigFile.SourceJson_Google_Mongo=this.ModifiedField[4]};
   if (this.IsFieldModified[5]===true){this.ModifConfigFile.Max_Nb_Bucket_Wedding=Number(this.ModifiedField[5])};
   if (this.IsFieldModified[6]===true){
     if (this.ModifiedField[6]==='false'){this.ModifConfigFile.GetOneBucketOnly=false};
@@ -260,11 +261,16 @@ UpdateConfigFile(){
 }
 
 BackToSaveFile(event:any){
+  if (event.SaveIsCancelled ===false){
+      this.UpdateConfigFile();
+  } else { 
   this.ContentTodisplay=false;
   this.scroller.scrollToAnchor('targetTop');
 }
+}
 
-
+// for testing purpose only
+///////////////////////////
  AccessMongo(){
      const HTTP_Address="https://data.mongodb-api.com/app/data-kpsyr/endpoint/data/v1/action/insertOne" ;
      this.myHeader=new HttpHeaders({

@@ -82,7 +82,7 @@
           <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Contact; else NoContact" > 
                   <div class=' options otherOptions options-text option_background' (click) = "Display_Contact()"><br>Contact</div>
           </div>
-          <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===MyEvents; else Events" > 
+          <div *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===MyEvents && isConfigServerRetrieved===true; else Events" > 
             <div class=' options otherOptions options-text option_background' (click) = "Display_Events()"><br>Events</div>
     </div>
 
@@ -135,7 +135,9 @@
         <div class=' options othertOption options-text' (click) = "Display_HomePage()"><br>Home</div>
     </ng-template>
     <ng-template #Events>
+      <div *ngIf='isConfigServerRetrieved===true'>
       <div class=' options othertOption options-text' (click) = "Display_Events()"><br>Events</div>
+    </div>
   </ng-template>
    
   <!-- ======== END HEADER ======== -->
@@ -165,7 +167,7 @@
           <!-- CONTACT -->
           <ng-template #contact> 
               <span *ngIf="Display_Table[i_table].display===true && Display_Table[i_table].type===Contact; else GHomePage" > 
-              <app-xmvcompany-contact></app-xmvcompany-contact>
+              <app-xmvcompany-contact [configServer]="configServer"></app-xmvcompany-contact>
               </span>
           </ng-template>
 
@@ -219,11 +221,13 @@
 
 <!-- [destination]="source" -->
       <ng-template #TheEvents>   
+        <div *ngIf='isConfigServerRetrieved===true'>
             <span class='mainbody'>  
-              <app-login  [identification]="identif" 
+              <app-login  [identification]="identif" [configServer]="configServer" [XMVConfig]="XMVConfig"
                 (my_output1)='TheIdentifObject($event)' (my_output2)='TheLoginRoute($event)'>             
             </app-login>
           </span>  
+        </div>
         </ng-template>
 
 

@@ -1,7 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http';
 import { FormGroup, FormControl, Validators} from '@angular/forms';
+
+import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
+import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
+
+import { configServer } from 'src/app/JsonServerClass';
 
 // import { SearchCountryField, CountryISO, PhoneNumberFormat } from 'ngx-intl-tel-input';
 
@@ -22,7 +27,12 @@ export class XMVCompanyContactComponent implements OnInit {
   
   constructor(
 
-    private http: HttpClient) {}
+    private http: HttpClient,
+    private ManageGoogleService: ManageGoogleService,
+    private ManageMangoDBService: ManageMangoDBService,
+    ) {}
+
+@Input() configServer=new configServer;
 
 Server_Name:string='Google'; // "Google" or "MyJson"
 Google_Bucket_Access_Root:string='https://storage.googleapis.com/storage/v1/b/';
@@ -123,8 +133,8 @@ onSubmit(event:any){
                 this.text_error='text is required';
               } else if (this.myContactForm.controls['text'].value!=='' && this.myContactForm.controls['text'].value.length<10){
                 this.text_error='text must have 10 characters at least';
-                } else if (this.myContactForm.controls['phone'].invalid===true && this.myContactForm.controls['phone'].value!==null){
-                  this.mobile_error='phone number is invalid';
+               // } else if (this.myContactForm.controls['phone'].invalid===true && this.myContactForm.controls['phone'].value!==null){
+               //   this.mobile_error='phone number is invalid';
                       //***************************************************************************** */
                       // then start the server:  json-server --watch db.json or Google CLoud Storage  //
                       //***************************************************************************** */
@@ -137,10 +147,15 @@ onSubmit(event:any){
                           else {
                             this.HTTP_Address='http://localhost:3000/XMV_Messages';
                           }
-                          this.http.post(this.HTTP_Address,this.myContactForm.value )
+                              
+    var file=new File ([JSON.stringify(this.myContactForm.value)],  "Message" + this.myDate  + '.json' ,{type: 'application/json'});
+    this.ManageGoogleService.uploadObject(this.configServer, this.Google_Bucket_Name, file )
+    // this.http.post(this.HTTP_Address,this.myContactForm.value )
                                 .subscribe(res => {
+                                  if (res.type===4){
                                   alert('message sent successfully');
                                   this.Clear(1);
+                                  }
                                   },
                                 error_handler => {
                                   alert(error_handler.message + '  '+ error_handler.statusText)

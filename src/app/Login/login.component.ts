@@ -7,8 +7,12 @@ import { EventAug } from '../JsonServerClass';
 import {Bucket_List_Info} from '../JsonServerClass';
 import { XMVConfig } from '../JsonServerClass';
 import { XMVTestProd } from '../JsonServerClass';
+import { configServer } from '../JsonServerClass';
 import { LoginIdentif } from '../JsonServerClass';
 import { environment } from 'src/environments/environment';
+
+import { ManageGoogleService } from 'src/app/Services/ManageGoogle.service';
+import { ManageMangoDBService } from 'src/app/Services/ManageMangoDB.service';
 
 @Component({
   selector: 'app-login',
@@ -20,8 +24,13 @@ export class LoginComponent {
 
   constructor(
     private router:Router,
-    private http: HttpClient,    
+    private http: HttpClient,
+    private ManageGoogleService: ManageGoogleService,
+    private ManageMangoDBService: ManageMangoDBService,
     ) {}
+
+    @Input() configServer=new configServer;
+    @Input() XMVConfig=new XMVConfig;
 
     @Input() identification=new LoginIdentif; 
     // from xmv-company.cmoponent.ts which got it through an @output action
@@ -92,6 +101,8 @@ export class LoginComponent {
       this.device_type = navigator.userAgent;
       this.device_type = this.device_type.substring(10, 48);
 
+      this.ConfigXMV=this.XMVConfig;
+
       this.myHeader=new HttpHeaders({
         'content-type': 'application/json',
         'cache-control': 'private, max-age=0'
@@ -101,14 +112,8 @@ export class LoginComponent {
         this.id_Animation.push(0);
         this.j_loop.push(0);
       }
-      this.EventHTTPReceived[3]=false;
-      this. getConfigAsset();
-      // id_animation=3; EventHTTPReceived=3
-      this.j_loop[3]=0;
-      this.waitHTTP(30000,3,3);
-      //this.httpHeader.append('content-type', 'application/json');
-      //this.httpHeader.append('Cache-Control', 'no-store, must-revalidate, private, max-age=0, no-transform');
-      this.routing_code=0;
+      this.EventHTTPReceived[3]=true; // inherited from old process; config is received
+       this.routing_code=0;
       this.EventHTTPReceived[0]=false;
       this.getEventAug(0);
       // id_animation=0; EventHTTPReceived=0
@@ -165,7 +170,9 @@ GetObject(event:number){
       console.log('GetObject() - object:', this.Google_Object_Name);
       this.text_error='';
       this.EventHTTPReceived[event]=false;
-            this.http.get<LoginIdentif>(this.HTTP_Address, {'headers':this.myHeader} )
+
+      this.ManageGoogleService.getContentObject(this.configServer, this.Google_Bucket_Name,this.Google_Object_Name )
+      //this.http.get<LoginIdentif>(this.HTTP_Address, {'headers':this.myHeader} )
             .subscribe(data => {
             //console.log(data);
             this.Encrypt_Data = data;
@@ -195,15 +202,7 @@ GetObject(event:number){
                   }
                 else if (this.i<this.ConfigXMV.UserSpecific.length && this.Encrypt_Data.UserId===this.ConfigXMV.UserSpecific[this.i].id && this.ConfigXMV.UserSpecific[this.i].type==='ADMIN') {
                     this.routing_code=1;
-                    /*** OLD PROCESS
-                    if (this.myForm.controls['action'].value==='' || this.myForm.controls['action'].value===null){ 
-                      this.routing_code=4;
-                    } else if (this.myForm.controls['action'].value.toUpperCase()==='ADMINJSON'){
-                        this.routing_code=1; // go to Respond_Contact
-                    } else if (this.myForm.controls['action'].value.toUpperCase()==='EVENT-27AUG2022'){
-                      this.routing_code=3; // go to Respond_Contact
-                    }
-                     */
+
                   } 
                   else {
                     this.ValidateEventAug();
@@ -311,8 +310,9 @@ getEventAug(event:number){
 
   this.HTTP_AddressMetaData=this.Google_Bucket_Access_Root + this.Google_Bucket_Name + "/o/" + this.Google_Object_Name  + "?cacheContro=max-age=0, no-store, private"; 
   this.EventHTTPReceived[event]=false;
-          
-          this.http.get(this.HTTP_Address, {'headers':this.myHeader} )
+  
+  this.ManageGoogleService.getContentObject(this.configServer, this.Google_Bucket_Name,this.Google_Object_Name )
+  //        this.http.get(this.HTTP_Address, {'headers':this.myHeader} )
             .subscribe((data ) => {
               this.EventHTTPReceived[event]=true;
               console.log('getEventAug() - data received'+ ' [event]' + event + ' '+this.EventHTTPReceived[event]);
@@ -344,74 +344,6 @@ getEventAug(event:number){
         )
   }
 
-
-getConfig(ObjectName:string, event:number){
-  console.log('getConfig() of '+ObjectName + ' [event]' + event + ' '+this.EventHTTPReceived[event]);
-  this.EventHTTPReceived[event]=false;
-  this.HTTP_Address=this.Google_Bucket_Access_Root +  "config-xmvit/o/" + ObjectName + "?alt=media" ;    
-          this.http.get<XMVConfig>(this.HTTP_Address )
-            .subscribe((data ) => {
-              this.EventHTTPReceived[event]=true;
-              console.log('getConfig() - data received '+ ' [event]' + event + ' '+this.EventHTTPReceived[event]);
-              this.ConfigXMV=data;
-              
-            },
-              error_handler => {
-                console.log('getConfig() - error handler');
-                this.text_error='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
-              } 
-        )
-  }
-
-
-getConfigAsset(){
-    console.log('getConfigAsset()');
-  /****
-            this.http.get<any>('./assets/XMVConfigTestOrProd.json' )
-              .subscribe((data ) => {
-                console.log('getConfigAsset() - data received');
-                this.FileType=data;
-                this.getConfigXMV();
-              },
-                error_handler => {
-                  console.log('getConfigAsset() - error handler');
-                  this.text_error='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
-                } 
-          )
-    
-     */
-    if (environment.production === false){
-      this.FileType.TestProd = 'Test';
-    }
-    else {
-      this.FileType.TestProd='Prod';
-    }
-    this.getConfigXMV();
-  }
-
-  getConfigXMV(){
-    console.log('getConfigXMV()');
-    this.EventHTTPReceived[3]=false;
-    //this.Google_Object_Name="ConfigXMVTestProd.json";
-   const HTTP_Address=this.Google_Bucket_Access_Root +  "config-xmvit/o/ConfigXMVTestProd.json?alt=media" ;    
-            this.http.get<XMVTestProd>(HTTP_Address )
-              .subscribe((data ) => {
-                this.EventHTTPReceived[3]=true;
-                console.log('getConfigXMV() - data received'+ ' [event]' + 3 + ' '+this.EventHTTPReceived[3]);
-                this.ConfigTestProd=data;
-                
-                if (this.FileType.TestProd==='Test'){
-                    this.getConfig(this.ConfigTestProd.TestFile,3);
-                } else {
-                  this.getConfig(this.ConfigTestProd.ProdFile,3);
-                }
-              },
-                error_handler => {
-                  console.log('getConfigXMV() - error handler');
-                  this.text_error='INIT - error message==> ' + error_handler.message + ' error status==> '+ error_handler.statusText+'   name=> '+ error_handler.name + '   Error url==>  '+ error_handler.url;
-                } 
-          )
-    }
 
 
 GetUpdatedTable(event:any){
